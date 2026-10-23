@@ -30,3 +30,82 @@
 .community{background:linear-gradient(180deg,#090708,#10090b)}
 .page-title{letter-spacing:-1.5px}
 @media(max-width:700px){.header{height:70px}.hero{min-height:auto;background:linear-gradient(160deg,#090708,#16080b)}.hero:before{inset:40% 0 0}.hero h1{font-size:clamp(57px,15vw,86px);letter-spacing:-1px}.ticker{gap:12px}.feature-band:after{right:3%;font-size:110px}}
+
+
+/* Site-wide Ruby Essentials esports system */
+:root{
+  --bg:#080708;
+  --panel:#120d0f;
+  --line:#302326;
+  --muted:#b3a8ab;
+  --ruby:#790b17;
+  --ruby2:#e21d2b;
+  --soft:#e9e1e3;
+  color-scheme:dark;
+}
+::selection{background:#e21d2b;color:#fff}
+:focus-visible{outline:2px solid #ff5260;outline-offset:4px}
+body{color:#f7f2f3;background:#080708}
+.header{box-shadow:0 8px 30px #0005}
+.nav a{position:relative;padding-block:9px}
+.nav a:after{content:"";position:absolute;left:0;right:100%;bottom:0;height:2px;background:var(--ruby2);transition:right .2s}
+.nav a:hover:after,.nav a.active:after{right:0}
+.brand-name{line-height:1}
+.hero{isolation:isolate}
+.hero-copy{max-width:650px}
+.hero h1{max-width:700px;text-shadow:0 5px 32px #0007}
+.hero .accent{color:#f02b3b}
+.hero-art{isolation:isolate}
+.hero-art:after{content:"";position:absolute;inset:12% 6%;border:1px solid #e21d2b26;transform:skewY(-13deg);pointer-events:none}
+.art-label{font-weight:800;text-transform:uppercase}
+.hero-stats strong{letter-spacing:.5px}
+.roster-preview-head,.section-heading{gap:22px}
+.roster-preview-card,.event-card,.member-card,.admin-grid>div,.auth-card{box-shadow:0 16px 35px #0002}
+.roster-preview-art img,.member-logo{transition:transform .25s,filter .25s}
+.roster-preview-card:hover .roster-preview-art img{transform:scale(1.08);filter:drop-shadow(0 0 28px #e21d2b80)}
+.event-card{position:relative;overflow:hidden}
+.event-card:before{content:"";position:absolute;left:0;top:0;width:3px;height:0;background:var(--ruby2);transition:height .25s}
+.event-card:hover:before{height:100%}
+.status{padding:7px 9px;border:1px solid #483238;background:#090708}
+.status.live{border-color:#e21d2b66;background:#e21d2b16}
+.feature-band{box-shadow:0 18px 45px #0004}
+.community-row>div{position:relative;padding:20px;border:1px solid transparent;transition:background .2s,border-color .2s}
+.community-row>div:hover{background:#150d0f;border-color:#352327}
+.footer{background:#080708}
+.footer .brand{flex-shrink:0}
+.footer>small{line-height:1.8;text-align:right}
+.page{background:radial-gradient(ellipse at 90% 0%,#5b0b1520,transparent 34%)}
+.page-title{max-width:900px}
+.member-card{transition:transform .2s,border-color .2s}
+.member-card:hover{transform:translateY(-4px);border-color:#e21d2b99}
+.member-banner{background:radial-gradient(circle at 50% 35%,#e21d2b50,transparent 55%),linear-gradient(135deg,#211014,#100a0c)}
+.role-tag{background:#e21d2b0c}
+.auth-card{box-shadow:0 25px 80px #0006}
+.auth-card input{border-radius:0;transition:border-color .2s,background .2s}
+.auth-card input:focus{background:#10090b}
+.auth-bottom a{text-decoration:underline;text-decoration-color:#e21d2b80;text-underline-offset:3px}
+.admin-grid>div{min-height:180px;transition:border-color .2s,transform .2s}
+.admin-grid>div:hover{border-color:#e21d2b80;transform:translateY(-3px)}
+.hint{padding:14px 16px;border-left:2px solid var(--ruby2);background:#e21d2b0a}
+.btn,.text-link,.card-link,.login-link,.nav a{transition:all .2s ease}
+.btn:active{transform:translateY(0)}
+@media(min-width:1200px){
+  .hero{min-height:690px}
+  .hero-art{min-height:520px}
+  .roster-preview-art{height:220px}
+  .event-card{padding:26px}
+}
+@media(max-width:700px){
+  .hero-art:after{inset:10% 2%}
+  .hero-stats{gap:12px}
+  .hero-stats strong{font-size:21px}
+  .hero-stats small{font-size:7px;letter-spacing:.7px}
+  .roster-preview-head,.section-heading{align-items:flex-start}
+  .footer .brand{width:100%}
+  .footer>small{text-align:left}
+  .community-row{gap:8px}
+  .community-row>div{padding:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
