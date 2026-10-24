@@ -43,13 +43,15 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'}){
       const ign=String(form.get('ign')||'').trim();
       const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+'/login',data:{display_name:displayName,ign}}});
       if(error) throw error;
-      if(data.user){
+      if(data.session && data.user){
         const {error:profileError}=await supabase.from('profiles').upsert({id:data.user.id,display_name:displayName,ign:ign||null},{onConflict:'id'});
         if(profileError) throw profileError;
         const {error:applicationError}=await supabase.from('join_applications').insert({user_id:data.user.id,display_name:displayName,ign:ign||null});
         if(applicationError) throw applicationError;
+        setMessage('Your account was created and your join request submitted.');
+      }else{
+        setMessage('Account created. Check your email to confirm your address, then log in to complete your membership request.');
       }
-      setMessage(data.session?'Your account was created and your join request submitted.':'Account created. Check your email to confirm your address before logging in.');
     }catch(err){
       const error=err as {message?:string};
       setMessage(error.message||'Something went wrong. Please try again.');
