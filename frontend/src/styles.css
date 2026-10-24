@@ -521,3 +521,82 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #ff69
 .landing-crest{isolation:isolate}
 .landing-crest:before{z-index:-1}
 .mission-card>img{width:48px;height:48px;padding:4px;border:1px solid #ff263833;border-radius:8px;background:linear-gradient(135deg,#ff263812,#090506)}
+
+
+/* --- Ruby Essentials visual refinement: premium esports finish --- */
+:root{color-scheme:dark;scroll-behavior:smooth}
+body{background:#070506;background-image:radial-gradient(ellipse at 12% 8%,#4d0c1517,transparent 36%),radial-gradient(ellipse at 88% 42%,#39080f12,transparent 34%);color:#f7f1f2}
+::selection{background:#b8182b;color:#fff}
+a{ -webkit-tap-highlight-color:transparent }
+.header{position:sticky;top:0;z-index:50;background:rgba(8,5,6,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid #ff26381c;box-shadow:0 10px 35px #0002}
+.brand{gap:10px}
+.brand-logo{transition:transform .25s ease,filter .25s ease}
+.brand:hover .brand-logo{transform:rotate(-5deg) scale(1.04);filter:drop-shadow(0 0 12px #ff26386b)}
+.nav a{position:relative;transition:color .2s ease}
+.nav a:after{content:"";position:absolute;left:8px;right:8px;bottom:5px;height:2px;background:#ed263a;transform:scaleX(0);transform-origin:left;transition:transform .2s ease}
+.nav a:hover:after,.nav a.active:after,.nav a[aria-current="page"]:after{transform:scaleX(1)}
+.nav a:hover,.nav a[aria-current="page"]{color:#fff}
+.login-link{border:1px solid #ff263838;border-radius:4px;transition:background .2s,border-color .2s,transform .2s}
+.login-link:hover{background:#ff263814;border-color:#ff2638;transform:translateY(-1px)}
+.landing-home{overflow:hidden}
+.landing-hero{position:relative;isolation:isolate;background:radial-gradient(ellipse at 76% 46%,#6e101b2b,transparent 36%),linear-gradient(115deg,#090607 0%,#0e0709 56%,#090506 100%);border-bottom:1px solid #ff263817}
+.landing-hero:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.19;background-image:linear-gradient(#ff26380c 1px,transparent 1px),linear-gradient(90deg,#ff26380c 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(90deg,black,transparent 90%)}
+.landing-copy{position:relative;z-index:2}
+.landing-kicker{display:flex;align-items:center;gap:10px;color:#f36a78}
+.landing-kicker:before{content:"";display:inline-block;width:24px;height:1px;background:#e62b3e}
+.landing-copy h1{line-height:.88;letter-spacing:-.055em;text-shadow:0 8px 35px #0007}
+.landing-copy h1 span{color:#fff}
+.landing-copy h1 strong{color:#f04455;text-shadow:0 0 36px #d61b3026}
+.landing-tagline{border-left:2px solid #e32b3e;padding-left:14px;color:#cfc3c6;letter-spacing:.18em;line-height:1.8}
+.landing-primary{position:relative;overflow:hidden;box-shadow:0 8px 24px #c7192b20;transition:transform .2s,box-shadow .2s,background .2s}
+.landing-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px #c7192b38}
+.landing-secondary{transition:color .2s,border-color .2s,background .2s}
+.landing-secondary:hover{color:#fff;border-color:#e72b3e;background:#ff26380d}
+.landing-crest{position:relative}
+.landing-crest:after{content:"R / E";position:absolute;right:4%;bottom:7%;font-size:10px;letter-spacing:.38em;color:#e34a5a70}
+.mission-grid{position:relative}
+.mission-card{position:relative;overflow:hidden;background:linear-gradient(145deg,#120a0c,#0b0708 70%);border:1px solid #ff26381c;box-shadow:0 14px 35px #0002}
+.mission-card:before{content:"";position:absolute;left:0;top:0;width:3px;height:38px;background:#b91b2c;transition:height .25s}
+.mission-card:hover:before{height:100%}
+.mission-card h2{letter-spacing:.04em}
+.mission-card h2 em,.latest-intro h2 em,.gallery-strip h2 em{font-style:normal;color:#ed394b}
+.mission-card p,.mission-card li{color:#b9aeb1;line-height:1.8}
+.mission-card>a{display:inline-grid;place-items:center;width:34px;height:34px;border:1px solid #ff263833;border-radius:50%;color:#ff6674;transition:transform .2s,background .2s}
+.mission-card>a:hover{transform:translateX(3px);background:#ff26381b}
+.latest-section{position:relative;border-top:1px solid #ff263812;border-bottom:1px solid #ff263812;background:linear-gradient(180deg,#0b0708,#090607)}
+.latest-intro h2{letter-spacing:-.035em}
+.latest-intro>p:last-child{max-width:440px;color:#b9aeb1;line-height:1.8}
+.news-card{overflow:hidden;background:#10090b;border:1px solid #ff26381c}
+.news-card-link{height:100%;align-items:stretch}
+.news-art{flex-shrink:0}
+.news-copy{padding-block:6px}
+.news-copy>span{letter-spacing:.16em;color:#f05a69;font-size:10px}
+.news-copy h3{line-height:1.25}
+.news-copy p{color:#b9aeb1;line-height:1.7}
+.gallery-strip{position:relative;overflow:hidden;border-top:1px solid #ff263822}
+.gallery-strip:before,.gallery-strip:after{content:"";position:absolute;top:0;bottom:0;width:1px;background:linear-gradient(transparent,#e42a3d55,transparent);pointer-events:none}
+.gallery-strip:before{left:8%}.gallery-strip:after{right:8%}
+.footer{border-top:1px solid #ff26381f;background:#060405}
+.footer p{color:#b9aeb1}
+.page{animation:re-enter .45s ease both}
+.page-title{letter-spacing:-.045em}
+.eyebrow{letter-spacing:.17em}
+.event-card,.roster-player-panel,.auth-card,.admin-action{border:1px solid #ff26381b;background:linear-gradient(145deg,#120a0c,#0b0708)}
+.roster-player-panel{overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s}
+.roster-player-panel:hover{transform:translateY(-4px);border-color:#b91b2c;box-shadow:0 18px 45px #0004}
+.roster-panel-art{background:radial-gradient(ellipse at center,#57101b44,transparent 68%),#0b0708}
+.roster-panel-number{color:#f04a5c}
+.auth-card{backdrop-filter:blur(14px)}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #ff6574;outline-offset:3px}
+@keyframes re-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:700px){
+ .header{backdrop-filter:blur(14px)}
+ .landing-hero:before{opacity:.1;background-size:32px 32px}
+ .landing-copy h1{letter-spacing:-.045em}
+ .landing-tagline{letter-spacing:.12em}
+ .mission-card{box-shadow:none}
+ .news-card-link{gap:12px}
+ .news-copy h3{font-size:15px}
+ .gallery-strip:before{left:3%}.gallery-strip:after{right:3%}
+}
+@media(prefers-reduced-motion:reduce){.page{animation:none}}
