@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink, Route, Routes } from 'react-router-dom';
-import { ArrowUpRight, ChevronRight, Gamepad2, Menu, Shield, Trophy, Users, Zap } from 'lucide-react';
+import { ArrowUpRight, Gamepad2, Menu, Shield, Trophy, Users } from 'lucide-react';
 
 const members = [
   { name: 'Ruby Ace', role: 'CLAN LEADER', tag: 'ACE' },
