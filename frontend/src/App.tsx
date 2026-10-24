@@ -24,7 +24,8 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   const authRedirectUrl='https://ruby-essentials.vercel.app';
   async function submit(e:React.FormEvent<HTMLFormElement>){
     e.preventDefault();
-    const form=new FormData(e.currentTarget);
+    const formElement=e.currentTarget;
+    const form=new FormData(formElement);
     setMessage('');setBusy(true);
     try{
       if(!configured) throw new Error('Account services are not configured yet. Please try again later.');
