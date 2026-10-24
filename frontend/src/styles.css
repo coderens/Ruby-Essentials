@@ -387,3 +387,31 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #ff69
 .roster-placeholder-note{max-width:300px;margin:22px 0;color:#a99b9e;font-size:11px;line-height:1.8}
 .roster-join{min-height:43px;padding:0 18px;font-size:10px}
 @media(max-width:600px){.roster-placeholder{min-height:430px;padding:28px 18px}.roster-placeholder-logo{width:108px;height:108px}}
+
+
+/* KNS-inspired roster player panels */
+.roster-page .page-intro{max-width:650px;margin-bottom:26px}
+.roster-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 18px}
+.roster-count{color:#9b8b8e;font-size:9px;font-weight:800;letter-spacing:1.8px}
+.roster-panel-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.roster-player-panel{position:relative;min-width:0;overflow:hidden;border:1px solid #472027;background:#100b0d;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+.roster-player-panel:hover{transform:translateY(-5px);border-color:#b52535;box-shadow:0 18px 38px #0008}
+.roster-panel-art{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;min-height:245px;overflow:hidden;background:radial-gradient(ellipse at 50% 46%,#54121d 0%,#230c12 46%,#0c090a 100%);border-bottom:1px solid #4a1921}
+.roster-panel-art:before{content:"";position:absolute;z-index:-1;inset:14px;border:1px solid #f0445522;clip-path:polygon(12% 0,88% 0,100% 12%,100% 88%,88% 100%,12% 100%,0 88%,0 12%)}
+.roster-panel-art:after{content:"";position:absolute;z-index:-1;width:175px;height:175px;border:1px solid #f0445528;transform:rotate(45deg)}
+.roster-panel-art img{width:145px;height:155px;object-fit:contain;filter:drop-shadow(0 0 24px #e21d2b42);opacity:.92}
+.roster-panel-number{position:absolute;top:12px;left:15px;color:#ff3347;font-family:"Barlow Condensed",Impact,sans-serif;font-size:18px;font-weight:800;letter-spacing:1px}
+.roster-panel-tag{position:absolute;bottom:12px;left:14px;right:14px;text-align:center;color:#bca9ad;font-size:8px;font-weight:800;letter-spacing:2.4px}
+.roster-panel-sheen{position:absolute;inset:0;background:linear-gradient(120deg,transparent 28%,#fff04 50%,transparent 68%);pointer-events:none}
+.roster-panel-info{padding:19px 18px 20px}
+.roster-panel-info .eyebrow{margin:0 0 7px;font-size:9px}
+.roster-panel-info h2{margin:0;color:#f5eff0;font-family:"Barlow Condensed",Impact,sans-serif;font-size:clamp(35px,4vw,48px);line-height:1;letter-spacing:1.5px}
+.roster-panel-divider{width:44px;height:2px;margin:15px 0;background:linear-gradient(90deg,#f02a3c,#6d101b)}
+.roster-panel-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-top:1px solid #302025;font-size:8px;letter-spacing:1px}
+.roster-panel-meta span{color:#9c8b8f}
+.roster-panel-meta strong{color:#e4dadd;font-size:8px;text-align:right}
+.roster-panel-footer{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:28px;padding-top:22px;border-top:1px solid #32151b}
+.roster-panel-footer p{margin:0;color:#c0afb3;font-size:13px;letter-spacing:.6px}
+.roster-join{min-height:43px;padding:0 18px;font-size:10px}
+@media(max-width:900px){.roster-panel-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.roster-panel-art{min-height:220px}}
+@media(max-width:600px){.roster-panel-grid{grid-template-columns:1fr;gap:14px}.roster-panel-art{min-height:230px}.roster-panel-info h2{font-size:44px}.roster-panel-heading{align-items:flex-start;flex-direction:column}.roster-panel-footer{align-items:flex-start;flex-direction:column}}
