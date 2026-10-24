@@ -23,11 +23,12 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   const configured=Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
   const authRedirectUrl='https://ruby-essentials.vercel.app';
   async function submit(e:React.FormEvent<HTMLFormElement>){
-    e.preventDefault();setMessage('');setBusy(true);
+    e.preventDefault();
+    const form=new FormData(e.currentTarget);
+    setMessage('');setBusy(true);
     try{
       if(!configured) throw new Error('Account services are not configured yet. Please try again later.');
       const { supabase } = await import('./lib/supabase');
-      const form=new FormData(e.currentTarget);
       const email=String(form.get('email')||'').trim();
       if(mode==='forgot'){
         const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:authRedirectUrl+'/reset-password'});
