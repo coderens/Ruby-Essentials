@@ -21,7 +21,8 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   const [message,setMessage]=useState('');
   const [busy,setBusy]=useState(false);
   const [emailForResend,setEmailForResend]=useState('');
-  const configured=Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);\n  const authRedirectUrl='https://ruby-essentials.vercel.app';
+  const configured=Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+  const authRedirectUrl='https://ruby-essentials.vercel.app';
   async function resendVerification(){
     setMessage('');setBusy(true);
     try{
@@ -93,7 +94,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
       if(password!==confirmation) throw new Error('The passwords do not match.');
       const displayName=String(form.get('displayName')||'').trim();
       const ign=String(form.get('ign')||'').trim();
-      const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+'/login',data:{display_name:displayName,ign}}});
+      const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:authRedirectUrl+'/login',data:{display_name:displayName,ign}}});
       if(error) throw error;
       if(data.session && data.user){
         const {error:profileError}=await supabase.from('profiles').upsert({id:data.user.id,display_name:displayName,ign:ign||null},{onConflict:'id'});
