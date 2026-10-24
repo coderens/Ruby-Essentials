@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, Route, Routes } from 'react-router-dom';
 import { ArrowUpRight, Gamepad2, Menu, Shield, Trophy, Users } from 'lucide-react';
 
-const members = [
-  { name: 'Member name coming soon', role: 'ROLE TBD', tag: 'IGN' },
-];
 const events = [
   { type: 'CLAN EVENT', title: 'Ruby Scrim Night', date: 'COMING SOON', detail: 'Team practice · Custom rooms' },
   { type: 'COMMUNITY', title: 'Recruitment Open', date: 'NOW OPEN', detail: 'Meet the clan · Apply to join' },
