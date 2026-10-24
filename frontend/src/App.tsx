@@ -19,7 +19,6 @@ function Events(){return <main className="page section"><p className="eyebrow"><
 function AuthPage({mode}:{mode:'login'|'join'|'forgot'}){
   const [message,setMessage]=useState('');
   const [busy,setBusy]=useState(false);
-  const [resetSent,setResetSent]=useState(false);
   const configured=Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
   async function submit(e:React.FormEvent<HTMLFormElement>){
     e.preventDefault();setMessage('');setBusy(true);
@@ -31,7 +30,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'}){
       if(mode==='forgot'){
         const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/login'});
         if(error) throw error;
-        setResetSent(true);setMessage('If an account exists for that email, a password reset link will be sent. Check your inbox and spam folder.');return;
+        setMessage('If an account exists for that email, a password reset link will be sent. Check your inbox and spam folder.');return;
       }
       const password=String(form.get('password')||'');
       if(mode==='login'){
