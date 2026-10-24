@@ -161,3 +161,88 @@ body{background:#050404;color:#f5f1f2}
 @media(max-width:1000px){.header{padding-inline:24px;gap:18px}.nav{gap:16px}.nav a{font-size:12px}.brand-logo{width:54px!important;height:54px!important}}
 @media(max-width:700px){.header{height:70px;padding:0 14px;gap:10px}.brand{gap:6px}.brand-logo{width:44px!important;height:44px!important}.brand-name{font-size:16px}.nav{top:69px}.nav a{padding:13px 5px}.nav a.active:after{height:2px}.header-actions .login-link{padding:9px 10px;font-size:9px}.page.section{padding:45px 18px 55px}.page-title{font-size:clamp(42px,12vw,64px)}.member-grid,.event-grid,.admin-grid{grid-template-columns:1fr}.footer{padding:22px 18px}.footer>p{width:100%;order:3}}
 @media(prefers-reduced-motion:reduce){.member-card,.event-card,.admin-action{transition:none}}
+
+
+/* Final responsive polish for the Ruby Essentials landing page */
+.landing-home{overflow:hidden;background:#050404}
+.landing-hero{position:relative;isolation:isolate;min-height:clamp(560px,68vw,760px);padding:clamp(48px,7vw,100px) clamp(22px,9.2vw,142px);display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.9fr);align-items:center;gap:clamp(18px,4vw,60px);border-bottom:1px solid #4b1017;background:radial-gradient(ellipse at 77% 48%,#9d0b1b28,transparent 34%),linear-gradient(115deg,#050404 25%,#100608 100%)}
+.landing-hero:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.35;pointer-events:none;background-image:linear-gradient(#ff263808 1px,transparent 1px),linear-gradient(90deg,#ff263808 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(90deg,transparent,#000 35%,#000)}
+.landing-copy{position:relative;z-index:2;min-width:0}
+.landing-kicker{font-size:10px;line-height:1.6;letter-spacing:2.4px;font-weight:800;color:#ff6671;margin-bottom:18px}
+.landing-copy h1{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(64px,8.4vw,122px);font-style:italic;font-weight:900;line-height:.78;letter-spacing:-1.5px;margin:0 0 28px}
+.landing-copy h1 span,.landing-copy h1 strong{display:block}
+.landing-copy h1 span{color:#ff2638;text-shadow:0 0 30px #ff26381a}
+.landing-copy h1 strong{color:#f5f1f2}
+.landing-tagline{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:clamp(17px,2vw,25px);letter-spacing:2.4px;line-height:1.35;color:#c8c0c2;margin-bottom:28px}
+.landing-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.landing-primary,.landing-secondary{min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:11px;padding:12px 18px;font-size:11px;font-weight:900;letter-spacing:.8px;transition:transform .2s,border-color .2s,background .2s,color .2s}
+.landing-primary{background:linear-gradient(110deg,#ff2638,#8e0611);border:1px solid #ff2638;color:#fff;clip-path:polygon(4% 0,96% 0,100% 18%,100% 82%,96% 100%,4% 100%,0 82%,0 18%);box-shadow:0 8px 24px #e20d2020}
+.landing-primary img{width:27px;height:27px;object-fit:contain}
+.landing-primary:hover{transform:translateY(-2px);background:linear-gradient(110deg,#ff5360,#a50b19)}
+.landing-secondary{border:1px solid #673039;color:#e4dfe0;background:#080607}
+.landing-secondary:hover{border-color:#ff2638;color:#ff5360;transform:translateY(-2px)}
+.landing-crest{position:relative;min-width:0;min-height:clamp(330px,38vw,510px);display:grid;place-items:center}
+.landing-crest:before{content:"";position:absolute;width:min(90%,440px);aspect-ratio:1;border:1px solid #ff263832;transform:rotate(45deg);box-shadow:0 0 0 24px #ff263806,0 0 0 48px #ff263804}
+.landing-crest:after{content:"";position:absolute;width:min(74%,360px);aspect-ratio:1;border:1px solid #e4dfe01a;border-radius:50%}
+.landing-crest .crest-glow{position:absolute;width:80%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#ff26382a,transparent 68%);filter:blur(10px)}
+.landing-crest img{position:relative;z-index:1;width:min(100%,470px);height:auto;max-height:clamp(300px,38vw,470px);object-fit:contain;filter:drop-shadow(0 0 18px #ff152e70) drop-shadow(0 0 52px #e20d2038)}
+.mission-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding:26px clamp(22px,9.2vw,142px) 78px;background:linear-gradient(180deg,#080506,#100607)}
+.mission-card{position:relative;min-width:0;min-height:220px;padding:24px 20px;border:1px solid #4b1017;background:linear-gradient(145deg,#16090a,#080506 75%);display:flex;flex-direction:column;align-items:flex-start;transition:transform .2s,border-color .2s,box-shadow .2s}
+.mission-card:hover{transform:translateY(-4px);border-color:#ff2638;box-shadow:0 12px 28px #0006,0 0 18px #e20d2014}
+.mission-card>img{width:45px;height:45px;object-fit:contain;margin-bottom:18px}
+.mission-card h2{font-family:'Barlow Condensed',sans-serif;font-size:25px;font-weight:900;font-style:italic;line-height:1;margin-bottom:12px}
+.mission-card h2 em,.latest-intro h2 em,.gallery-strip h2 em{font-style:italic;color:#ff2638}
+.mission-card p,.mission-card li{font-size:11px;line-height:1.8;color:#b9b0b2}
+.mission-card ul{padding-left:17px;margin:0 0 12px}
+.mission-card>a{margin-top:auto;color:#ff2638;font-size:22px}
+.latest-section{padding:76px clamp(22px,9.2vw,142px);background:#070506;border-top:1px solid #3b0c12;border-bottom:1px solid #3b0c12}
+.latest-intro{max-width:650px;margin-bottom:30px}
+.latest-intro h2,.gallery-strip h2{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(38px,5vw,62px);font-style:italic;font-weight:900;line-height:.95;margin-bottom:14px}
+.latest-intro>p:last-child{font-size:13px;line-height:1.8;color:#b9b0b2;max-width:560px}
+.news-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.news-card{min-width:0;border:1px solid #4b1017;background:linear-gradient(135deg,#16090a,#090606 80%);border-radius:0;overflow:hidden}
+.news-art{position:relative;flex:0 0 145px;width:145px;height:145px;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 50%,#9c101d55,transparent 65%),#0c0708}
+.news-art:before{content:"";position:absolute;width:100px;height:100px;border:1px solid #ff263838;transform:rotate(45deg)}
+.news-art-crest img{position:relative;width:90px;height:90px;object-fit:contain}
+.news-copy{min-width:0;padding:4px 8px 4px 0}
+.news-copy>span{font-size:8px;letter-spacing:1.5px;font-weight:900;color:#ff5360}
+.news-copy h3{font-family:'Barlow Condensed',sans-serif;font-size:25px;font-style:italic;line-height:1.05;margin:9px 0}
+.news-copy p{font-size:11px;line-height:1.7;color:#b9b0b2;margin-bottom:12px}
+.news-copy time{font-size:9px;letter-spacing:.7px;color:#8e8587}
+.gallery-strip{padding:76px 22px;text-align:center;background:radial-gradient(ellipse at 50% 100%,#7b0c1729,transparent 55%),#0a0607}
+.gallery-strip .landing-kicker{margin-bottom:12px}
+.gallery-strip h2{margin:0 auto 25px;max-width:850px}
+.gallery-strip .landing-primary{margin:auto}
+.footer .brand-logo{object-fit:contain!important}
+@media(max-width:1100px){
+ .landing-hero{padding-inline:clamp(24px,5vw,60px);gap:20px}
+ .mission-grid{padding-inline:clamp(24px,5vw,60px);grid-template-columns:repeat(2,minmax(0,1fr))}
+ .latest-section{padding-inline:clamp(24px,5vw,60px)}
+}
+@media(max-width:760px){
+ .landing-hero{min-height:auto;grid-template-columns:1fr;padding:62px 22px 35px;gap:8px}
+ .landing-copy h1{font-size:clamp(64px,15vw,96px)}
+ .landing-crest{min-height:300px;margin-top:5px}
+ .landing-crest img{width:min(84%,340px);max-height:300px}
+ .mission-grid{grid-template-columns:1fr 1fr;padding:18px 16px 48px;gap:10px}
+ .mission-card{padding:18px 14px;min-height:205px}
+ .mission-card h2{font-size:22px}
+ .latest-section{padding:50px 16px}
+ .news-cards{grid-template-columns:1fr}
+ .gallery-strip{padding:55px 18px}
+}
+@media(max-width:430px){
+ .landing-kicker{font-size:8px;letter-spacing:1.6px}
+ .landing-copy h1{font-size:clamp(55px,16vw,72px)}
+ .landing-actions{align-items:stretch;flex-direction:column}
+ .landing-primary,.landing-secondary{width:100%}
+ .mission-grid{grid-template-columns:1fr}
+ .mission-card{min-height:175px}
+ .news-card-link{align-items:flex-start;flex-direction:column}
+ .news-art{width:100%;height:125px;flex-basis:125px}
+ .news-copy{padding:2px 3px 6px}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ .landing-primary,.landing-secondary,.mission-card,.news-card{transition:none}
+}
