@@ -94,3 +94,28 @@ body{background:#050404;color:#f6f3f3;background-image:radial-gradient(ellipse a
 .landing-crest img{object-fit:contain!important;border:0!important;background:transparent!important;box-shadow:none!important;transform:none!important}
 .landing-actions .landing-primary img{object-fit:contain!important;background:transparent!important;border:0!important}
 .mission-card>img,.news-art-crest img,.member-logo,.auth-logo{object-fit:contain!important;background:transparent!important;border:0!important}
+
+/* Blend the uploaded JPG artwork into the dark crimson landing-page background.
+   Screen blending suppresses the image's dark rectangular backdrop without redrawing the logo. */
+.brand-logo,
+.landing-crest img,
+.landing-primary img,
+.mission-card>img,
+.news-art-crest img,
+.member-logo,
+.auth-logo {
+  mix-blend-mode: screen;
+  background: transparent !important;
+}
+.brand-logo {
+  filter: drop-shadow(0 0 8px #ed1d32aa);
+}
+.landing-crest img {
+  filter: drop-shadow(0 0 18px #ff152e70) drop-shadow(0 0 52px #e20d2038);
+}
+.mission-card>img,
+.news-art-crest img,
+.member-logo,
+.auth-logo {
+  filter: drop-shadow(0 0 8px #f21c2e55);
+}
