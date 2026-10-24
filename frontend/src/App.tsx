@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, NavLink, Route, Routes } from 'react-router-dom';
+import { Link, NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import { ArrowUpRight, Gamepad2, Menu, Shield, Trophy, Users } from 'lucide-react';
 
 const events = [
@@ -16,7 +16,8 @@ function Home(){return <><main className="landing-home"><section className="land
 <section className="gallery-strip" id="gallery"><p className="landing-kicker">ONE CLAN. ONE FAMILY.</p><h2>READY TO REPRESENT <em>RUBY?</em></h2><Link className="landing-primary" to="/join">JOIN OUR CLAN <ArrowUpRight size={17}/></Link></section></main></>}
 function Members(){const slots=[1,2,3,4,5];return <main className="page section roster-page"><p className="eyebrow"><span className="accent">01 / </span>THE ROSTER</p><h1 className="page-title">MEET THE <span className="accent">CLAN.</span></h1><p className="muted page-intro">Meet the players behind the tag. Official names and roles will appear here as the lineup is confirmed.</p><div className="roster-panel-heading"><span className="roster-status"><span></span> ROSTER REVEAL IN PROGRESS</span><span className="roster-count">05 PLAYER SLOTS</span></div><section className="roster-panel-grid" aria-label="Roster player panels">{slots.map(slot=><article className="roster-player-panel" key={slot}><div className="roster-panel-art"><span className="roster-panel-number">0{slot}</span><div className="roster-panel-sheen"></div><img src="/transparent%20logo.png" alt="Ruby Essentials emblem" loading="lazy" decoding="async"/><span className="roster-panel-tag">RUBY ESSENTIALS</span></div><div className="roster-panel-info"><p className="eyebrow">PLAYER SLOT 0{slot}</p><h2>[IGN]</h2><div className="roster-panel-divider"></div><div className="roster-panel-meta"><span>IN-GAME NAME</span><strong>COMING SOON</strong></div><div className="roster-panel-meta"><span>ROLE</span><strong>TO BE ANNOUNCED</strong></div></div></article>)}</section><div className="roster-panel-footer"><p>Real players. Real bonds. One goal.</p><Link className="landing-primary roster-join" to="/join">JOIN OUR CLAN <ArrowUpRight size={16}/></Link></div></main>}
 function Events(){return <main className="page section"><p className="eyebrow"><span className="accent">02 / </span>CLAN ACTIVITIES</p><h1 className="page-title">EVENTS & <span className="accent">UPDATES.</span></h1><p className="muted page-intro">Clan scrims, recruitment updates, and community activities in one place.</p><div className="event-grid">{events.map((e,i)=><article className="event-card" key={e.title}><div className="card-top"><span className="game-icon">{i===0?<Gamepad2 size={20}/>:i===1?<Users size={20}/>:<Trophy size={20}/>}</span><span className={'status '+(i===1?'live':'')}>{e.date}</span></div><p className="eyebrow">{e.type}</p><h3>{e.title}</h3><p className="muted">{e.detail}</p><Link className="card-action" to={i===1?"/join":"/#contact"}>{i===1?"Apply to join":"Get involved"} <ArrowUpRight size={15}/></Link></article>)}</div></main>}
-function AuthPage({mode}:{mode:'login'|'join'|'forgot'}){
+function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
+  const navigate=useNavigate();
   const [message,setMessage]=useState('');
   const [busy,setBusy]=useState(false);
   const configured=Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
@@ -28,11 +29,22 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'}){
       const form=new FormData(e.currentTarget);
       const email=String(form.get('email')||'').trim();
       if(mode==='forgot'){
-        const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/login'});
+        const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/reset-password'});
         if(error) throw error;
         setMessage('If an account exists for that email, a password reset link will be sent. Check your inbox and spam folder.');return;
       }
       const password=String(form.get('password')||'');
+      if(mode==='reset'){
+        const confirmation=String(form.get('confirmPassword')||'');
+        if(password.length<8) throw new Error('Your new password must be at least 8 characters.');
+        if(password!==confirmation) throw new Error('The passwords do not match.');
+        const {error}=await supabase.auth.updateUser({password});
+        if(error) throw error;
+        await supabase.auth.signOut();
+        setMessage('Your password has been updated. You can now log in with your new password.');
+        navigate('/login',{replace:true});
+        return;
+      }
       if(mode==='login'){
         const {data,error}=await supabase.auth.signInWithPassword({email,password});
         if(error) throw error;
@@ -50,8 +62,12 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'}){
           }
         }
         setMessage('You are signed in successfully.');
+        navigate('/members',{replace:true});
         return;
       }
+      const confirmation=String(form.get('confirmPassword')||'');
+      if(password.length<8) throw new Error('Your password must be at least 8 characters.');
+      if(password!==confirmation) throw new Error('The passwords do not match.');
       const displayName=String(form.get('displayName')||'').trim();
       const ign=String(form.get('ign')||'').trim();
       const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:window.location.origin+'/login',data:{display_name:displayName,ign}}});
@@ -70,7 +86,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'}){
       setMessage(error.message||'Something went wrong. Please try again.');
     }finally{setBusy(false)}
   }
-  return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>{mode==='login'?'WELCOME BACK.':mode==='join'?'JOIN THE CLAN.':'RESET ACCESS.'}</h1><p className="muted">{mode==='login'?'Sign in to your Ruby Essentials account.':mode==='join'?'Create your account and submit a membership request.':'Enter your account email to receive a password reset link.'}</p><form onSubmit={submit}>{mode==='join'&&<label>Display name<input name="displayName" required minLength={2} maxLength={60} placeholder="Your name or clan alias"/></label>}<label>Email address<input name="email" type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com"/></label>{mode!=='forgot'&&<label>Password<input name="password" type="password" required minLength={8} maxLength={128} autoComplete={mode==='login'?'current-password':'new-password'} placeholder="At least 8 characters"/></label>}{mode==='join'&&<label>In-game name<input name="ign" maxLength={40} placeholder="Your IGN"/></label>}<button className="btn auth-submit" disabled={busy||!configured}>{busy?'Please wait…':mode==='login'?'Log in':mode==='join'?'Create account & request to join':'Send reset link'} <ArrowUpRight size={17}/></button></form>{message&&<p className="form-message" role="status">{message}</p>}{!configured&&<p className="hint">Account services are not configured yet. Please try again later.</p>}<div className="auth-bottom">{mode==='login'?<><Link to="/forgot-password">Forgot password?</Link><span>New to Ruby? <Link to="/join">Request to join</Link></span></>:mode==='join'?<span>Already have an account? <Link to="/login">Log in</Link></span>:<span>Remembered it? <Link to="/login">Back to login</Link></span>}</div></div></main>
+  return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>{mode==='login'?'WELCOME BACK.':mode==='join'?'JOIN THE CLAN.':mode==='reset'?'CHOOSE A NEW PASSWORD.':'RESET ACCESS.'}</h1><p className="muted">{mode==='login'?'Sign in to your Ruby Essentials account.':mode==='join'?'Create your account and submit a membership request.':mode==='reset'?'Choose a new password for your account.':'Enter your account email to receive a password reset link.'}</p><form onSubmit={submit}>{mode==='join'&&<label>Display name<input name="displayName" required minLength={2} maxLength={60} placeholder="Your name or clan alias"/></label>}{mode!=='reset'&&<label>Email address<input name="email" type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com"/></label>}{mode!=='forgot'&&<label>{mode==='reset'?'New password':'Password'}<input name="password" type="password" required minLength={8} maxLength={128} autoComplete={mode==='login'?'current-password':'new-password'} placeholder="At least 8 characters"/></label>}{(mode==='join'||mode==='reset')&&<label>Confirm password<input name="confirmPassword" type="password" required minLength={8} maxLength={128} autoComplete="new-password" placeholder="Enter password again"/></label>}{mode==='join'&&<label>In-game name<input name="ign" maxLength={40} placeholder="Your IGN"/></label>}<button className="btn auth-submit" disabled={busy||!configured}>{busy?'Please wait…':mode==='login'?'Log in':mode==='join'?'Create account & request to join':mode==='reset'?'Update password':'Send reset link'} <ArrowUpRight size={17}/></button></form>{message&&<p className="form-message" role="status">{message}</p>}{!configured&&<p className="hint">Account services are not configured yet. Please try again later.</p>}<div className="auth-bottom">{mode==='login'?<><Link to="/forgot-password">Forgot password?</Link><span>New to Ruby? <Link to="/join">Request to join</Link></span>:mode==='join'?<span>Already have an account? <Link to="/login">Log in</Link></span>:mode==='reset'?<span>Remembered it? <Link to="/login">Back to login</Link></span>:<span>Remembered it? <Link to="/login">Back to login</Link></span>}</div></div></main>
 }
 function Admin(){return <main className="page section"><p className="eyebrow"><span className="accent">ADMIN / </span>CONTROL ROOM</p><h1 className="page-title">CLAN <span className="accent">CENTER.</span></h1><p className="muted page-intro">Admin dashboard preview. Secure roles and backend access must be configured before live member data can be managed.</p><div className="admin-grid"><Link to="/members" className="admin-action"><span className="muted">MEMBERS</span><strong>View roster</strong><p className="muted">Browse member profiles and clan roles.</p><span className="card-action">Open roster <ArrowUpRight size={15}/></span></Link><Link to="/events" className="admin-action"><span className="muted">EVENTS</span><strong>View updates</strong><p className="muted">Browse scrims, announcements, and activities.</p><span className="card-action">Open events <ArrowUpRight size={15}/></span></Link><Link to="/join" className="admin-action"><span className="muted">APPLICATIONS</span><strong>Join requests</strong><p className="muted">Open the membership request form.</p><span className="card-action">View join form <ArrowUpRight size={15}/></span></Link></div><p className="hint">This is a visual prototype only. Add authenticated, role-protected backend routes before using it for real administration.</p></main>}
-export default function App(){return <><Header/><Routes><Route path="/" element={<Home/>}/><Route path="/members" element={<Members/>}/><Route path="/events" element={<Events/>}/><Route path="/login" element={<AuthPage mode="login"/>}/><Route path="/join" element={<AuthPage mode="join"/>}/><Route path="/forgot-password" element={<AuthPage mode="forgot"/>}/><Route path="/admin" element={<Admin/>}/><Route path="*" element={<main className="page section"><h1 className="page-title">PAGE NOT FOUND<span className="accent">.</span></h1><Link to="/" className="text-link">Return home <ArrowUpRight size={17}/></Link></main>}/></Routes><Footer/></>}
+export default function App(){return <><Header/><Routes><Route path="/" element={<Home/>}/><Route path="/members" element={<Members/>}/><Route path="/events" element={<Events/>}/><Route path="/login" element={<AuthPage mode="login"/>}/><Route path="/join" element={<AuthPage mode="join"/>}/><Route path="/forgot-password" element={<AuthPage mode="forgot"/>}/><Route path="/reset-password" element={<AuthPage mode="reset"/>}/><Route path="/admin" element={<Admin/>}/><Route path="*" element={<main className="page section"><h1 className="page-title">PAGE NOT FOUND<span className="accent">.</span></h1><Link to="/" className="text-link">Return home <ArrowUpRight size={17}/></Link></main>}/></Routes><Footer/></>}
