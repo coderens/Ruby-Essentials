@@ -415,3 +415,8 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #ff69
 .roster-join{min-height:43px;padding:0 18px;font-size:10px}
 @media(max-width:900px){.roster-panel-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.roster-panel-art{min-height:220px}}
 @media(max-width:600px){.roster-panel-grid{grid-template-columns:1fr;gap:14px}.roster-panel-art{min-height:230px}.roster-panel-info h2{font-size:44px}.roster-panel-heading{align-items:flex-start;flex-direction:column}.roster-panel-footer{align-items:flex-start;flex-direction:column}}
+
+
+/* Remove banner-style background artwork from the homepage hero. */
+.landing-hero{background:#070404!important;background-image:none!important}
+.landing-hero:before,.landing-hero:after{background:none!important;opacity:0!important;border:0!important}
