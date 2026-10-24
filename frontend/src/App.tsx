@@ -21,7 +21,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   const [message,setMessage]=useState('');
   const [busy,setBusy]=useState(false);
   const [emailForResend,setEmailForResend]=useState('');
-  const configured=Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+  const configured=Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);\n  const authRedirectUrl='https://ruby-essentials.vercel.app';
   async function resendVerification(){
     setMessage('');setBusy(true);
     try{
@@ -29,7 +29,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
       const {supabase}=await import('./lib/supabase');
       const email=emailForResend.trim();
       if(!email) throw new Error('Enter your email address first.');
-      const {error}=await supabase.auth.resend({type:'signup',email,options:{emailRedirectTo:window.location.origin+'/login'}});
+      const {error}=await supabase.auth.resend({type:'signup',email,options:{emailRedirectTo:authRedirectUrl+'/login'}});
       if(error) throw error;
       setMessage('If this address has an unconfirmed account, a verification email will be sent. Check your inbox and spam folder.');
     }catch(err){const error=err as {message?:string};setMessage(error.message||'Could not resend verification email. Please try again.');}
@@ -40,7 +40,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
     try{
       if(!configured) throw new Error('Account services are not configured yet.');
       const {supabase}=await import('./lib/supabase');
-      const {error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/members'}});
+      const {error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:authRedirectUrl+'/members'}});
       if(error) throw error;
     }catch(err){const error=err as {message?:string};setMessage(error.message||'Google sign-in could not be started.');setBusy(false);}
   }
@@ -52,7 +52,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
       const form=new FormData(e.currentTarget);
       const email=String(form.get('email')||'').trim();
       if(mode==='forgot'){
-        const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/reset-password'});
+        const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:authRedirectUrl+'/reset-password'});
         if(error) throw error;
         setMessage('If an account exists for that email, a password reset link will be sent. Check your inbox and spam folder.');return;
       }
