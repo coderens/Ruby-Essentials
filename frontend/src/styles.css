@@ -246,3 +246,31 @@ body{background:#050404;color:#f5f1f2}
  html{scroll-behavior:auto}
  .landing-primary,.landing-secondary,.mission-card,.news-card{transition:none}
 }
+
+
+/* Click-triggered motion and smooth page transitions */
+html{scroll-behavior:smooth}
+a,button,[role="button"]{-webkit-tap-highlight-color:transparent}
+a:active,button:active,[role="button"]:active{transform:translateY(1px) scale(.975)!important;filter:brightness(1.16)}
+.landing-primary,.landing-secondary,.header-actions .login-link,.auth-submit,.mobile-toggle{
+ transition:transform .18s ease,filter .18s ease,box-shadow .22s ease,background .22s ease,border-color .22s ease;
+}
+.landing-primary:active,.auth-submit:active{box-shadow:0 0 0 4px #ff26382b,0 0 28px #ff26385c}
+.mission-card>a,.card-action{transition:transform .2s ease,color .2s ease,gap .2s ease}
+.mission-card>a:active,.card-action:active{transform:translateX(5px) scale(.94)!important;color:#ff7b85}
+.nav a{transition:color .2s ease,background .2s ease}
+.nav a:active{background:#ff263812}
+.member-card,.event-card,.admin-action,.news-card,.mission-card{transform-origin:center;transition:transform .22s cubic-bezier(.2,.8,.2,1),border-color .2s ease,box-shadow .22s ease}
+.member-card:active,.event-card:active,.admin-action:active,.news-card:active,.mission-card:active{transform:scale(.985)!important;border-color:#ff2638;box-shadow:0 0 0 2px #ff26381a,0 12px 28px #0007}
+.header-actions .login-link:active{background:#a50b19;box-shadow:0 0 22px #ff26383b}
+button:focus-visible,a:focus-visible{outline:2px solid #ff5360;outline-offset:4px}
+@keyframes rubyRipple{from{transform:scale(.35);opacity:.7}to{transform:scale(1.8);opacity:0}}
+.click-ripple{position:relative;isolation:isolate;overflow:hidden}
+.click-ripple:after{content:"";position:absolute;inset:0;margin:auto;width:14px;height:14px;border-radius:50%;background:#ffffff40;opacity:0;pointer-events:none}
+.click-ripple:active:after{animation:rubyRipple .45s ease-out}
+@keyframes pageReveal{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.page.section,.auth-wrap,.landing-home{animation:pageReveal .38s ease-out both}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
