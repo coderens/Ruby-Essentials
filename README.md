@@ -1,6 +1,5 @@
 # Ruby Essentials — Clan Website
 
-An original esports-clan website using a KNS-style multi-page structure, adapted for Ruby Essentials. Branding colors are provisional until the clan logo and banner are supplied.
 
 ## Stack
 - React + TypeScript + Vite frontend (Vercel)
