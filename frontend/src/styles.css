@@ -95,8 +95,7 @@ body{background:#050404;color:#f6f3f3;background-image:radial-gradient(ellipse a
 .landing-actions .landing-primary img{object-fit:contain!important;background:transparent!important;border:0!important}
 .mission-card>img,.news-art-crest img,.member-logo,.auth-logo{object-fit:contain!important;background:transparent!important;border:0!important}
 
-/* Blend the uploaded JPG artwork into the dark crimson landing-page background.
-   Screen blending suppresses the image's dark rectangular backdrop without redrawing the logo. */
+/* Use the supplied transparent PNG naturally, preserving its original red and silver colors. */
 .brand-logo,
 .landing-crest img,
 .landing-primary img,
@@ -104,7 +103,7 @@ body{background:#050404;color:#f6f3f3;background-image:radial-gradient(ellipse a
 .news-art-crest img,
 .member-logo,
 .auth-logo {
-  mix-blend-mode: screen;
+  mix-blend-mode: normal;
   background: transparent !important;
 }
 .brand-logo {
@@ -125,7 +124,7 @@ body{background:#050404;color:#f6f3f3;background-image:radial-gradient(ellipse a
 body{background:#050404;color:#f5f1f2}
 .header{height:84px;padding-inline:clamp(20px,9.2vw,142px);gap:32px;background:rgba(5,4,4,.94);border-bottom:1px solid #78131c;box-shadow:0 4px 22px #0005}
 .brand{gap:11px}
-.brand-logo{width:66px!important;height:66px!important;object-fit:contain!important;border:0!important;border-radius:0!important;background:transparent!important;mix-blend-mode:screen;filter:drop-shadow(0 0 9px #ed1d3270)}
+.brand-logo{width:66px!important;height:66px!important;object-fit:contain!important;border:0!important;border-radius:0!important;background:transparent!important;mix-blend-mode:normal;filter:drop-shadow(0 0 9px #ed1d3270)}
 .brand-name{display:flex;flex-direction:column;font-family:'Barlow Condensed',Impact,sans-serif;font-size:20px;font-style:italic;line-height:.92;letter-spacing:.7px}
 .brand-name b{color:#ff2638}.brand-name strong{color:#e5e3e3}
 .nav{gap:clamp(15px,3vw,42px)}
@@ -143,7 +142,7 @@ body{background:#050404;color:#f5f1f2}
 .member-card,.event-card,.admin-action{position:relative;border:1px solid #501118!important;border-radius:0!important;background:linear-gradient(140deg,#16090a,#090606 80%)!important;box-shadow:inset 0 0 25px #a10b1510;transition:transform .2s,border-color .2s,box-shadow .2s}
 .member-card:hover,.event-card:hover,.admin-action:hover{transform:translateY(-3px);border-color:#ff2638!important;box-shadow:0 12px 28px #0006,0 0 20px #e20d2012}
 .member-banner{background:radial-gradient(circle at 50% 35%,#e21d2b4d,transparent 55%),linear-gradient(135deg,#24090d,#0a0708)!important}
-.member-banner img{mix-blend-mode:screen}
+.member-banner img{mix-blend-mode:normal}
 .role-tag,.status{border-radius:2px}
 .event-card{padding:25px}
 .event-card h3,.member-card h3{font-family:'Barlow Condensed',Inter,sans-serif;font-size:26px;font-style:italic}
