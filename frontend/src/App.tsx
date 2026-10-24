@@ -34,8 +34,21 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'}){
       }
       const password=String(form.get('password')||'');
       if(mode==='login'){
-        const {error}=await supabase.auth.signInWithPassword({email,password});
+        const {data,error}=await supabase.auth.signInWithPassword({email,password});
         if(error) throw error;
+        const user=data.user;
+        const displayName=String(user.user_metadata?.display_name||'').trim();
+        const ign=String(user.user_metadata?.ign||'').trim();
+        if(displayName){
+          const {error:profileError}=await supabase.from('profiles').upsert({id:user.id,display_name:displayName,ign:ign||null},{onConflict:'id'});
+          if(profileError) throw profileError;
+          const {data:applications,error:lookupError}=await supabase.from('join_applications').select('id').eq('user_id',user.id).limit(1);
+          if(lookupError) throw lookupError;
+          if(!applications?.length){
+            const {error:applicationError}=await supabase.from('join_applications').insert({user_id:user.id,display_name:displayName,ign:ign||null});
+            if(applicationError) throw applicationError;
+          }
+        }
         setMessage('You are signed in successfully.');
         return;
       }
