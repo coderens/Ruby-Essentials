@@ -138,8 +138,8 @@ function Home(){
     <section className="landing-hero">
       <div className="landing-copy">
         <p className="landing-kicker">CALL OF DUTY MOBILE ESPORTS CLAN</p>
-        <h1><span>RUBY</span><strong>ESSENTIALS</strong></h1>
-        <p className="landing-tagline">ESPORTS <span aria-hidden="true">•</span> APPAREL <span aria-hidden="true">•</span> COMMUNITY</p>
+        <h1><span>We The</span><strong>Confidence</strong></h1>
+        <p className="landing-tagline">Artists. Contenders. Community.</p>
         <div className="landing-actions">
           <Link className="landing-primary" to={primaryPath}><img src="/transparent%20logo.png" alt="" width="42" height="42" loading="lazy" decoding="async"/> {primaryLabel} <ArrowUpRight size={17}/></Link>
           <a className="landing-secondary" href="#about"><Shield size={15}/> LEARN MORE</a>
