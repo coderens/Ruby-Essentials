@@ -82,7 +82,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
         if(applicationError) throw applicationError;
         setMessage('Your account was created and your join request submitted.');
       }else{
-        setMessage('Account created. Check your email to confirm your address, then log in to complete your membership request.');
+        setMessage('Account created. Check your email and confirm your address. Your profile and membership request will be saved automatically after confirmation; then log in.');
       }
     }catch(err){
       const error=err as {message?:string};
