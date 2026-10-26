@@ -165,7 +165,21 @@ function Home(){
 }
 function Members(){
   const [directorsOpen,setDirectorsOpen]=useState(false);
-  const directorateSlots=Array.from({length:12},(_,index)=>index+1);
+  const [memberType,setMemberType]=useState('All');
+  const [memberSearch,setMemberSearch]=useState('');
+  const directorateMembers=Array.from({length:12},(_,index)=>({
+    id:index+1,
+    name:'Member to be announced',
+    category:index%3===0?'Streamers':'Casuals',
+    role:index%3===0?'Content Creator':'Community Member',
+  }));
+  const filteredMembers=directorateMembers.filter(member=>
+    (memberType==='All'||member.category===memberType)&&
+    (member.name.toLowerCase().includes(memberSearch.toLowerCase())||
+     member.category.toLowerCase().includes(memberSearch.toLowerCase())||
+     member.role.toLowerCase().includes(memberSearch.toLowerCase())||
+     String(member.id).includes(memberSearch))
+  );
   return <main className="page section roster-page">
     <p className="eyebrow"><span className="accent">01 / </span>WHO WE ARE</p>
     <h1 className="page-title">MORE THAN A <span className="accent">CLAN.</span></h1>
@@ -182,15 +196,30 @@ function Members(){
       </button>
       <div id="directorate-panel" className={directorsOpen?'directorate-panel is-open':'directorate-panel'} aria-hidden={!directorsOpen}>
         <div className="directorate-panel-inner">
-          <p className="directorate-note">Our directorate and creators will be introduced here. Member names and official positions can be added as they are confirmed.</p>
-          <div className="directorate-member-list">
-            {directorateSlots.map(slot=><article className="directorate-member-row" key={slot}>
-              <span className="directorate-member-number">{String(slot).padStart(2,'0')}</span>
-              <span className="directorate-member-avatar"><img src="/transparent%20logo.png" alt="" loading="lazy" decoding="async"/></span>
-              <span className="directorate-member-copy"><strong>Member to be announced</strong><small>Ruby Creators Directorate</small></span>
+          <p className="directorate-note">Browse the Ruby community by member type, or search for a member, category, or role.</p>
+          <div className="directorate-controls">
+            <div className="directorate-filter-block">
+              <span className="directorate-control-label">TYPES OF MEMBERS</span>
+              <div className="directorate-filter-tabs" role="group" aria-label="Filter members by type">
+                {['All','Streamers','Casuals'].map(type=><button type="button" key={type} className={memberType===type?'directorate-filter is-active':'directorate-filter'} onClick={()=>setMemberType(type)} aria-pressed={memberType===type}>{type}</button>)}
+              </div>
+            </div>
+            <label className="directorate-search">
+              <Search size={17} aria-hidden="true"/>
+              <input type="search" value={memberSearch} onChange={event=>setMemberSearch(event.target.value)} placeholder="Search members..." aria-label="Search members"/>
+              {memberSearch&&<button type="button" className="directorate-clear-search" onClick={()=>setMemberSearch('')} aria-label="Clear search">×</button>}
+            </label>
+          </div>
+          <div className="directorate-results-count">{filteredMembers.length} {filteredMembers.length===1?'MEMBER':'MEMBERS'} FOUND</div>
+          {filteredMembers.length>0?<div className="directorate-member-grid">
+            {filteredMembers.map(member=><article className="directorate-member-card" key={member.id}>
+              <div className="directorate-card-top"><span className="directorate-member-number">{String(member.id).padStart(2,'0')}</span><span className="directorate-card-type">{member.category}</span></div>
+              <div className="directorate-member-avatar"><img src="/transparent%20logo.png" alt="" loading="lazy" decoding="async"/></div>
+              <h3>{member.name}</h3>
+              <p>{member.role}</p>
               <span className="directorate-member-status">COMING SOON</span>
             </article>)}
-          </div>
+          </div>:<div className="directorate-empty-state"><strong>No members found</strong><p>Try another name or choose a different member type.</p></div>}
         </div>
       </div>
     </section>
