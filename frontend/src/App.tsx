@@ -129,7 +129,7 @@ function Header(){
     {logoutError&&<span className="header-logout-error" role="status">{logoutError}</span>}
   </header>
 }
-function Footer(){return <footer className="footer" id="contact"><Brand/><p>More than just a clan. We are a family.</p><small>© 2026 RUBY ESSENTIALS · CALL OF DUTY MOBILE ESPORTS</small></footer>}
+function Footer(){return <footer className="footer" id="contact"><Brand/><p>We The Confidence</p><small>© 2026 RUBY ESSENTIALS · CALL OF DUTY MOBILE ESPORTS</small></footer>}
 function Home(){
   const user=useAuthUser();
   const primaryPath=user?'/dashboard':'/join';
@@ -139,7 +139,7 @@ function Home(){
       <div className="landing-copy">
         <p className="landing-kicker">CALL OF DUTY MOBILE ESPORTS CLAN</p>
         <h1><span>RUBY</span><strong>ESSENTIALS</strong></h1>
-        <p className="landing-tagline">MORE THAN JUST A CLAN<br/>WE ARE A FAMILY</p>
+        <p className="landing-tagline">ESPORTS <span aria-hidden="true">•</span> APPAREL <span aria-hidden="true">•</span> COMMUNITY</p>
         {user&&<p className="home-member-greeting">WELCOME BACK, <strong>{displayNameFor(user).toUpperCase()}</strong></p>}
         <div className="landing-actions">
           <Link className="landing-primary" to={primaryPath}><img src="/transparent%20logo.png" alt="" width="42" height="42" loading="lazy" decoding="async"/> {primaryLabel} <ArrowUpRight size={17}/></Link>
