@@ -892,3 +892,44 @@ button:disabled { opacity: .65; cursor: wait; }
  .header-logout-error{right:12px}
 }
 @media(prefers-reduced-motion:reduce){.account-loading-mark{animation:none}}
+
+
+/* Typography refinement: keep the Ruby identity bold without making every label heavy. */
+.landing-copy h1,
+.landing-copy h1 span,
+.landing-copy h1 strong,
+.page-title,
+.community h2,
+.account-hero .page-title {
+  font-weight: 700 !important;
+}
+.account-panel-heading h2,
+.account-quick-links h2,
+.mission-card h2,
+.latest-intro h2,
+.gallery-strip h2,
+.news-copy h3,
+.event-card h3,
+.roster-panel-info h2,
+.auth-card h1 {
+  font-weight: 600 !important;
+}
+.eyebrow,
+.landing-kicker,
+.nav a,
+.login-link,
+.landing-primary,
+.landing-secondary,
+.btn,
+.auth-submit,
+.header-account-copy strong,
+.header-signout {
+  font-weight: 600 !important;
+}
+.brand-name b,
+.brand-name strong {
+  font-weight: 700 !important;
+}
+.landing-tagline {
+  font-weight: 500;
+}
