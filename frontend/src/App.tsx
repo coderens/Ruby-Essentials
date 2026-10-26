@@ -148,10 +148,10 @@ function Home(){
       <div className="landing-crest"><div className="crest-glow"></div><img src="/transparent%20logo.png" alt="Ruby Essentials logo" width="420" height="450" fetchPriority="high" decoding="async"/></div>
     </section>
     <section className="mission-grid" id="about">
-      <article className="mission-card"><img src="/transparent%20logo.png" alt=""/><h2>OUR <em>MISSION</em></h2><p>To build a competitive and supportive community in<br className="desktop-only"/> Call of Duty Mobile.</p><a href="#latest" aria-label="Read our mission">⟶</a></article>
-      <article className="mission-card"><img src="/transparent%20logo.png" alt=""/><h2>OUR <em>VISION</em></h2><p>To become one of the most respected and recognized<br className="desktop-only"/> CODM clans in the region.</p><a href="/members" aria-label="Meet the roster">⟶</a></article>
-      <article className="mission-card"><img src="/transparent%20logo.png" alt=""/><h2>OUR <em>VALUES</em></h2><ul><li>Teamwork</li><li>Discipline</li><li>Respect</li><li>Growth</li></ul><a href="/members" aria-label="Meet the team">⟶</a></article>
-      <article className="mission-card"><img src="/transparent%20logo.png" alt=""/><h2>OUR <em>COMMUNITY</em></h2><p>Real players. Real bonds.<br/>One goal.</p><a href={primaryPath} aria-label={user?'Open dashboard':'Join the community'}>⟶</a></article>
+      <article className="mission-card"><img src="/transparent%20logo.png" alt=""/><h2>OUR <em>MISSION</em></h2><p>To build a competitive and supportive community in<br className="desktop-only"/> Call of Duty Mobile.</p></article>
+      <article className="mission-card"><img src="/transparent%20logo.png" alt=""/><h2>OUR <em>VISION</em></h2><p>To become one of the most respected and recognized<br className="desktop-only"/> CODM clans in the region.</p></article>
+      <article className="mission-card"><img src="/transparent%20logo.png" alt=""/><h2>OUR <em>VALUES</em></h2><ul><li>Teamwork</li><li>Discipline</li><li>Respect</li><li>Growth</li></ul></article>
+      <article className="mission-card"><img src="/transparent%20logo.png" alt=""/><h2>OUR <em>COMMUNITY</em></h2><p>Real players. Real bonds.<br/>One goal.</p></article>
     </section>
     <section className="latest-section" id="latest">
       <div className="latest-intro"><p className="landing-kicker">LATEST UPDATES</p><h2>STAY <em>CONNECTED</em></h2><p>Get the latest news, events, and announcements from Ruby Essentials.</p></div>
