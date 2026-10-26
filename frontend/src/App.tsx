@@ -140,7 +140,6 @@ function Home(){
         <p className="landing-kicker">CALL OF DUTY MOBILE ESPORTS CLAN</p>
         <h1><span>RUBY</span><strong>ESSENTIALS</strong></h1>
         <p className="landing-tagline">ESPORTS <span aria-hidden="true">•</span> APPAREL <span aria-hidden="true">•</span> COMMUNITY</p>
-        {user&&<p className="home-member-greeting">WELCOME BACK, <strong>{displayNameFor(user).toUpperCase()}</strong></p>}
         <div className="landing-actions">
           <Link className="landing-primary" to={primaryPath}><img src="/transparent%20logo.png" alt="" width="42" height="42" loading="lazy" decoding="async"/> {primaryLabel} <ArrowUpRight size={17}/></Link>
           <a className="landing-secondary" href="#about"><Shield size={15}/> LEARN MORE</a>
@@ -244,7 +243,7 @@ function AccountDashboard(){
     <section className="account-hero">
       <div className="account-hero-copy">
         <p className="eyebrow"><span className="accent">MEMBER CENTER / </span>YOUR ACCOUNT</p>
-        <h1 className="page-title">WELCOME BACK,<br/><span className="accent">{userName.toUpperCase()}.</span></h1>
+        <h1 className="page-title">YOUR <span className="accent">ACCOUNT.</span></h1>
         <p className="muted account-intro">Your Ruby Essentials account, profile details, and membership progress—all in one place.</p>
         <div className="account-hero-actions">
           <Link className="landing-primary" to="/members">VIEW CLAN ROSTER <ArrowRight size={16}/></Link>
