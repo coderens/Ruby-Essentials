@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Route, Routes, useNavigate } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, CheckCircle2, Clock3, Gamepad2, LayoutDashboard, LogOut, Mail, Menu, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users } from 'lucide-react';
+import { Search, ArrowRight, ArrowUpRight, CheckCircle2, Clock3, Gamepad2, LayoutDashboard, LogOut, Mail, Menu, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users } from 'lucide-react';
 
 const events = [
   { type: 'CLAN EVENT', title: 'Ruby Scrim Night', date: 'COMING SOON', detail: 'Team practice · Custom rooms' },
