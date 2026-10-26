@@ -163,7 +163,40 @@ function Home(){
     <section className="gallery-strip" id="gallery"><p className="landing-kicker">ONE CLAN. ONE FAMILY.</p><h2>READY TO REPRESENT <em>RUBY?</em></h2><Link className="landing-primary" to={primaryPath}>{primaryLabel} <ArrowUpRight size={17}/></Link></section>
   </main></>
 }
-function Members(){const slots=[1,2,3,4,5];return <main className="page section roster-page"><p className="eyebrow"><span className="accent">01 / </span>THE ROSTER</p><h1 className="page-title">MEET THE <span className="accent">CLAN.</span></h1><p className="muted page-intro">Meet the players behind the tag. Official names and roles will appear here as the lineup is confirmed.</p><div className="roster-panel-heading"><span className="roster-status"><span></span> ROSTER REVEAL IN PROGRESS</span><span className="roster-count">05 PLAYER SLOTS</span></div><section className="roster-panel-grid" aria-label="Roster player panels">{slots.map(slot=><article className="roster-player-panel" key={slot}><div className="roster-panel-art"><span className="roster-panel-number">0{slot}</span><div className="roster-panel-sheen"></div><img src="/transparent%20logo.png" alt="Ruby Essentials emblem" loading="lazy" decoding="async"/><span className="roster-panel-tag">RUBY ESSENTIALS</span></div><div className="roster-panel-info"><p className="eyebrow">PLAYER SLOT 0{slot}</p><h2>[IGN]</h2><div className="roster-panel-divider"></div><div className="roster-panel-meta"><span>IN-GAME NAME</span><strong>COMING SOON</strong></div><div className="roster-panel-meta"><span>ROLE</span><strong>TO BE ANNOUNCED</strong></div></div></article>)}</section><div className="roster-panel-footer"><p>Real players. Real bonds. One goal.</p><Link className="landing-primary roster-join" to="/join">JOIN OUR CLAN <ArrowUpRight size={16}/></Link></div></main>}
+function Members(){
+  const [directorsOpen,setDirectorsOpen]=useState(false);
+  const directorateSlots=Array.from({length:12},(_,index)=>index+1);
+  return <main className="page section roster-page">
+    <p className="eyebrow"><span className="accent">01 / </span>WHO WE ARE</p>
+    <h1 className="page-title">MORE THAN A <span className="accent">CLAN.</span></h1>
+    <p className="muted page-intro">Ruby Essentials is a Call of Duty: Mobile community built around creativity, competition, teamwork, and respect. We bring together creators and contenders who want to grow, represent the clan, and build something bigger than the game.</p>
+    <section className="roster-intro-card">
+      <div className="roster-intro-mark"><img src="/transparent%20logo.png" alt="Ruby Essentials emblem" width="92" height="92" /></div>
+      <div><p className="eyebrow">OUR COMMUNITY · OUR IDENTITY</p><h2>Artists. Contenders. <span className="accent">Community.</span></h2><p>From content creation to competitive play, every member helps shape the Ruby Essentials name.</p></div>
+    </section>
+    <section className="directorate-section" aria-labelledby="directorate-heading">
+      <p className="eyebrow"><span className="accent">02 / </span>THE PEOPLE BEHIND RUBY</p>
+      <button className="directorate-toggle" type="button" onClick={()=>setDirectorsOpen(value=>!value)} aria-expanded={directorsOpen} aria-controls="directorate-panel">
+        <span><small>MEET THE TEAM</small><strong id="directorate-heading">Meet the Ruby Creators Directorates</strong></span>
+        <span className={directorsOpen?'directorate-chevron is-open':'directorate-chevron'} aria-hidden="true"><ArrowRight size={20}/></span>
+      </button>
+      <div id="directorate-panel" className={directorsOpen?'directorate-panel is-open':'directorate-panel'} aria-hidden={!directorsOpen}>
+        <div className="directorate-panel-inner">
+          <p className="directorate-note">Our directorate and creators will be introduced here. Member names and official positions can be added as they are confirmed.</p>
+          <div className="directorate-member-list">
+            {directorateSlots.map(slot=><article className="directorate-member-row" key={slot}>
+              <span className="directorate-member-number">{String(slot).padStart(2,'0')}</span>
+              <span className="directorate-member-avatar"><img src="/transparent%20logo.png" alt="" loading="lazy" decoding="async"/></span>
+              <span className="directorate-member-copy"><strong>Member to be announced</strong><small>Ruby Creators Directorate</small></span>
+              <span className="directorate-member-status">COMING SOON</span>
+            </article>)}
+          </div>
+        </div>
+      </div>
+    </section>
+    <div className="roster-panel-footer"><p>Real players. Real bonds. One goal.</p><Link className="landing-primary roster-join" to="/join">JOIN OUR CLAN <ArrowUpRight size={16}/></Link></div>
+  </main>
+}
 function AccountDashboard(){
   const navigate=useNavigate();
   const [loading,setLoading]=useState(true);
