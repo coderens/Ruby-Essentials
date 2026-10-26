@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import { ArrowUpRight, Gamepad2, Menu, Shield, Trophy, Users } from 'lucide-react';
 
@@ -20,10 +20,61 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   const navigate=useNavigate();
   const [message,setMessage]=useState('');
   const [busy,setBusy]=useState(false);
+  const [checkingSession,setCheckingSession]=useState(mode==='login');
+  const manualAuthInProgress=useRef(false);
   const configured=Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
   const authRedirectUrl='https://ruby-essentials.vercel.app';
+
+  // On the login route, resume a session created by the email-confirmation link.
+  // Do not run this on password-reset pages, where recovery sessions must remain available.
+  useEffect(()=>{
+    if(mode!=='login') return;
+    let active=true;
+    let redirected=false;
+    let unsubscribe:(()=>void)|undefined;
+
+    const redirectSignedInUser=()=>{
+      if(!active||redirected) return;
+      redirected=true;
+      navigate('/members',{replace:true});
+    };
+
+    (async()=>{
+      try{
+        if(!configured){
+          if(active) setCheckingSession(false);
+          return;
+        }
+        const {supabase}=await import('./lib/supabase');
+        if(!active) return;
+
+        const {data}=supabase.auth.onAuthStateChange((event,session)=>{
+          if(session&&!manualAuthInProgress.current&&(event==='INITIAL_SESSION'||event==='SIGNED_IN')){
+            redirectSignedInUser();
+          }
+        });
+        unsubscribe=()=>data.subscription.unsubscribe();
+
+        const {data:{session}}=await supabase.auth.getSession();
+        if(!active) return;
+        if(session&&!manualAuthInProgress.current){
+          redirectSignedInUser();
+          return;
+        }
+        setCheckingSession(false);
+      }catch{
+        if(active) setCheckingSession(false);
+      }
+    })();
+
+    return ()=>{
+      active=false;
+      unsubscribe?.();
+    };
+  },[mode,navigate,configured]);
   async function submit(e:React.FormEvent<HTMLFormElement>){
     e.preventDefault();
+    manualAuthInProgress.current=true;
     const formElement=e.currentTarget;
     const form=new FormData(formElement);
     setMessage('');setBusy(true);
@@ -87,7 +138,10 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
     }catch(err){
       const error=err as {message?:string};
       setMessage(error.message||'Something went wrong. Please try again.');
-    }finally{setBusy(false)}
+    }finally{setBusy(false);manualAuthInProgress.current=false}
+  }
+  if(mode==='login'&&checkingSession){
+    return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>CHECKING YOUR SESSION.</h1><p className="muted" role="status">Checking whether you're already signed in…</p></div></main>;
   }
   return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>{mode==='login'?'WELCOME BACK.':mode==='join'?'JOIN THE CLAN.':mode==='reset'?'CHOOSE A NEW PASSWORD.':'RESET ACCESS.'}</h1><p className="muted">{mode==='login'?'Sign in to your Ruby Essentials account.':mode==='join'?'Create your account and submit a membership request.':mode==='reset'?'Choose a new password for your account.':'Enter your account email to receive a password reset link.'}</p><form onSubmit={submit}>{mode==='join'&&<label>Display name<input name="displayName" required minLength={2} maxLength={60} placeholder="Your name or clan alias"/></label>}{mode!=='reset'&&<label>Email address<input name="email" type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com"/></label>}{mode!=='forgot'&&<label>{mode==='reset'?'New password':'Password'}<input name="password" type="password" required minLength={8} maxLength={128} autoComplete={mode==='login'?'current-password':'new-password'} placeholder="At least 8 characters"/></label>}{(mode==='join'||mode==='reset')&&<label>Confirm password<input name="confirmPassword" type="password" required minLength={8} maxLength={128} autoComplete="new-password" placeholder="Enter password again"/></label>}{mode==='join'&&<label>In-game name<input name="ign" maxLength={40} placeholder="Your IGN"/></label>}<button className="btn auth-submit" disabled={busy||!configured}>{busy?'Please wait…':mode==='login'?'Log in':mode==='join'?'Create account & request to join':mode==='reset'?'Update password':'Send reset link'} <ArrowUpRight size={17}/></button></form>{message&&<p className="form-message" role="status">{message}</p>}{!configured&&<p className="hint">Account services are not configured yet. Please try again later.</p>}<div className="auth-bottom">{mode==='login'?<><Link to="/forgot-password">Forgot password?</Link><span>New to Ruby? <Link to="/join">Request to join</Link></span></>:mode==='join'?<span>Already have an account? <Link to="/login">Log in</Link></span>:mode==='reset'?<span>Remembered it? <Link to="/login">Back to login</Link></span>:<span>Remembered it? <Link to="/login">Back to login</Link></span>}</div></div></main>
 }
