@@ -2953,3 +2953,41 @@ a,button{-webkit-tap-highlight-color:rgba(255,53,72,.14)}
   .admin-status{margin-left:0}
   .admin-review-footer{flex-direction:column;gap:14px}
 }
+
+
+/* Live status indicator for realtime application totals */
+.admin-live-status{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-top:3px;
+  color:#8f8589;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:1px;
+}
+.admin-live-status i{
+  display:inline-block;
+  width:6px;
+  height:6px;
+  flex:0 0 6px;
+  border-radius:50%;
+  background:#8f8589;
+}
+.admin-live-status.live{color:#84d8a3}
+.admin-live-status.live i{
+  background:#70dc98;
+  box-shadow:0 0 0 3px rgba(112,220,152,.11);
+  animation:admin-live-pulse 1.8s ease-out infinite;
+}
+.admin-live-status.connecting{color:#e5bd72}
+.admin-live-status.connecting i{background:#e5bd72}
+.admin-live-status.offline{color:#ff9ba6}
+.admin-live-status.offline i{background:#ff6c7e}
+@keyframes admin-live-pulse{
+  0%,100%{box-shadow:0 0 0 2px rgba(112,220,152,.08)}
+  50%{box-shadow:0 0 0 5px rgba(112,220,152,.01)}
+}
+@media(prefers-reduced-motion:reduce){
+  .admin-live-status.live i{animation:none}
+}
