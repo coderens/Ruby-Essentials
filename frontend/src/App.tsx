@@ -296,21 +296,16 @@ function AccountDashboard(){
     return <main className="account-page page section"><div className="account-loading"><span className="account-loading-mark"><RefreshCw size={22}/></span><p className="eyebrow">RUBY ESSENTIALS / MEMBER CENTER</p><h1>PREPARING YOUR <span className="accent">ACCOUNT.</span></h1><p className="muted">Securely loading your profile and membership status…</p></div></main>;
   }
 
-  return <main className="account-page page section">
-    <section className="account-hero">
-      <div className="account-hero-copy">
-        <p className="eyebrow"><span className="accent">MEMBER CENTER / </span>YOUR ACCOUNT</p>
-        <h1 className="page-title">YOUR <span className="accent">ACCOUNT.</span></h1>
-        <p className="muted account-intro">Your Ruby Essentials account, profile details, and membership progress—all in one place.</p>
-        <div className="account-hero-actions">
-          <Link className="landing-primary" to="/members">VIEW CLAN ROSTER <ArrowRight size={16}/></Link>
-          <button className="account-refresh" type="button" onClick={()=>setRefreshCount(count=>count+1)} disabled={refreshing}><RefreshCw size={14}/> {refreshing?'Refreshing…':'Refresh status'}</button>
-        </div>
+  return <main className="account-page page section account-dashboard">
+    <section className="account-dashboard-header">
+      <div className="account-dashboard-heading">
+        <p className="eyebrow"><span className="accent">RUBY ESSENTIALS / </span>MEMBER DASHBOARD</p>
+        <h1 className="account-dashboard-title">WELCOME BACK, <span className="accent">{userName}</span></h1>
+        <p className="muted account-intro">Your profile, membership request, and clan links—organized in one place.</p>
       </div>
-      <div className="account-hero-emblem">
-        <div className="account-emblem-ring"></div>
-        <img src="/transparent%20logo.png" alt="Ruby Essentials emblem" width="180" height="180"/>
-        <span><ShieldCheck size={13}/> ACCOUNT SIGNED IN</span>
+      <div className="account-hero-actions">
+        <Link className="landing-primary" to="/members">VIEW CLAN ROSTER <ArrowRight size={16}/></Link>
+        <button className="account-refresh" type="button" onClick={()=>setRefreshCount(count=>count+1)} disabled={refreshing}><RefreshCw size={14}/> {refreshing?'Refreshing…':'Refresh status'}</button>
       </div>
     </section>
 
@@ -327,36 +322,47 @@ function AccountDashboard(){
       </article>
       <article className="account-summary-card">
         <span className="account-summary-icon"><Clock3 size={18}/></span>
-        <div><p className="eyebrow">MEMBERSHIP REQUEST</p><strong className="account-summary-value">{statusLabel}</strong><span className={'account-status-dot status-'+requestStatus}>{requestStatus==='approved'?'Approved':requestStatus==='rejected'?'Needs attention':requestStatus==='pending'?'Awaiting review':'No request yet'}</span></div>
+        <div><p className="eyebrow">MEMBER SINCE</p><strong className="account-summary-value">{formatDate(createdAt)}</strong><span className="account-summary-note">Account creation date</span></div>
       </article>
     </section>
 
-    <section className="account-content-grid">
-      <article className="account-panel">
-        <div className="account-panel-heading"><div><p className="eyebrow">ACCOUNT DETAILS</p><h2>YOUR <span className="accent">PROFILE.</span></h2></div><span className="account-panel-icon"><UserRound size={19}/></span></div>
-        <div className="account-profile-banner"><span className="account-profile-avatar">{userName.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]?.toUpperCase()).join('')||'RE'}</span><div><strong>{userName}</strong><small>{account?.email||'Signed-in Ruby member'}</small></div></div>
-        <dl className="account-details-list">
-          <div><dt>DISPLAY NAME</dt><dd>{userName}</dd></div>
-          <div><dt>IN-GAME NAME</dt><dd>{ign||'Not provided'}</dd></div>
-          <div><dt>ACCOUNT CREATED</dt><dd>{formatDate(createdAt)}</dd></div>
-          <div><dt>PROFILE RECORD</dt><dd>{profile?'Saved in database':'Waiting for profile record'}</dd></div>
-        </dl>
-      </article>
+    <section className="account-dashboard-grid">
+      <div className="account-dashboard-primary">
+        <article className="account-panel membership-panel account-status-panel">
+          <div className="account-panel-heading">
+            <div><p className="eyebrow">CLAN APPLICATION</p><h2>MEMBERSHIP <span className="accent">STATUS.</span></h2></div>
+            <span className={'account-status-pill status-'+requestStatus}>{requestStatus==='pending'?'UNDER REVIEW':requestStatus==='approved'?'APPROVED':requestStatus==='rejected'?'NOT APPROVED':'NOT SUBMITTED'}</span>
+          </div>
+          <div className="membership-status-visual">
+            <span className={'membership-status-symbol status-'+requestStatus}>{requestStatus==='approved'?<CheckCircle2 size={24}/>:requestStatus==='pending'?<Clock3 size={24}/>:<Shield size={24}/>}</span>
+            <div><strong>{statusLabel}</strong><p>{statusDescription}</p></div>
+          </div>
+          {application&&<p className="account-request-date">REQUEST SUBMITTED <strong>{formatDate(application.created_at)}</strong></p>}
+          {!application&&<div className="account-application-cta"><div><strong>Ready to join the roster?</strong><p>Send a membership request to the Ruby Essentials team.</p></div><Link to="/join" className="account-inline-action">REQUEST TO JOIN <ArrowRight size={15}/></Link></div>}
+          <div className="account-panel-divider"></div>
+          <p className="account-small-note">Your account credentials stay private. Membership status is read from your own account records.</p>
+        </article>
 
-      <article className="account-panel membership-panel">
-        <div className="account-panel-heading"><div><p className="eyebrow">CLAN APPLICATION</p><h2>YOUR <span className="accent">STATUS.</span></h2></div><span className={'account-status-pill status-'+requestStatus}>{requestStatus==='pending'?'UNDER REVIEW':requestStatus==='approved'?'APPROVED':requestStatus==='rejected'?'NOT APPROVED':'NOT SUBMITTED'}</span></div>
-        <div className="membership-status-visual"><span className={'membership-status-symbol status-'+requestStatus}>{requestStatus==='approved'?<CheckCircle2 size={24}/>:requestStatus==='pending'?<Clock3 size={24}/>:<Shield size={24}/>}</span><div><strong>{statusLabel}</strong><p>{statusDescription}</p></div></div>
-        {application&&<p className="account-request-date">REQUEST SUBMITTED <strong>{formatDate(application.created_at)}</strong></p>}
-        {!application&&<Link to="/join" className="account-inline-action">REQUEST TO JOIN <ArrowRight size={15}/></Link>}
-        <div className="account-panel-divider"></div>
-        <p className="account-small-note">Your account credentials stay private. Membership status is read from your own account records.</p>
-      </article>
-    </section>
+        <section className="account-quick-links">
+          <div className="account-quick-links-heading"><p className="eyebrow">EXPLORE RUBY ESSENTIALS</p><h2>YOUR <span className="accent">NEXT MOVE.</span></h2></div>
+          <Link to="/events" className="account-quick-link"><span className="account-quick-icon"><Trophy size={18}/></span><span><strong>News & events</strong><small>See clan activities and updates.</small></span><ArrowUpRight size={17}/></Link>
+          <Link to="/members" className="account-quick-link"><span className="account-quick-icon"><Users size={18}/></span><span><strong>Member roster</strong><small>Explore the Ruby Essentials lineup.</small></span><ArrowUpRight size={17}/></Link>
+        </section>
+      </div>
 
-    <section className="account-quick-links">
-      <div><p className="eyebrow">KEEP EXPLORING</p><h2>STAY IN THE <span className="accent">LOOP.</span></h2></div>
-      <Link to="/events" className="account-quick-link"><span className="account-quick-icon"><Trophy size={18}/></span><span><strong>Clan news & events</strong><small>See the latest activities and updates.</small></span><ArrowUpRight size={17}/></Link>
-      <Link to="/members" className="account-quick-link"><span className="account-quick-icon"><Users size={18}/></span><span><strong>Meet the roster</strong><small>Explore the Ruby Essentials lineup.</small></span><ArrowUpRight size={17}/></Link>
+      <aside className="account-dashboard-sidebar">
+        <article className="account-panel account-profile-panel">
+          <div className="account-panel-heading"><div><p className="eyebrow">YOUR DETAILS</p><h2>ACCOUNT <span className="accent">PROFILE.</span></h2></div><span className="account-panel-icon"><UserRound size={19}/></span></div>
+          <div className="account-profile-banner"><span className="account-profile-avatar">{userName.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]?.toUpperCase()).join('')||'RE'}</span><div><strong>{userName}</strong><small>{account?.email||'Signed-in Ruby member'}</small></div></div>
+          <dl className="account-details-list">
+            <div><dt>DISPLAY NAME</dt><dd>{userName}</dd></div>
+            <div><dt>IN-GAME NAME</dt><dd>{ign||'Not provided'}</dd></div>
+            <div><dt>ACCOUNT CREATED</dt><dd>{formatDate(createdAt)}</dd></div>
+            <div><dt>PROFILE RECORD</dt><dd>{profile?'Saved':'Not created yet'}</dd></div>
+          </dl>
+          <div className="account-profile-foot"><ShieldCheck size={15}/><span>Signed in securely with your Ruby Essentials account.</span></div>
+        </article>
+      </aside>
     </section>
   </main>;
 }
