@@ -166,66 +166,58 @@ function Home(){
 function Members(){
   const [memberType,setMemberType]=useState('All');
   const [memberSearch,setMemberSearch]=useState('');
-  const directorateMembers=Array.from({length:12},(_,index)=>({
+  const members=Array.from({length:12},(_,index)=>({
     id:index+1,
-    name:'Member to be announced',
+    name:'Member profile pending',
     category:index%3===0?'Streamers':'Casuals',
-    role:index%3===0?'Content Creator':'Community Member',
+    role:index%3===0?'Creator profile':'Community profile',
   }));
-  const filteredMembers=directorateMembers.filter(member=>
+  const query=memberSearch.trim().toLowerCase();
+  const filteredMembers=members.filter(member=>
     (memberType==='All'||member.category===memberType)&&
-    (member.name.toLowerCase().includes(memberSearch.toLowerCase())||
-     member.category.toLowerCase().includes(memberSearch.toLowerCase())||
-     member.role.toLowerCase().includes(memberSearch.toLowerCase())||
-     String(member.id).includes(memberSearch))
+    (!query||[member.name,member.category,member.role,String(member.id)].some(value=>value.toLowerCase().includes(query)))
   );
   return <main className="ruby-directory-page">
-    <section className="ruby-directory-hero">
-      <div className="ruby-directory-hero-copy">
-        <p className="landing-kicker"><span className="accent">RUBY ESSENTIALS / </span>COMMUNITY DIRECTORY</p>
-        <h1>THE <span className="accent">DIRECTORY.</span></h1>
-        <p>Meet the players, creators, and community members who make Ruby Essentials what it is.</p>
+    <section className="ruby-directory-intro">
+      <div className="ruby-directory-intro-copy">
+        <p className="landing-kicker"><span className="accent">RUBY ESSENTIALS</span><span className="ruby-directory-slash"> / </span>COMMUNITY</p>
+        <h1>MEMBER <span className="accent">DIRECTORY</span></h1>
+        <p>Get to know the people behind Ruby Essentials.</p>
       </div>
-      <div className="ruby-directory-hero-mark">
-        <img src="/transparent%20logo.png" alt="Ruby Essentials" width="180" height="180" loading="eager" decoding="async"/>
-        <span>WE THE CONFIDENCE</span>
-      </div>
+      <div className="ruby-directory-total"><strong>{String(filteredMembers.length).padStart(2,'0')}</strong><span>PROFILES</span></div>
     </section>
     <section className="ruby-directory-content" aria-labelledby="ruby-directory-heading">
-      <div className="ruby-directory-heading">
-        <div>
-          <p className="landing-kicker">MEET THE COMMUNITY</p>
-          <h2 id="ruby-directory-heading">OUR <span className="accent">MEMBERS</span></h2>
-          <p>Browse the Ruby family by role or search for a member.</p>
-        </div>
-        <div className="ruby-directory-count"><strong>{String(filteredMembers.length).padStart(2,'0')}</strong><span>LISTED MEMBERS</span></div>
-      </div>
       <div className="ruby-directory-toolbar">
+        <div className="ruby-directory-toolbar-label"><span className="ruby-directory-live-dot"/> BROWSE THE ROSTER</div>
         <div className="ruby-directory-filters" role="group" aria-label="Filter members">
           {['All','Streamers','Casuals'].map(type=><button type="button" key={type} className={memberType===type?'ruby-directory-filter active':'ruby-directory-filter'} onClick={()=>setMemberType(type)} aria-pressed={memberType===type}>{type}</button>)}
         </div>
         <label className="ruby-directory-search">
           <Search size={17} aria-hidden="true"/>
-          <input type="search" value={memberSearch} onChange={event=>setMemberSearch(event.target.value)} placeholder="Search the directory..." aria-label="Search members"/>
+          <input type="search" value={memberSearch} onChange={event=>setMemberSearch(event.target.value)} placeholder="Search members..." aria-label="Search members by name, type, or role"/>
           {memberSearch&&<button type="button" onClick={()=>setMemberSearch('')} aria-label="Clear search">×</button>}
         </label>
+      </div>
+      <div className="ruby-directory-results-heading">
+        <div><h2 id="ruby-directory-heading">THE <span className="accent">ROSTER</span></h2><p>Players, creators, and community members.</p></div>
+        <span>{filteredMembers.length} RESULTS</span>
       </div>
       {filteredMembers.length>0?<div className="ruby-directory-grid">
         {filteredMembers.map(member=><article className="ruby-directory-member" key={member.id}>
           <div className="ruby-directory-member-top">
-            <span className="ruby-directory-member-number">MEMBER / {String(member.id).padStart(2,'0')}</span>
+            <span className="ruby-directory-member-number">RE / {String(member.id).padStart(2,'0')}</span>
             <span className="ruby-directory-member-type">{member.category}</span>
           </div>
           <div className="ruby-directory-avatar"><img src="/transparent%20logo.png" alt="" loading="lazy" decoding="async"/></div>
           <div className="ruby-directory-member-copy">
             <h3>{member.name}</h3>
-            <p>{member.role}</p>
+            <p>{member.role} · Details coming soon</p>
           </div>
-          <div className="ruby-directory-member-bottom"><span><i/> RUBY ESSENTIALS</span><ArrowUpRight size={18} aria-hidden="true"/></div>
+          <div className="ruby-directory-member-bottom"><span><i/> RUBY ESSENTIALS</span><span className="ruby-directory-member-arrow"><ArrowUpRight size={17} aria-hidden="true"/></span></div>
         </article>)}
-      </div>:<div className="directorate-empty-state"><strong>No members found</strong><p>Try another name or choose a different member type.</p></div>}
-      <div className="ruby-directory-footer">
-        <div><span>YOUR NEXT CHAPTER STARTS HERE</span><p>Ready to join the Ruby family?</p></div>
+      </div>:<div className="directorate-empty-state"><strong>No members found</strong><p>Try a different search or filter.</p><button className="ruby-directory-reset" type="button" onClick={()=>{setMemberSearch('');setMemberType('All')}}>Reset filters</button></div>}
+      <div className="ruby-directory-join">
+        <div><span>YOUR PLACE COULD BE HERE</span><h2>JOIN THE <em>RUBY FAMILY.</em></h2></div>
         <Link className="landing-primary" to="/join">APPLY TO JOIN <ArrowUpRight size={17}/></Link>
       </div>
     </section>
