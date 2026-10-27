@@ -2495,3 +2495,61 @@ a,button{-webkit-tap-highlight-color:rgba(255,53,72,.14)}
     scroll-behavior:auto!important;
   }
 }
+
+
+/* Declutter pass: keep the brand cues, remove duplicate decorative captions
+   and calm layered effects so content and actions stay first. */
+.landing-hero:after,
+.ruby-directory-intro:after,
+.account-dashboard-header:after,
+.auth-wrap:after,
+.ruby-directory-join:after,
+.account-dashboard .account-profile-panel:after{
+  content:none!important;
+  display:none!important;
+}
+.page.section:after{display:none}
+.landing-hero{
+  background:
+    radial-gradient(ellipse at 76% 48%,rgba(160,13,31,.16),transparent 36%),
+    linear-gradient(112deg,#070506 12%,#10080a 60%,#080607);
+}
+.landing-hero:before{opacity:.24}
+.landing-crest:before{
+  box-shadow:0 0 0 16px rgba(255,53,72,.014),0 0 54px rgba(255,53,72,.045);
+}
+.landing-crest:after{
+  border-style:solid;
+  border-color:rgba(255,125,137,.15);
+}
+.mission-card,
+.news-card,
+.ruby-directory-member,
+.event-card,
+.admin-action,
+.account-dashboard .account-panel{
+  box-shadow:0 8px 22px rgba(0,0,0,.16);
+}
+.mission-card:hover,
+.news-card:hover,
+.ruby-directory-member:hover,
+.event-card:hover,
+.admin-action:hover,
+.account-dashboard .account-quick-link:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 28px rgba(0,0,0,.24);
+}
+.news-card:hover{border-color:rgba(255,83,99,.4)}
+.ruby-directory-member:hover{
+  border-color:rgba(255,83,99,.42);
+  background:linear-gradient(155deg,#180b0d,#090607);
+}
+.ruby-directory-member:hover .ruby-directory-member-arrow{transform:none}
+.event-card:hover,.admin-action:hover{border-color:rgba(255,83,99,.42)}
+.account-dashboard .account-summary-card:after{height:1px}
+.account-dashboard .account-profile-panel{box-shadow:0 8px 22px rgba(0,0,0,.16)}
+@media(prefers-reduced-motion:reduce){
+  .ruby-directory-member:before,
+  .ruby-directory-member-arrow,
+  .account-dashboard .account-summary-card:after{transition:none!important}
+}
