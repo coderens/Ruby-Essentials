@@ -124,7 +124,7 @@ function Header(){
       {user ? <>
         <Link to="/dashboard" className="header-account-chip" title={user.email||'Member account'} onClick={closeMenu}>
           <span className="header-account-avatar">{initials}</span>
-          <span className="header-account-copy"><strong>{accountName}</strong><small>MEMBER ACCOUNT</small></span>
+          <span className="header-account-copy"><strong>{accountName}</strong><small>{user.app_metadata?.role==='admin'?'ADMIN ACCOUNT':'MEMBER ACCOUNT'}</small></span>
         </Link>
         <button className="header-signout" type="button" onClick={handleSignOut} disabled={signingOut} aria-label="Sign out" title="Sign out">
           <LogOut size={15}/><span>{signingOut?'Signing out':'Sign out'}</span>
@@ -342,6 +342,7 @@ function AccountDashboard(){
     return ()=>{active=false;unsubscribe?.()};
   },[navigate,refreshCount]);
 
+  const isAdmin=account?.app_metadata?.role==='admin';
   const userName=profile?.display_name||displayNameFor(account);
   const ign=profile?.ign||String(account?.user_metadata?.ign||'').trim();
   const requestStatus=application?.status??'none';
@@ -362,12 +363,12 @@ function AccountDashboard(){
   return <main className="account-page page section account-dashboard">
     <section className="account-dashboard-header">
       <div className="account-dashboard-heading">
-        <p className="eyebrow"><span className="accent">RUBY ESSENTIALS / </span>MEMBER DASHBOARD</p>
-        <h1 className="account-dashboard-title">WELCOME BACK, <span className="accent">{userName}</span></h1>
-        <p className="muted account-intro">Your profile, membership request, and clan links—organized in one place.</p>
+        <p className="eyebrow"><span className="accent">RUBY ESSENTIALS / </span>{isAdmin?'ADMIN DASHBOARD':'MEMBER DASHBOARD'}</p>
+        <h1 className="account-dashboard-title">{isAdmin?<>WELCOME BACK, <span className="accent">ADMIN.</span></>:<>WELCOME BACK, <span className="accent">{userName}</span></>}</h1>
+        <p className="muted account-intro">{isAdmin?'Manage membership requests and access Ruby Essentials administration tools.':'Your profile, membership request, and clan links—organized in one place.'}</p>
       </div>
       <div className="account-hero-actions">
-        <Link className="landing-primary" to="/members">VIEW CLAN ROSTER <ArrowRight size={16}/></Link>
+        <Link className="landing-primary" to={isAdmin?'/admin':'/members'}>{isAdmin?'REVIEW APPLICATIONS':'VIEW CLAN ROSTER'} <ArrowRight size={16}/></Link>
         <button className="account-refresh" type="button" onClick={()=>setRefreshCount(count=>count+1)} disabled={refreshing}><RefreshCw size={14}/> {refreshing?'Refreshing…':'Refresh status'}</button>
       </div>
     </section>
