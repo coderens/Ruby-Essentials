@@ -169,8 +169,8 @@ function Members(){
   const members=Array.from({length:12},(_,index)=>({
     id:index+1,
     name:'Member profile pending',
-    category:index%3===0?'Streamers':'Casuals',
-    role:index%3===0?'Creator profile':'Community profile',
+    category:index%3===0?'Streamers':index%3===1?'Members':'Content Creators',
+    role:index%3===0?'Streamer profile':index%3===1?'Community member':'Content creator',
   }));
   const query=memberSearch.trim().toLowerCase();
   const filteredMembers=members.filter(member=>
@@ -189,7 +189,7 @@ function Members(){
       <div className="ruby-directory-toolbar">
         <div className="ruby-directory-toolbar-label"><span className="ruby-directory-live-dot"/> BROWSE THE ROSTER</div>
         <div className="ruby-directory-filters" role="group" aria-label="Filter members">
-          {['All','Streamers','Casuals'].map(type=><button type="button" key={type} className={memberType===type?'ruby-directory-filter active':'ruby-directory-filter'} onClick={()=>setMemberType(type)} aria-pressed={memberType===type}>{type}</button>)}
+          {['All','Members','Streamers','Content Creators'].map(type=><button type="button" key={type} className={memberType===type?'ruby-directory-filter active':'ruby-directory-filter'} onClick={()=>setMemberType(type)} aria-pressed={memberType===type}>{type}</button>)}
         </div>
         <label className="ruby-directory-search">
           <Search size={17} aria-hidden="true"/>
