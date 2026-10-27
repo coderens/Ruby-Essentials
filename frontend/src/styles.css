@@ -2991,3 +2991,42 @@ a,button{-webkit-tap-highlight-color:rgba(255,53,72,.14)}
 @media(prefers-reduced-motion:reduce){
   .admin-live-status.live i{animation:none}
 }
+
+
+/* Decision-email retry controls */
+.admin-reviewed-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.admin-resend-button{
+  padding:9px 11px;
+  border:1px solid rgba(255,111,128,.35);
+  background:rgba(129,12,31,.12);
+  color:#ff9ba6;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.25px;
+  cursor:pointer;
+}
+.admin-resend-button:hover:not(:disabled){
+  border-color:rgba(255,111,128,.65);
+  background:rgba(129,12,31,.25);
+}
+.admin-resend-button:disabled{
+  opacity:.55;
+  cursor:wait;
+}
+@media(max-width:760px){
+  .admin-reviewed-actions{
+    width:100%;
+    margin-left:auto;
+    justify-content:flex-end;
+  }
+}
+@media(max-width:420px){
+  .admin-reviewed-actions{justify-content:space-between}
+  .admin-resend-button{flex:1}
+}
