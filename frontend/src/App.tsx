@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { InputHTMLAttributes, ReactNode } from 'react';
+import type { InputHTMLAttributes, MouseEvent, ReactNode } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { Search, ArrowRight, ArrowUpRight, Camera, CheckCircle2, Clock3, Gamepad2, House, LayoutDashboard, LogOut, Mail, Menu, Newspaper, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users } from 'lucide-react';
 
@@ -115,9 +115,11 @@ function Header(){
     return()=>window.removeEventListener('keydown',closeOnEscape)
   },[]);
   const closeMenu=()=>setOpen(false);
-  const handleSectionClick=(id:string)=>{
+  const handleSectionClick=(event:MouseEvent<HTMLAnchorElement>,id:string)=>{
     closeMenu();
-    if(location.pathname==='/'&&location.hash===`#${id}`){
+    // On the landing page, scroll directly instead of changing routes or hashes.
+    if(location.pathname==='/'){
+      event.preventDefault();
       document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
     }
   };
@@ -160,10 +162,10 @@ function Header(){
     <Brand/>
     <button className="mobile-toggle" type="button" onClick={()=>setOpen(value=>!value)} aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="primary-navigation"><Menu aria-hidden="true"/></button>
     <nav id="primary-navigation" className={open?'nav nav-open':'nav'} aria-label="Main navigation">
-      <Link to="/#home" className={activeSection==='home'?'active':''} onClick={()=>handleSectionClick('home')}><House size={14} aria-hidden="true"/><span>Home</span></Link>
-      <Link to="/#ruby-official" className={activeSection==='ruby-official'?'active':''} onClick={()=>handleSectionClick('ruby-official')}><Users size={14} aria-hidden="true"/><span>Ruby Official</span></Link>
-      <Link to="/#news" className={activeSection==='news'?'active':''} onClick={()=>handleSectionClick('news')}><Newspaper size={14} aria-hidden="true"/><span>News</span></Link>
-      <Link to="/#gallery" className={activeSection==='gallery'?'active':''} onClick={()=>handleSectionClick('gallery')}><Camera size={14} aria-hidden="true"/><span>Gallery</span></Link>
+      <Link to="/#home" className={activeSection==='home'?'active':''} onClick={event=>handleSectionClick(event,'home')}><House size={14} aria-hidden="true"/><span>Home</span></Link>
+      <Link to="/#ruby-official" className={activeSection==='ruby-official'?'active':''} onClick={event=>handleSectionClick(event,'ruby-official')}><Users size={14} aria-hidden="true"/><span>Ruby Official</span></Link>
+      <Link to="/#news" className={activeSection==='news'?'active':''} onClick={event=>handleSectionClick(event,'news')}><Newspaper size={14} aria-hidden="true"/><span>News</span></Link>
+      <Link to="/#gallery" className={activeSection==='gallery'?'active':''} onClick={event=>handleSectionClick(event,'gallery')}><Camera size={14} aria-hidden="true"/><span>Gallery</span></Link>
       {user&&<NavLink className="nav-dashboard" to="/dashboard" onClick={closeMenu}><LayoutDashboard size={14} aria-hidden="true"/><span>Dashboard</span></NavLink>}
       {user?.app_metadata?.role==='admin'&&<NavLink className="nav-dashboard" to="/admin" onClick={closeMenu}><ShieldCheck size={14} aria-hidden="true"/><span>Admin</span></NavLink>}
     </nav>
