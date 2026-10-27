@@ -204,7 +204,6 @@ function Members(){
       {filteredMembers.length>0?<div className="ruby-directory-grid">
         {filteredMembers.map(member=><article className="ruby-directory-member" key={member.id}>
           <div className="ruby-directory-member-top">
-            <span className="ruby-directory-member-number">RE / {String(member.id).padStart(2,'0')}</span>
             <span className="ruby-directory-member-type">{member.category}</span>
           </div>
           <div className="ruby-directory-avatar"><img src="/transparent%20logo.png" alt="" loading="lazy" decoding="async"/></div>
