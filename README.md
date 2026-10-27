@@ -27,4 +27,4 @@ This repository is an initial scaffold. Authentication and password reset requir
 
 ## Membership decision emails
 
-When an admin approves or rejects a join request, the site uses the Supabase Edge Function `notify-application-status` to email the applicant. Configure the Resend API key and verified sender address using the [email-notification setup guide](docs/email-notifications.md). Keep provider keys in Supabase Edge Function secrets, never in frontend environment variables.
+When an admin approves or rejects a join request, the site uses the Supabase Edge Function `notify-application-status` to email the applicant. To use the free Gmail-based sender, follow the [email-notification setup guide](docs/email-notifications.md). Store its URL and shared secret in Supabase Edge Function secrets, never in frontend environment variables.
