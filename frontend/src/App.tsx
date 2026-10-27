@@ -346,14 +346,16 @@ function AccountDashboard(){
   const userName=profile?.display_name||displayNameFor(account);
   const ign=profile?.ign||String(account?.user_metadata?.ign||'').trim();
   const requestStatus=application?.status??'none';
-  const statusLabel=requestStatus==='pending'?'Pending review':requestStatus==='approved'?'Approved':requestStatus==='rejected'?'Not approved':'No request yet';
-  const statusDescription=requestStatus==='pending'
-    ?'Your request has been received and is waiting for the clan team to review it.'
-    :requestStatus==='approved'
-      ?'Your membership request has been approved. Welcome to the clan.'
-      :requestStatus==='rejected'
-        ?'Your previous request was not approved. Contact the clan team for guidance.'
-        :'No membership request is connected to this account yet.';
+  const statusLabel=isAdmin?'Administrator access':requestStatus==='pending'?'Pending review':requestStatus==='approved'?'Approved':requestStatus==='rejected'?'Not approved':'No request yet';
+  const statusDescription=isAdmin
+    ?'Your account has administrator permissions. You can review and manage Ruby Essentials membership applications.'
+    :requestStatus==='pending'
+      ?'Your request has been received and is waiting for the clan team to review it.'
+      :requestStatus==='approved'
+        ?'Your membership request has been approved. Welcome to the clan.'
+        :requestStatus==='rejected'
+          ?'Your previous request was not approved. Contact the clan team for guidance.'
+          :'No membership request is connected to this account yet.';
   const createdAt=profile?.created_at||account?.created_at;
 
   if(loading){
@@ -394,17 +396,17 @@ function AccountDashboard(){
       <div className="account-dashboard-primary">
         <article className="account-panel membership-panel account-status-panel">
           <div className="account-panel-heading">
-            <div><p className="eyebrow">CLAN APPLICATION</p><h2>MEMBERSHIP <span className="accent">STATUS.</span></h2></div>
-            <span className={'account-status-pill status-'+requestStatus}>{requestStatus==='pending'?'UNDER REVIEW':requestStatus==='approved'?'APPROVED':requestStatus==='rejected'?'NOT APPROVED':'NOT SUBMITTED'}</span>
+            <div><p className="eyebrow">{isAdmin?'ADMINISTRATOR ACCOUNT':'CLAN APPLICATION'}</p><h2>{isAdmin?<>ADMIN <span className="accent">ACCESS.</span></>:<>MEMBERSHIP <span className="accent">STATUS.</span></>}</h2></div>
+            <span className={'account-status-pill '+(isAdmin?'status-approved':'status-'+requestStatus)}>{isAdmin?'ADMIN':requestStatus==='pending'?'UNDER REVIEW':requestStatus==='approved'?'APPROVED':requestStatus==='rejected'?'NOT APPROVED':'NOT SUBMITTED'}</span>
           </div>
           <div className="membership-status-visual">
-            <span className={'membership-status-symbol status-'+requestStatus}>{requestStatus==='approved'?<CheckCircle2 size={24}/>:requestStatus==='pending'?<Clock3 size={24}/>:<Shield size={24}/>}</span>
+            <span className={'membership-status-symbol '+(isAdmin?'status-approved':'status-'+requestStatus)}>{isAdmin?<ShieldCheck size={24}/>:requestStatus==='approved'?<CheckCircle2 size={24}/>:requestStatus==='pending'?<Clock3 size={24}/>:<Shield size={24}/>}</span>
             <div><strong>{statusLabel}</strong><p>{statusDescription}</p></div>
           </div>
-          {application&&<p className="account-request-date">REQUEST SUBMITTED <strong>{formatDate(application.created_at)}</strong></p>}
-          {!application&&<div className="account-application-cta"><div><strong>Ready to join the roster?</strong><p>Send a membership request to the Ruby Essentials team.</p></div><Link to="/join" className="account-inline-action">REQUEST TO JOIN <ArrowRight size={15}/></Link></div>}
+          {!isAdmin&&application&&<p className="account-request-date">REQUEST SUBMITTED <strong>{formatDate(application.created_at)}</strong></p>}
+          {!isAdmin&&!application&&<div className="account-application-cta"><div><strong>Ready to join the roster?</strong><p>Send a membership request to the Ruby Essentials team.</p></div><Link to="/join" className="account-inline-action">REQUEST TO JOIN <ArrowRight size={15}/></Link></div>}
           <div className="account-panel-divider"></div>
-          <p className="account-small-note">Your account credentials stay private. Membership status is read from your own account records.</p>
+          <p className="account-small-note">{isAdmin?'Administrator permissions are assigned securely to your account. Use the review button above to manage membership requests.':'Your account credentials stay private. Membership status is read from your own account records.'}</p>
         </article>
 
         <section className="account-quick-links">
