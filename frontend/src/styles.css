@@ -1309,21 +1309,6 @@ input::placeholder,textarea::placeholder{opacity:1}
   border-bottom:1px solid rgba(222,184,190,.15);
   background:linear-gradient(105deg,rgba(14,9,10,.92),rgba(15,8,10,.65));
 }
-.ruby-directory-intro:after{
-  content:"RE";
-  position:absolute;
-  z-index:-1;
-  right:clamp(22px,7vw,110px);
-  top:50%;
-  transform:translateY(-50%);
-  color:rgba(255,255,255,.025);
-  font-family:'Barlow Condensed',Impact,sans-serif;
-  font-size:clamp(180px,30vw,420px);
-  font-weight:900;
-  line-height:.7;
-  letter-spacing:-.09em;
-  pointer-events:none;
-}
 .ruby-directory-intro .landing-kicker{margin-bottom:22px;letter-spacing:2.4px}
 .ruby-directory-intro h1{font-size:clamp(54px,8.5vw,112px);letter-spacing:-1.8px}
 .ruby-directory-intro-copy>p:last-child{font-size:13px;max-width:440px;margin-top:20px}
@@ -1414,7 +1399,6 @@ input::placeholder,textarea::placeholder{opacity:1}
 }
 @media(max-width:720px){
   .ruby-directory-intro{min-height:0;padding:48px 22px 38px}
-  .ruby-directory-intro:after{right:12px;font-size:230px}
   .ruby-directory-intro .landing-kicker{font-size:8px;margin-bottom:17px}
   .ruby-directory-intro h1{font-size:clamp(48px,10vw,72px);letter-spacing:-.8px}
   .ruby-directory-intro-copy>p:last-child{font-size:12px;margin-top:15px}
@@ -1432,7 +1416,6 @@ input::placeholder,textarea::placeholder{opacity:1}
 @media(max-width:430px){
   .ruby-directory-intro{padding:39px 17px 31px}
   .ruby-directory-intro h1{font-size:clamp(40px,10vw,52px)}
-  .ruby-directory-intro:after{font-size:175px;right:5px}
   .ruby-directory-total strong{font-size:42px}
   .ruby-directory-content{padding-inline:17px}
   .ruby-directory-toolbar{padding:15px 0}
