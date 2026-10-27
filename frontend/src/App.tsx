@@ -110,7 +110,7 @@ function Header(){
       <NavLink to="/" end onClick={closeMenu}>Home</NavLink>
       <NavLink to="/members" onClick={closeMenu}>Ruby Official</NavLink>
       <NavLink to="/events" onClick={closeMenu}>News</NavLink>
-      <a href="/#gallery" onClick={closeMenu}>Ruby Gallery</a>
+      <a href="/#gallery" onClick={closeMenu}>Gallery</a>
       {user&&<NavLink className="nav-dashboard" to="/dashboard" onClick={closeMenu}><LayoutDashboard size={14}/> Dashboard</NavLink>}
     </nav>
     <div className="header-actions">
