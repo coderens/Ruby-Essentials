@@ -631,8 +631,17 @@ function Admin(){
     return()=>{active=false;cleanupRealtime?.()};
   },[refreshCount]);
 
+  async function sendDecisionEmail(applicationId:string){
+    const {supabase}=await import('./lib/supabase');
+    const {data,error:emailError}=await supabase.functions.invoke('notify-application-status',{body:{applicationId}});
+    if(emailError)throw new Error(emailError.message||'Email notification could not be sent.');
+    if(!data?.sent)throw new Error(data?.error||'Email notification could not be sent.');
+    return data as {sent:boolean;to?:string;emailId?:string|null};
+  }
+
   async function updateStatus(application:ApplicationRow,status:'approved'|'rejected'){
     setBusyId(application.id);setError('');setMessage('');
+    const applicantName=application.display_name||application.email||'Application';
     try{
       const {supabase}=await import('./lib/supabase');
       const {data,error:updateError}=await supabase
@@ -645,9 +654,26 @@ function Admin(){
       if(updateError)throw updateError;
       if(!data)throw new Error('No status was changed. Refresh the list and confirm the request is still pending.');
       setApplications(current=>current.map(item=>item.id===application.id?{...item,status}:item));
-      setMessage(`${application.display_name||application.email||'Application'} was ${status}.`);
+      try{
+        const notification=await sendDecisionEmail(application.id);
+        setMessage(`${applicantName} was ${status}. The notification email was sent to ${notification.to||application.email||'the applicant'}.`);
+      }catch(emailError){
+        const emailMessage=emailError instanceof Error?emailError.message:'Unknown email sending error.';
+        setError(`${applicantName} was ${status}, but the email was not sent. ${emailMessage} After email setup, use Resend email to retry.`);
+      }
     }catch(e){
       setError(e instanceof Error?e.message:'Could not update this application.');
+    }finally{setBusyId(null)}
+  }
+
+  async function resendDecisionEmail(application:ApplicationRow){
+    setBusyId(application.id);setError('');setMessage('');
+    try{
+      const notification=await sendDecisionEmail(application.id);
+      setMessage(`Decision email sent to ${notification.to||application.email||'the applicant'}.`);
+    }catch(e){
+      const reason=e instanceof Error?e.message:'Unknown email sending error.';
+      setError(`Email could not be sent. ${reason}`);
     }finally{setBusyId(null)}
   }
 
@@ -689,7 +715,7 @@ function Admin(){
         {application.status==='pending'?<div className="admin-application-actions">
           <button type="button" className="admin-approve-button" disabled={busyId!==null} onClick={()=>void updateStatus(application,'approved')}>{busyId===application.id?'Saving…':'Approve'}</button>
           <button type="button" className="admin-reject-button" disabled={busyId!==null} onClick={()=>void updateStatus(application,'rejected')}>Reject</button>
-        </div>:<span className="admin-reviewed-label">Reviewed</span>}
+        </div>:<div className="admin-reviewed-actions"><span className="admin-reviewed-label">Reviewed</span><button type="button" className="admin-resend-button" disabled={busyId!==null} onClick={()=>void resendDecisionEmail(application)}>{busyId===application.id?'Sending…':'Resend email'}</button></div>}
       </article>)}</div>}
     </>}
     <div className="admin-review-footer"><Link to="/members" className="text-link">View roster <ArrowUpRight size={15}/></Link><Link to="/events" className="text-link">Manage clan updates <ArrowUpRight size={15}/></Link></div>
