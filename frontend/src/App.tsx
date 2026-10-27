@@ -110,7 +110,7 @@ function Header(){
       <NavLink to="/" end onClick={closeMenu}>Home</NavLink>
       <NavLink to="/members" onClick={closeMenu}>Ruby Official</NavLink>
       <NavLink to="/events" onClick={closeMenu}>News</NavLink>
-      <a href="/#gallery" onClick={closeMenu}>Gallery</a>
+      <a href="/#gallery" onClick={closeMenu}>Ruby Gallery</a>
       {user&&<NavLink className="nav-dashboard" to="/dashboard" onClick={closeMenu}><LayoutDashboard size={14}/> Dashboard</NavLink>}
     </nav>
     <div className="header-actions">
@@ -161,11 +161,9 @@ function Home(){
     <section className="gallery-section" id="gallery" aria-labelledby="gallery-heading">
       <div className="gallery-section-heading">
         <div className="gallery-section-heading-copy">
-          <p className="landing-kicker">THE RUBY ARCHIVE</p>
-          <h2 id="gallery-heading">MEMORIES &amp; <em>ACHIEVEMENTS.</em></h2>
-          <p>Every match, milestone, and moment matters. This is where the Ruby Essentials story will be collected.</p>
+          <h2 id="gallery-heading">RUBY <em>GALLERY.</em></h2>
+          <p>Memories, achievements, and moments from the clan.</p>
         </div>
-        <span className="gallery-section-label"><Camera size={15}/> CLAN PHOTO &amp; VIDEO ARCHIVE</span>
       </div>
       <div className="gallery-collection-grid">
         <article className="gallery-collection-card">
