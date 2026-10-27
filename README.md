@@ -23,3 +23,8 @@ On Vercel, import this repository and set the Root Directory to `frontend`, Buil
 
 ## Important
 This repository is an initial scaffold. Authentication and password reset require configured backend secrets, database, and a real email provider before live use. Do not put secrets in frontend environment variables.
+
+
+## Membership decision emails
+
+When an admin approves or rejects a join request, the site uses the Supabase Edge Function `notify-application-status` to email the applicant. Configure the Resend API key and verified sender address using the [email-notification setup guide](docs/email-notifications.md). Keep provider keys in Supabase Edge Function secrets, never in frontend environment variables.
