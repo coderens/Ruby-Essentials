@@ -97,12 +97,18 @@ Deno.serve(async (request: Request) => {
       return jsonResponse(422, { sent: false, error: "This application has no valid email address. Check the applicant's email in the database." });
     }
 
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    const emailFrom = Deno.env.get("EMAIL_FROM");
-    if (!resendApiKey || !emailFrom) {
+    const emailWebhookUrl = Deno.env.get("GOOGLE_APPS_SCRIPT_URL");
+    const emailWebhookSecret = Deno.env.get("GOOGLE_APPS_SCRIPT_SECRET");
+    if (!emailWebhookUrl || !emailWebhookSecret) {
       return jsonResponse(503, {
         sent: false,
-        error: "Email is not configured yet. Add RESEND_API_KEY and EMAIL_FROM in Supabase Edge Function secrets.",
+        error: "Free Gmail sending is not configured yet. Follow docs/email-notifications.md and add GOOGLE_APPS_SCRIPT_URL and GOOGLE_APPS_SCRIPT_SECRET in Supabase Edge Function secrets.",
+      });
+    }
+    if (!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec(?:\?.*)?$/.test(emailWebhookUrl)) {
+      return jsonResponse(503, {
+        sent: false,
+        error: "The Google Apps Script URL is invalid. Use the deployed Web app URL ending in /exec.",
       });
     }
 
@@ -133,31 +139,40 @@ Open your dashboard: https://ruby-essentials.vercel.app/dashboard
 
 This is an automated notification from Ruby Essentials.`;
 
-    const resendResponse = await fetch("https://api.resend.com/emails", {
+    const emailResponse = await fetch(emailWebhookUrl, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendApiKey}`,
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: emailFrom,
-        to: [recipient],
+        secret: emailWebhookSecret,
+        to: recipient,
         subject,
         html,
         text,
+        status: application.status,
       }),
     });
 
-    const resendData = await resendResponse.json().catch(() => ({})) as { id?: string; message?: string; name?: string };
-    if (!resendResponse.ok) {
-      console.error("Resend rejected a membership notification:", resendResponse.status, resendData.message ?? resendData.name ?? "unknown error");
+    const responseText = await emailResponse.text();
+    let emailResult: { ok?: boolean; error?: string } = {};
+    try {
+      emailResult = JSON.parse(responseText) as { ok?: boolean; error?: string };
+    } catch {
+      // The Apps Script endpoint should return JSON. Avoid returning its raw response to the browser.
+    }
+
+    if (!emailResponse.ok || emailResult.ok !== true) {
+      console.error(
+        "Google Apps Script email delivery failed:",
+        emailResponse.status,
+        emailResult.error ?? "Unexpected response",
+      );
       return jsonResponse(502, {
         sent: false,
-        error: "The email provider rejected the message. Check your Resend API key, verified sender address, and sender-domain settings.",
+        error: "The free Gmail sender could not send this email. Check the Apps Script deployment, shared secret, and Gmail daily sending quota.",
       });
     }
 
-    return jsonResponse(200, { sent: true, to: recipient, emailId: resendData.id ?? null });
+    return jsonResponse(200, { sent: true, to: recipient });
   } catch (error) {
     console.error("Unexpected membership notification error:", error);
     return jsonResponse(500, { sent: false, error: "Unexpected email notification error. Check the Edge Function logs." });
