@@ -13,6 +13,7 @@ type AppUser = {
   email?: string;
   created_at?: string;
   email_confirmed_at?: string | null;
+  app_metadata?: Record<string, unknown>;
   user_metadata?: Record<string, unknown>;
 };
 
@@ -33,13 +34,14 @@ type ApplicationRow = {
   created_at: string;
 };
 
-function asAppUser(user: { id: string; email?: string; created_at?: string; email_confirmed_at?: string; user_metadata?: Record<string, unknown> } | null | undefined): AppUser | null {
+function asAppUser(user: { id: string; email?: string; created_at?: string; email_confirmed_at?: string; app_metadata?: Record<string, unknown>; user_metadata?: Record<string, unknown> } | null | undefined): AppUser | null {
   if (!user) return null;
   return {
     id: user.id,
     email: user.email,
     created_at: user.created_at,
     email_confirmed_at: user.email_confirmed_at,
+    app_metadata: user.app_metadata,
     user_metadata: user.user_metadata
   };
 }
@@ -116,6 +118,7 @@ function Header(){
       <NavLink to="/events" onClick={closeMenu}>News</NavLink>
       <NavLink to="/gallery" onClick={()=>{closeMenu();window.scrollTo(0,0)}}>Gallery</NavLink>
       {user&&<NavLink className="nav-dashboard" to="/dashboard" onClick={closeMenu}><LayoutDashboard size={14}/> Dashboard</NavLink>}
+      {user?.app_metadata?.role==='admin'&&<NavLink className="nav-dashboard" to="/admin" onClick={closeMenu}><ShieldCheck size={14}/> Admin</NavLink>}
     </nav>
     <div className="header-actions">
       {user ? <>
@@ -523,7 +526,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
           const {data:applications,error:lookupError}=await supabase.from('join_applications').select('id').eq('user_id',user.id).limit(1);
           if(lookupError) throw lookupError;
           if(!applications?.length){
-            const {error:applicationError}=await supabase.from('join_applications').insert({user_id:user.id,display_name:displayName,ign:ign||null});
+            const {error:applicationError}=await supabase.from('join_applications').insert({user_id:user.id,display_name:displayName,ign:ign||null,email:user.email||email});
             if(applicationError) throw applicationError;
           }
         }
@@ -541,7 +544,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
       if(data.session && data.user){
         const {error:profileError}=await supabase.from('profiles').upsert({id:data.user.id,display_name:displayName,ign:ign||null},{onConflict:'id'});
         if(profileError) throw profileError;
-        const {error:applicationError}=await supabase.from('join_applications').insert({user_id:data.user.id,display_name:displayName,ign:ign||null});
+        const {error:applicationError}=await supabase.from('join_applications').insert({user_id:data.user.id,display_name:displayName,ign:ign||null,email:data.user.email||email});
         if(applicationError) throw applicationError;
         setMessage('Your account was created and your join request submitted.');
         navigate('/dashboard',{replace:true});
