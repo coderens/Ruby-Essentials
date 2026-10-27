@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Route, Routes, useNavigate } from 'react-router-dom';
-import { Search, ArrowRight, ArrowUpRight, CheckCircle2, Clock3, Gamepad2, LayoutDashboard, LogOut, Mail, Menu, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users } from 'lucide-react';
+import { Search, ArrowRight, ArrowUpRight, Camera, CheckCircle2, Clock3, Gamepad2, LayoutDashboard, LogOut, Mail, Menu, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users } from 'lucide-react';
 
 const events = [
   { type: 'CLAN EVENT', title: 'Ruby Scrim Night', date: 'COMING SOON', detail: 'Team practice · Custom rooms' },
@@ -110,6 +110,7 @@ function Header(){
       <NavLink to="/" end onClick={closeMenu}>Home</NavLink>
       <NavLink to="/members" onClick={closeMenu}>Ruby Official</NavLink>
       <NavLink to="/events" onClick={closeMenu}>News</NavLink>
+      <a href="/#gallery" onClick={closeMenu}>Gallery</a>
       {user&&<NavLink className="nav-dashboard" to="/dashboard" onClick={closeMenu}><LayoutDashboard size={14}/> Dashboard</NavLink>}
     </nav>
     <div className="header-actions">
@@ -157,7 +158,61 @@ function Home(){
         <article className="news-card"><Link className="news-card-link" to="/events" aria-label="View CODM Scrim Schedule"><div className="news-art news-art-soldier"><div className="soldier-visor"></div><div className="soldier-body"></div></div><div className="news-copy"><span>EVENT</span><h3>CODM Scrim Schedule</h3><p>Check out our upcoming scrim schedule and be ready for the action!</p><time>SCHEDULE TBA</time></div></Link></article>
       </div>
     </section>
-    <section className="gallery-strip" id="gallery"><p className="landing-kicker">ONE CLAN. ONE FAMILY.</p><h2>READY TO REPRESENT <em>RUBY?</em></h2><Link className="landing-primary" to={primaryPath}>{primaryLabel} <ArrowUpRight size={17}/></Link></section>
+    <section className="gallery-section" id="gallery" aria-labelledby="gallery-heading">
+      <div className="gallery-section-heading">
+        <div className="gallery-section-heading-copy">
+          <p className="landing-kicker">THE RUBY ARCHIVE</p>
+          <h2 id="gallery-heading">MEMORIES &amp; <em>ACHIEVEMENTS.</em></h2>
+          <p>Every match, milestone, and moment matters. This is where the Ruby Essentials story will be collected.</p>
+        </div>
+        <span className="gallery-section-label"><Camera size={15}/> CLAN PHOTO &amp; VIDEO ARCHIVE</span>
+      </div>
+      <div className="gallery-collection-grid">
+        <article className="gallery-collection-card">
+          <div className="gallery-collection-visual gallery-visual-memories">
+            <span className="gallery-visual-icon"><Camera size={25}/></span>
+            <span className="gallery-visual-index">01 / MEMORIES</span>
+            <span className="gallery-visual-placeholder">CLAN MOMENTS</span>
+          </div>
+          <div className="gallery-collection-copy">
+            <p className="eyebrow">THE PEOPLE BEHIND THE CLAN</p>
+            <h3>Moments Together</h3>
+            <p>Scrims, celebrations, community moments, and memories made together.</p>
+            <span className="gallery-coming-soon">PHOTOS WILL BE ADDED HERE</span>
+          </div>
+        </article>
+        <article className="gallery-collection-card">
+          <div className="gallery-collection-visual gallery-visual-achievements">
+            <span className="gallery-visual-icon"><Trophy size={25}/></span>
+            <span className="gallery-visual-index">02 / ACHIEVEMENTS</span>
+            <span className="gallery-visual-placeholder">MILESTONES</span>
+          </div>
+          <div className="gallery-collection-copy">
+            <p className="eyebrow">PROGRESS WORTH REMEMBERING</p>
+            <h3>Milestones &amp; Achievements</h3>
+            <p>Tournament highlights, placements, and clan milestones—added as they are recorded.</p>
+            <span className="gallery-coming-soon">ACHIEVEMENTS WILL BE ADDED HERE</span>
+          </div>
+        </article>
+        <article className="gallery-collection-card">
+          <div className="gallery-collection-visual gallery-visual-community">
+            <span className="gallery-visual-icon"><Users size={25}/></span>
+            <span className="gallery-visual-index">03 / COMMUNITY</span>
+            <span className="gallery-visual-placeholder">ONE RUBY FAMILY</span>
+          </div>
+          <div className="gallery-collection-copy">
+            <p className="eyebrow">MORE THAN THE GAME</p>
+            <h3>Community Highlights</h3>
+            <p>Teamwork, friendships, and the moments that make Ruby Essentials a community.</p>
+            <span className="gallery-coming-soon">COMMUNITY PHOTOS COMING SOON</span>
+          </div>
+        </article>
+      </div>
+      <div className="gallery-section-footer">
+        <span>OUR STORY IS STILL BEING WRITTEN.</span>
+        <Link to="/events" className="gallery-updates-link">EXPLORE CLAN UPDATES <ArrowUpRight size={15}/></Link>
+      </div>
+    </section>
   </main></>
 }
 function Members(){
