@@ -1595,3 +1595,120 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #ff66
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+
+/* Member dashboard refresh — compact, open layout with clear content hierarchy. */
+.account-dashboard{
+  max-width:1440px;width:100%;margin-inline:auto;
+  padding:clamp(28px,4vw,54px) clamp(18px,3.5vw,44px) 68px!important;
+}
+.account-dashboard-header{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:28px;
+  padding:0 0 26px;border-bottom:1px solid rgba(255,255,255,.09);
+}
+.account-dashboard-heading{min-width:0;max-width:800px}
+.account-dashboard-heading>.eyebrow{margin-bottom:12px}
+.account-dashboard-title{
+  margin:0;color:#f8f1f2;font:700 clamp(35px,4.4vw,58px)/1.02 'Barlow Condensed',Impact,sans-serif;
+  letter-spacing:.15px;overflow-wrap:anywhere;
+}
+.account-dashboard-title .accent{display:inline}
+.account-dashboard .account-intro{margin:13px 0 0;max-width:660px;line-height:1.75;font-size:13px!important}
+.account-dashboard .account-hero-actions{flex:0 0 auto;justify-content:flex-end}
+.account-dashboard .account-hero-actions .landing-primary,.account-dashboard .account-refresh{white-space:nowrap}
+.account-dashboard .account-summary-grid{
+  gap:0;margin:24px 0 26px;border-top:1px solid rgba(255,255,255,.07);
+  border-bottom:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.012)
+}
+.account-dashboard .account-summary-card{
+  border:0;border-right:1px solid rgba(255,255,255,.075);background:transparent;
+  padding:19px 20px;align-items:center;transition:background .18s ease
+}
+.account-dashboard .account-summary-card:last-child{border-right:0}
+.account-dashboard .account-summary-card:hover{background:rgba(255,255,255,.025)}
+.account-dashboard .account-summary-icon{border-radius:3px;width:36px;height:36px;flex-basis:36px}
+.account-dashboard .account-summary-card .eyebrow{margin-bottom:6px}
+.account-dashboard .account-summary-value{font-size:13px;line-height:1.45}
+.account-dashboard .account-summary-note{font-size:10px;margin-top:5px}
+.account-dashboard-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,.82fr);align-items:start;gap:22px}
+.account-dashboard-primary,.account-dashboard-sidebar{min-width:0}
+.account-dashboard-primary{display:flex;flex-direction:column;gap:22px}
+.account-dashboard .account-panel{
+  border:1px solid rgba(255,255,255,.085);border-radius:4px;
+  background:linear-gradient(145deg,rgba(20,10,12,.9),rgba(8,6,7,.96));
+  padding:clamp(19px,2.4vw,29px)
+}
+.account-dashboard .account-panel-heading{padding-bottom:17px}
+.account-dashboard .account-panel-heading h2{font-size:clamp(24px,2.6vw,32px)}
+.account-dashboard .account-status-pill{border-radius:3px;font-size:8px;letter-spacing:.7px}
+.account-dashboard .membership-status-visual{padding:26px 0 18px;min-height:112px}
+.account-dashboard .membership-status-symbol{border-radius:4px}
+.account-dashboard .membership-status-visual strong{font-size:18px}
+.account-dashboard .membership-status-visual p{max-width:590px;font-size:12px;line-height:1.75}
+.account-dashboard .account-panel-divider{margin:18px 0 14px}
+.account-application-cta{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:4px;
+  padding:16px 0 4px;border-top:1px solid rgba(255,255,255,.07)
+}
+.account-application-cta>div{min-width:0}
+.account-application-cta>div>strong{font-size:12px;color:#f5edef}
+.account-application-cta p{margin:5px 0 0;font-size:10px;line-height:1.6;color:#a99b9f}
+.account-dashboard .account-inline-action{margin:0;flex:0 0 auto;border-radius:3px;white-space:nowrap}
+.account-dashboard .account-profile-panel{padding:23px}
+.account-dashboard .account-profile-banner{padding:21px 0 18px}
+.account-dashboard .account-profile-avatar{border-radius:4px;width:52px;height:52px;flex-basis:52px}
+.account-dashboard .account-details-list>div{padding:13px 0}
+.account-dashboard .account-details-list dt{font-size:8px}
+.account-dashboard .account-details-list dd{max-width:62%;font-size:10px}
+.account-profile-foot{
+  display:flex;align-items:flex-start;gap:9px;margin-top:19px;padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.07);color:#9f9296;font-size:10px;line-height:1.65
+}
+.account-profile-foot svg{flex:0 0 auto;color:#70dca0;margin-top:1px}
+.account-dashboard .account-quick-links{
+  grid-template-columns:1fr 1fr;padding:0;gap:10px;border:0;background:transparent;margin-top:0
+}
+.account-dashboard .account-quick-links-heading{grid-column:1/-1;padding:0 0 4px}
+.account-dashboard .account-quick-links-heading .eyebrow{margin-bottom:8px}
+.account-dashboard .account-quick-links-heading h2{font-size:clamp(25px,2.7vw,32px)}
+.account-dashboard .account-quick-link{
+  min-height:88px;padding:14px;border-radius:3px;background:rgba(255,255,255,.018)
+}
+.account-dashboard .account-quick-link strong{font-size:11px}
+.account-dashboard .account-quick-link small{font-size:10px}
+.account-dashboard .account-error{margin-top:20px}
+@media(max-width:1050px){
+  .account-dashboard-header{align-items:flex-start;flex-direction:column;gap:20px}
+  .account-dashboard .account-hero-actions{justify-content:flex-start}
+  .account-dashboard-grid{grid-template-columns:minmax(0,1.2fr) minmax(270px,.8fr);gap:16px}
+  .account-dashboard .account-summary-card{padding:16px 13px}
+  .account-dashboard .account-summary-icon{display:none}
+}
+@media(max-width:760px){
+  .account-dashboard{padding:29px 16px 50px!important}
+  .account-dashboard-header{padding-bottom:21px}
+  .account-dashboard-title{font-size:clamp(34px,8.5vw,48px)}
+  .account-dashboard .account-hero-actions{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .account-dashboard .account-hero-actions .landing-primary,.account-dashboard .account-refresh{
+    width:100%;min-width:0;padding-inline:10px;font-size:9px;white-space:normal
+  }
+  .account-dashboard .account-summary-grid{grid-template-columns:1fr;margin:18px 0 20px}
+  .account-dashboard .account-summary-card{
+    padding:14px 15px;border-right:0;border-bottom:1px solid rgba(255,255,255,.065)
+  }
+  .account-dashboard .account-summary-card:last-child{border-bottom:0}
+  .account-dashboard .account-summary-icon{display:grid}
+  .account-dashboard-grid{grid-template-columns:1fr;gap:17px}
+  .account-dashboard-primary{gap:17px}
+  .account-dashboard .account-panel{padding:19px}
+  .account-dashboard .account-quick-links{grid-template-columns:1fr 1fr}
+  .account-application-cta{align-items:flex-start;flex-direction:column}
+  .account-dashboard .account-inline-action{white-space:normal}
+}
+@media(max-width:440px){
+  .account-dashboard .account-hero-actions{grid-template-columns:1fr}
+  .account-dashboard .account-quick-links{grid-template-columns:1fr}
+  .account-dashboard .account-quick-links-heading{grid-column:auto}
+  .account-dashboard .account-panel-heading{gap:10px}
+  .account-dashboard .account-status-pill{max-width:132px;white-space:normal;text-align:center;padding:5px 7px;line-height:1.4}
+}
