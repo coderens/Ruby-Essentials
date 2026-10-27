@@ -1219,3 +1219,72 @@ input::placeholder,textarea::placeholder{opacity:1}
   .members-home-card-top{flex-direction:row;align-items:center}
 }
 @media(prefers-reduced-motion:reduce){.members-hero-visual img{animation:none}}
+
+
+/* Full-page editorial roster: open layout, no member-card rectangles */
+.roster-fullpage{width:100%;overflow:hidden;background:#090708;color:#f7eff0}
+.roster-editorial-hero{position:relative;min-height:min(790px,calc(100svh - 76px));width:100%;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:center;padding:72px clamp(28px,7vw,112px) 96px;isolation:isolate;border-bottom:1px solid rgba(255,255,255,.08);background:radial-gradient(ellipse at 78% 48%,rgba(145,11,29,.2),transparent 38%),linear-gradient(110deg,#090708 0%,#10090b 60%,#0b0809 100%)}
+.roster-hero-copy{position:relative;z-index:2;max-width:760px}
+.roster-hero-copy>.landing-kicker{font-size:10px;letter-spacing:2.2px;margin:0 0 28px;color:#b9a7ab}
+.roster-hero-copy h1{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(76px,10.4vw,158px);font-weight:900;line-height:.78;letter-spacing:-2px;margin:0;text-transform:uppercase}
+.roster-hero-copy h1 span{display:inline-block;color:#e21d2b;margin-top:13px}
+.roster-hero-tagline{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(23px,3vw,39px);margin:31px 0 13px;color:#f7eff0}
+.roster-hero-tagline span{color:#e21d2b}
+.roster-hero-description{max-width:490px;color:#b6a7aa;font-size:14px;line-height:1.9;margin:0 0 27px}
+.roster-hero-copy .members-scroll-link{display:inline-flex;align-items:center;gap:12px;text-decoration:none;letter-spacing:1px;font-size:10px}
+.roster-hero-wordmark{display:flex;align-items:baseline;gap:3px;margin-top:56px;padding-top:18px;border-top:1px solid rgba(255,255,255,.13);max-width:450px;font-family:'Barlow Condensed',Impact,sans-serif;font-size:20px;font-weight:900;letter-spacing:7px;color:#f7eff0}
+.roster-hero-wordmark span:nth-child(2){color:#e21d2b}.roster-hero-wordmark i{font-family:inherit;font-style:normal;font-size:8px;letter-spacing:2px;color:#a89499;margin-left:auto}
+.roster-hero-art{position:relative;display:grid;place-items:center;min-width:0;min-height:500px;isolation:isolate}
+.roster-hero-art:before{content:"";position:absolute;z-index:-2;width:min(100%,570px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(203,12,34,.2),rgba(100,8,22,.08) 42%,transparent 70%);filter:blur(10px)}
+.roster-hero-art img{width:min(100%,520px);max-height:570px;object-fit:contain;filter:drop-shadow(0 25px 70px rgba(218,19,42,.22));animation:roster-logo-drift 7s ease-in-out infinite}
+.roster-hero-ring{position:absolute;z-index:-1;width:95%;max-width:580px;aspect-ratio:1;border:1px solid rgba(255,255,255,.09);border-radius:50%;transform:scaleY(.78) rotate(-24deg)}
+.roster-hero-ring-inner{width:76%;border-color:rgba(226,29,43,.24);transform:scaleY(.94) rotate(34deg)}
+.roster-hero-number{position:absolute;top:5%;right:0;color:#d6c4c8;font-size:10px;line-height:1.8;letter-spacing:2px;text-align:right}
+.roster-hero-number span{font-size:7px;color:#8d7b80}
+.roster-hero-motto{position:absolute;bottom:5%;font-family:'Barlow Condensed',Impact,sans-serif;font-size:10px;font-weight:800;letter-spacing:5px;color:#d0bfc3}
+.roster-hero-scroll{position:absolute;bottom:28px;left:clamp(28px,7vw,112px);display:flex;align-items:center;gap:17px;text-decoration:none;color:#9f8e92;font-size:8px;letter-spacing:2px}
+.roster-hero-scroll span{font-size:18px;color:#e21d2b}
+@keyframes roster-logo-drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.roster-manifesto{display:grid;grid-template-columns:1fr 2fr 1fr;align-items:center;gap:30px;padding:54px clamp(28px,7vw,112px);border-bottom:1px solid rgba(255,255,255,.08);background:#0d090a}
+.roster-manifesto-index{font-size:8px;letter-spacing:2px;color:#e21d2b}
+.roster-manifesto>p{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(34px,5.5vw,72px);font-weight:900;line-height:.86;letter-spacing:-.5px;margin:0}
+.roster-manifesto>p em{font-style:normal;color:#e21d2b}
+.roster-manifesto-copy{font-size:11px;line-height:1.8;color:#aa999d;max-width:260px;justify-self:end}
+.roster-directory-full{width:100%;padding:100px clamp(28px,7vw,112px) 90px;scroll-margin-top:80px;background:linear-gradient(180deg,#090708,#0e090b 55%,#090708)}
+.roster-directory-top{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;margin-bottom:40px}
+.roster-directory-top .landing-kicker{font-size:9px;letter-spacing:2px;margin:0 0 15px;color:#b9a7ab}
+.roster-directory-top h2{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(45px,7.6vw,105px);line-height:.85;letter-spacing:-1px;margin:0;font-weight:900}
+.roster-directory-top h2 .accent{color:#e21d2b}
+.roster-directory-top>div>p:last-child{font-size:12px;color:#a99b9e;line-height:1.8;margin:18px 0 0}
+.roster-directory-index{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.roster-directory-index strong{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(40px,5vw,68px);line-height:.9;color:#e21d2b}
+.roster-directory-index span{font-size:7px;letter-spacing:1.5px;color:#a99b9e;white-space:nowrap}
+.roster-directory-tools{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px 0;border-block:1px solid rgba(255,255,255,.12);margin-bottom:5px}
+.roster-directory-tools .directorate-filter-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.roster-directory-tools .directorate-filter{border-radius:0;background:transparent;border:1px solid rgba(255,255,255,.16);color:#c2b3b7;padding:10px 17px;font-size:10px}
+.roster-directory-tools .directorate-filter.is-active{background:#e21d2b;border-color:#e21d2b;color:#fff}
+.roster-search{width:min(100%,360px);height:42px;border-radius:0;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.28);padding:0 8px}
+.roster-search input{font-size:11px;color:#fff}
+.roster-member-list{width:100%}
+.roster-member-row{position:relative;display:grid;grid-template-columns:54px 92px minmax(0,1fr) minmax(85px,auto) 34px;align-items:center;gap:clamp(14px,2.5vw,34px);min-height:155px;padding:23px 12px;border-bottom:1px solid rgba(255,255,255,.12);background:transparent;transition:background .25s ease,padding .25s ease}
+.roster-member-row:first-child{border-top:1px solid rgba(255,255,255,.12)}
+.roster-member-row:before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:#e21d2b;transform:scaleY(0);transform-origin:center;transition:transform .25s ease}
+.roster-member-row:hover{background:linear-gradient(90deg,rgba(226,29,43,.08),transparent 68%);padding-left:22px}
+.roster-member-row:hover:before{transform:scaleY(1)}
+.roster-member-index{font-family:'Barlow Condensed',Impact,sans-serif;font-size:24px;color:#8f7b80;font-weight:700}
+.roster-member-symbol{width:86px;height:86px;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle,rgba(145,12,29,.22),transparent 72%)}
+.roster-member-symbol img{width:78px;height:78px;object-fit:contain;filter:drop-shadow(0 5px 16px rgba(226,29,43,.16))}
+.roster-member-info{min-width:0}
+.roster-member-kicker{font-size:7px;letter-spacing:1.8px;color:#e45b67;font-weight:800}
+.roster-member-info h3{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(25px,3.2vw,42px);line-height:1;margin:8px 0 6px;font-weight:800}
+.roster-member-info p{font-size:11px;color:#b3a2a6;margin:0;line-height:1.6}
+.roster-member-info p span{color:#75666a}
+.roster-member-type{font-size:8px;letter-spacing:1.3px;text-transform:uppercase;color:#d4c4c8;white-space:nowrap}
+.roster-member-arrow{display:grid;place-items:center;color:#e21d2b;transition:transform .2s ease}
+.roster-member-row:hover .roster-member-arrow{transform:translate(3px,-3px)}
+.roster-end-note{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:42px;padding-top:25px;border-top:1px solid rgba(255,255,255,.12)}
+.roster-end-note>span{font-family:'Barlow Condensed',Impact,sans-serif;font-size:clamp(18px,2.6vw,29px);letter-spacing:.6px;color:#c5b5b9}
+.roster-end-note .landing-primary{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+@media(max-width:900px){.roster-editorial-hero{min-height:650px;padding-inline:35px;grid-template-columns:minmax(0,1fr) minmax(0,.8fr)}.roster-hero-copy h1{font-size:clamp(65px,10vw,105px)}.roster-hero-art{min-height:380px}.roster-hero-wordmark{max-width:380px}.roster-manifesto{grid-template-columns:1fr 2fr;gap:22px}.roster-manifesto-copy{grid-column:2;justify-self:start}.roster-directory-full{padding:75px 35px}.roster-member-row{grid-template-columns:35px 72px minmax(0,1fr) 28px;gap:17px}.roster-member-symbol{width:68px;height:68px}.roster-member-symbol img{width:62px;height:62px}.roster-member-type{display:none}}
+@media(max-width:600px){.roster-editorial-hero{display:flex;flex-direction:column;align-items:stretch;min-height:0;padding:48px 22px 75px}.roster-hero-copy>.landing-kicker{font-size:8px;letter-spacing:1.2px;margin-bottom:23px}.roster-hero-copy h1{font-size:clamp(59px,14.5vw,90px);letter-spacing:-1px}.roster-hero-tagline{font-size:25px;margin-top:23px}.roster-hero-description{font-size:12px}.roster-hero-wordmark{margin-top:35px;font-size:17px;letter-spacing:5px}.roster-hero-wordmark i{font-size:6px;letter-spacing:1px}.roster-hero-art{min-height:300px;margin-top:18px}.roster-hero-art img{width:min(88%,360px);max-height:360px}.roster-hero-number{top:0;right:5px}.roster-hero-motto{bottom:0;font-size:8px;letter-spacing:3px}.roster-hero-scroll{left:22px;bottom:20px}.roster-manifesto{grid-template-columns:1fr;gap:16px;padding:34px 22px}.roster-manifesto>p{font-size:54px}.roster-manifesto-copy{grid-column:auto;justify-self:start;max-width:330px}.roster-directory-full{padding:58px 22px 55px}.roster-directory-top{align-items:flex-start;gap:14px;margin-bottom:25px}.roster-directory-top h2{font-size:clamp(42px,10.5vw,62px)}.roster-directory-top>div>p:last-child{font-size:10px}.roster-directory-index strong{font-size:34px}.roster-directory-index span{font-size:6px;letter-spacing:.7px}.roster-directory-tools{align-items:stretch;flex-direction:column;gap:14px;padding:15px 0}.roster-search{width:100%}.roster-member-row{grid-template-columns:27px 54px minmax(0,1fr) 22px;gap:11px;min-height:120px;padding:17px 0}.roster-member-row:hover{padding-left:8px}.roster-member-index{font-size:18px}.roster-member-symbol{width:52px;height:52px}.roster-member-symbol img{width:49px;height:49px}.roster-member-kicker{font-size:6px;letter-spacing:1px}.roster-member-info h3{font-size:24px;margin:7px 0 4px}.roster-member-info p{font-size:9px}.roster-member-arrow svg{width:17px}.roster-end-note{align-items:flex-start;flex-direction:column;gap:16px;margin-top:30px}.roster-end-note>span{font-size:22px}}
+@media(prefers-reduced-motion:reduce){.roster-hero-art img{animation:none}.roster-member-row,.roster-member-row:before,.roster-member-arrow{transition:none}}
