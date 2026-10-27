@@ -570,38 +570,62 @@ function Admin(){
   const [message,setMessage]=useState('');
   const [error,setError]=useState('');
   const [refreshCount,setRefreshCount]=useState(0);
+  const [realtimeStatus,setRealtimeStatus]=useState<'connecting'|'live'|'offline'>('connecting');
 
   useEffect(()=>{
     let active=true;
+    let cleanupRealtime:(()=>void)|undefined;
     (async()=>{
-      setLoading(true);setError('');
+      setLoading(true);setError('');setRealtimeStatus('connecting');
       try{
         const {supabase}=await import('./lib/supabase');
         const {data:{user},error:userError}=await supabase.auth.getUser();
-        if(userError) throw userError;
+        if(userError)throw userError;
         if(!user){
-          if(active){setIsAdmin(false);setApplications([])}
+          if(active){setIsAdmin(false);setApplications([]);setRealtimeStatus('offline')}
           return;
         }
         const allowed=user.app_metadata?.role==='admin';
         if(active)setIsAdmin(allowed);
         if(!allowed){
-          if(active)setApplications([]);
+          if(active){setApplications([]);setRealtimeStatus('offline')}
           return;
         }
-        const {data,error:queryError}=await supabase
-          .from('join_applications')
-          .select('id,user_id,display_name,ign,email,status,created_at')
-          .order('created_at',{ascending:false});
-        if(queryError)throw queryError;
-        if(active)setApplications((data||[]) as ApplicationRow[]);
+
+        const reloadApplications=async()=>{
+          try{
+            const {data,error:queryError}=await supabase
+              .from('join_applications')
+              .select('id,user_id,display_name,ign,email,status,created_at')
+              .order('created_at',{ascending:false});
+            if(queryError)throw queryError;
+            if(active)setApplications((data||[]) as ApplicationRow[]);
+          }catch(e){
+            if(active)setError(e instanceof Error?e.message:'Unable to refresh membership applications.');
+          }
+        };
+
+        // Subscribe to inserts and status changes, then refresh the authoritative rows.
+        const channel=supabase
+          .channel('admin-join-applications-live')
+          .on('postgres_changes',{event:'*',schema:'public',table:'join_applications'},()=>{
+            void reloadApplications();
+          })
+          .subscribe((status)=>{
+            if(!active)return;
+            if(status==='SUBSCRIBED')setRealtimeStatus('live');
+            else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED')setRealtimeStatus('offline');
+            else setRealtimeStatus('connecting');
+          });
+        cleanupRealtime=()=>{void supabase.removeChannel(channel)};
+        await reloadApplications();
       }catch(e){
-        if(active)setError(e instanceof Error?e.message:'Unable to load membership applications.');
+        if(active){setIsAdmin(false);setRealtimeStatus('offline');setError(e instanceof Error?e.message:'Unable to load membership applications.')}
       }finally{
         if(active)setLoading(false);
       }
     })();
-    return()=>{active=false};
+    return()=>{active=false;cleanupRealtime?.()};
   },[refreshCount]);
 
   async function updateStatus(application:ApplicationRow,status:'approved'|'rejected'){
@@ -626,6 +650,7 @@ function Admin(){
 
   const visibleApplications=applications.filter(item=>filter==='all'||item.status==='pending');
   const pendingCount=applications.filter(item=>item.status==='pending').length;
+  const realtimeLabel=realtimeStatus==='live'?'LIVE UPDATES':realtimeStatus==='connecting'?'CONNECTING…':'LIVE UPDATES OFF';
 
   return <main className="page section admin-review-page">
     <p className="eyebrow"><span className="accent">ADMIN / </span>CONTROL ROOM</p>
@@ -636,7 +661,7 @@ function Admin(){
     :<>
       <section className="admin-review-summary">
         <div><span className="eyebrow">PENDING REQUESTS</span><strong>{pendingCount}</strong></div>
-        <div><span className="eyebrow">TOTAL APPLICATIONS</span><strong>{applications.length}</strong></div>
+        <div><span className="eyebrow">TOTAL APPLICATIONS</span><strong>{applications.length}</strong><small className={'admin-live-status '+realtimeStatus}><i aria-hidden="true"/>{realtimeLabel}</small></div>
         <button className="account-refresh" type="button" onClick={()=>setRefreshCount(value=>value+1)}><RefreshCw size={14}/> Refresh list</button>
       </section>
       <div className="admin-review-toolbar">
