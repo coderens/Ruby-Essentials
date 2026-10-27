@@ -1,22 +1,15 @@
-# Membership decision email notifications
+# Free Gmail notification setup
 
-The Supabase Edge Function `notify-application-status` sends a decision email to the address saved on a join application after an administrator approves or rejects it. The function verifies the signed-in administrator and reads the saved status from Supabase; it does not trust a status supplied by the browser.
+Ruby Essentials now has a Supabase Edge Function configured to call a Google Apps Script sender. To finish setup, authorize a Google account to send mail and add two secrets in Supabase.
 
-## One-time email-provider setup
+1. Open [Google Apps Script](https://script.new/) using the Gmail account that should send notifications.
+2. Copy the contents of [scripts/google-apps-script-notifier.gs](../scripts/google-apps-script-notifier.gs) into the new project's `Code.gs` file and save.
+3. In Project Settings, add the script property `RUBY_ESSENTIALS_WEBHOOK_SECRET` with a long, random value. Keep this value private.
+4. Run `authorizeMailService` once and approve the Google Mail permission.
+5. Deploy as a Web app, execute as your account, and set access to anyone. Copy the Web app URL ending in `/exec`.
+6. In [Supabase Function Secrets](https://supabase.com/dashboard/project/vkhhikpbhjzrtinfqypk/functions/secrets), add `GOOGLE_APPS_SCRIPT_URL` (the URL from step 5) and `GOOGLE_APPS_SCRIPT_SECRET` (the exact same random value from step 3).
+7. Sign into Ruby Essentials as an administrator and test an approval and a rejection using test applications whose recipient inboxes you can check.
 
-1. Create a Resend account and an API key at [Resend](https://resend.com/).
-2. Add and verify a domain in Resend. Use a sender address on that verified domain. A sender domain is required for sending real notifications to applicants.
-3. Open the [Ruby Essentials Supabase Edge Function secrets](https://supabase.com/dashboard/project/vkhhikpbhjzrtinfqypk/functions/secrets) page.
-4. Add these two secrets:
-   - `RESEND_API_KEY`: the API key from Resend.
-   - `EMAIL_FROM`: sender identity on the verified domain, for example `Ruby Essentials <notifications@your-verified-domain.com>`.
-5. Save the secrets. The function is already deployed; no sender secrets belong in Vercel or in frontend code.
+The email is sent from the Google account you authorize. No paid domain is required. Google account type and quotas may affect availability. If sending fails after the application status changes, fix the sender configuration and use **Resend email**.
 
-Keep the Resend key private. Do not commit it to GitHub or paste it into chat.
-
-## Behavior
-
-- When an admin clicks **Approve** or **Reject**, the application status is saved, then the function attempts to send the corresponding email to that application's saved email address.
-- The admin interface reports whether email sending succeeded. If it fails, the status remains updated and the admin can use **Resend email** after fixing the configuration.
-- Confirmed-signup applications store the user's email in `public.join_applications.email`, including applications created by the email-confirmation trigger.
-- The function uses the signed-in caller's JWT and admin app-metadata role checks. It does not expose a Supabase service-role key to the browser.
+Never put the shared secret in frontend code or commit it to GitHub. Do not share your Google password or the secret in chat.
