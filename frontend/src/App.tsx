@@ -179,55 +179,55 @@ function Members(){
      member.role.toLowerCase().includes(memberSearch.toLowerCase())||
      String(member.id).includes(memberSearch))
   );
-  return <main className="roster-fullpage">
-    <section className="roster-editorial-hero">
-      <div className="roster-hero-copy">
-        <p className="landing-kicker"><span className="accent">RUBY ESSENTIALS / </span>THE PEOPLE BEHIND THE NAME</p>
-        <h1>MEET THE<br/><span>RUBY FAMILY.</span></h1>
-        <p className="roster-hero-tagline">Not just players. <span>Part of the story.</span></p>
-        <p className="roster-hero-description">Every name carries a story. Every player brings a different energy. This is the community behind Ruby Essentials — creators, competitors, and friends connected by one shared identity.</p>
-        <a className="landing-secondary members-scroll-link" href="#ruby-members"><Users size={16}/> MEET THE MEMBERS <ArrowRight size={16}/></a>
-        <div className="roster-hero-wordmark"><span>R</span><span>U</span><span>B</span><span>Y</span><i>ESSENTIALS COMMUNITY</i></div>
+  return <main className="ruby-directory-page">
+    <section className="ruby-directory-hero">
+      <div className="ruby-directory-hero-copy">
+        <p className="landing-kicker"><span className="accent">RUBY ESSENTIALS / </span>COMMUNITY DIRECTORY</p>
+        <h1>THE <span className="accent">DIRECTORY.</span></h1>
+        <p>Meet the players, creators, and community members who make Ruby Essentials what it is.</p>
       </div>
-      <div className="roster-hero-art" aria-label="Ruby Essentials emblem">
-        <div className="roster-hero-number">R / E<br/><span>EST. COMMUNITY</span></div>
-        <div className="roster-hero-ring"></div>
-        <div className="roster-hero-ring roster-hero-ring-inner"></div>
-        <img src="/transparent%20logo.png" alt="Ruby Essentials emblem" width="520" height="520" fetchPriority="high" decoding="async"/>
-        <span className="roster-hero-motto">WE THE CONFIDENCE</span>
+      <div className="ruby-directory-hero-mark">
+        <img src="/transparent%20logo.png" alt="Ruby Essentials" width="180" height="180" loading="eager" decoding="async"/>
+        <span>WE THE CONFIDENCE</span>
       </div>
-      <a className="roster-hero-scroll" href="#ruby-members">SCROLL TO DISCOVER <span>↓</span></a>
     </section>
-    <section className="roster-manifesto">
-      <span className="roster-manifesto-index">OUR IDENTITY / 001</span>
-      <p>ONE NAME.<br/><em>MANY STORIES.</em></p>
-      <span className="roster-manifesto-copy">Built on respect, teamwork, creativity, and the people who show up for each other.</span>
-    </section>
-    <section className="roster-directory-full" id="ruby-members" aria-labelledby="ruby-members-heading">
-      <div className="roster-directory-top">
-        <div><p className="landing-kicker">THE PEOPLE OF RUBY</p><h2 id="ruby-members-heading">THIS IS <span className="accent">OUR FAMILY.</span></h2><p>Get to know the faces and roles shaping our community.</p></div>
-        <div className="roster-directory-index"><strong>{String(filteredMembers.length).padStart(2,'0')}</strong><span>MEMBERS IN VIEW</span></div>
-      </div>
-      <div className="roster-directory-tools">
-        <div className="directorate-filter-tabs" role="group" aria-label="Filter members by type">
-          {['All','Streamers','Casuals'].map(type=><button type="button" key={type} className={memberType===type?'directorate-filter is-active':'directorate-filter'} onClick={()=>setMemberType(type)} aria-pressed={memberType===type}>{type}</button>)}
+    <section className="ruby-directory-content" aria-labelledby="ruby-directory-heading">
+      <div className="ruby-directory-heading">
+        <div>
+          <p className="landing-kicker">MEET THE COMMUNITY</p>
+          <h2 id="ruby-directory-heading">OUR <span className="accent">MEMBERS</span></h2>
+          <p>Browse the Ruby family by role or search for a member.</p>
         </div>
-        <label className="directorate-search roster-search">
+        <div className="ruby-directory-count"><strong>{String(filteredMembers.length).padStart(2,'0')}</strong><span>LISTED MEMBERS</span></div>
+      </div>
+      <div className="ruby-directory-toolbar">
+        <div className="ruby-directory-filters" role="group" aria-label="Filter members">
+          {['All','Streamers','Casuals'].map(type=><button type="button" key={type} className={memberType===type?'ruby-directory-filter active':'ruby-directory-filter'} onClick={()=>setMemberType(type)} aria-pressed={memberType===type}>{type}</button>)}
+        </div>
+        <label className="ruby-directory-search">
           <Search size={17} aria-hidden="true"/>
-          <input type="search" value={memberSearch} onChange={event=>setMemberSearch(event.target.value)} placeholder="Search members, type, or role..." aria-label="Search members by name, type, or role"/>
-          {memberSearch&&<button type="button" className="directorate-clear-search" onClick={()=>setMemberSearch('')} aria-label="Clear search">×</button>}
+          <input type="search" value={memberSearch} onChange={event=>setMemberSearch(event.target.value)} placeholder="Search the directory..." aria-label="Search members"/>
+          {memberSearch&&<button type="button" onClick={()=>setMemberSearch('')} aria-label="Clear search">×</button>}
         </label>
       </div>
-      {filteredMembers.length>0?<div className="roster-member-list">
-        {filteredMembers.map(member=><article className="roster-member-row" key={member.id}>
-          <span className="roster-member-index">{String(member.id).padStart(2,'0')}</span>
-          <div className="roster-member-symbol"><img src="/transparent%20logo.png" alt="" loading="lazy" decoding="async"/></div>
-          <div className="roster-member-info"><span className="roster-member-kicker">RUBY ESSENTIALS / {member.category.toUpperCase()}</span><h3>{member.name}</h3><p>{member.role} <span>· Profile coming soon</span></p></div>
-          <span className="roster-member-type">{member.category}</span>
-          <span className="roster-member-arrow" aria-hidden="true"><ArrowUpRight size={22}/></span>
+      {filteredMembers.length>0?<div className="ruby-directory-grid">
+        {filteredMembers.map(member=><article className="ruby-directory-member" key={member.id}>
+          <div className="ruby-directory-member-top">
+            <span className="ruby-directory-member-number">MEMBER / {String(member.id).padStart(2,'0')}</span>
+            <span className="ruby-directory-member-type">{member.category}</span>
+          </div>
+          <div className="ruby-directory-avatar"><img src="/transparent%20logo.png" alt="" loading="lazy" decoding="async"/></div>
+          <div className="ruby-directory-member-copy">
+            <h3>{member.name}</h3>
+            <p>{member.role}</p>
+          </div>
+          <div className="ruby-directory-member-bottom"><span><i/> RUBY ESSENTIALS</span><ArrowUpRight size={18} aria-hidden="true"/></div>
         </article>)}
       </div>:<div className="directorate-empty-state"><strong>No members found</strong><p>Try another name or choose a different member type.</p></div>}
-      <div className="roster-end-note"><span>THE STORY IS STILL BEING WRITTEN.</span><Link className="landing-primary" to="/join">BECOME PART OF RUBY <ArrowUpRight size={17}/></Link></div>
+      <div className="ruby-directory-footer">
+        <div><span>YOUR NEXT CHAPTER STARTS HERE</span><p>Ready to join the Ruby family?</p></div>
+        <Link className="landing-primary" to="/join">APPLY TO JOIN <ArrowUpRight size={17}/></Link>
+      </div>
     </section>
   </main>
 }
