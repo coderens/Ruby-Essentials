@@ -1436,3 +1436,162 @@ input::placeholder,textarea::placeholder{opacity:1}
   .ruby-directory-member,.ruby-directory-member:before,.ruby-directory-filter,.ruby-directory-avatar,.ruby-directory-join .landing-primary{transition:none}
   .ruby-directory-member:hover,.ruby-directory-join .landing-primary:hover{transform:none}
 }
+
+
+/* Site-wide UI/UX refinement: clearer hierarchy, spacing, accessibility and responsive behavior */
+:root{
+  --ui-surface:#100809;
+  --ui-surface-raised:#160b0d;
+  --ui-border:rgba(255,92,106,.22);
+  --ui-border-strong:rgba(255,54,72,.55);
+  --ui-text:#f7f2f3;
+  --ui-muted:#b7aaad;
+  --ui-accent:#ff2638;
+  --ui-radius:10px;
+}
+html{scroll-padding-top:96px;scroll-behavior:smooth}
+body{line-height:1.55;-webkit-font-smoothing:antialiased}
+::selection{background:#ff2638;color:#fff}
+a,button,input{touch-action:manipulation}
+button:disabled{opacity:.58;cursor:not-allowed;transform:none!important}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #ff6673;outline-offset:4px}
+.header{gap:clamp(14px,2vw,32px);padding-inline:clamp(18px,5vw,84px)}
+.header .brand{flex-shrink:0}
+.nav{gap:clamp(12px,2vw,28px)}
+.nav a{white-space:nowrap}
+.header-actions{flex-shrink:0}
+.header-account-chip{display:flex;align-items:center;gap:10px;min-width:0}
+.header-account-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+.header-account-copy strong{max-width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.header-account-copy small{font-size:8px;letter-spacing:1px;color:var(--ui-muted)}
+.header-account-avatar{width:34px;height:34px;display:grid;place-items:center;flex-shrink:0;border:1px solid var(--ui-border-strong);border-radius:50%;background:#25090d;color:#fff;font-size:10px;font-weight:800}
+.header-signout{display:inline-flex;align-items:center;gap:7px;padding:10px 12px;border:1px solid var(--ui-border);background:transparent;color:#eee;font-size:11px;cursor:pointer;transition:background .2s,border-color .2s}
+.header-signout:hover{background:#ff263814;border-color:var(--ui-border-strong)}
+.landing-primary,.landing-secondary,.login-link,.btn,.account-refresh,.account-inline-action{min-height:44px}
+.landing-primary,.landing-secondary,.btn{border-radius:4px}
+.landing-primary:focus-visible,.landing-secondary:focus-visible,.btn:focus-visible{outline-offset:5px}
+.landing-hero{isolation:isolate}
+.landing-copy{max-width:680px}
+.landing-copy h1{max-width:100%;overflow-wrap:anywhere}
+.landing-tagline{max-width:440px}
+.landing-crest img{max-width:100%;height:auto;max-height:390px;object-fit:contain}
+.mission-card,.news-card,.event-card,.member-card,.admin-action,.account-panel,.account-summary-card,.auth-card{min-width:0}
+.mission-card{border-radius:8px;clip-path:none}
+.news-card{border-radius:10px}
+.news-card-link{border-radius:inherit}
+.news-copy h3,.news-copy p,.account-summary-value{overflow-wrap:anywhere}
+.news-copy p{line-height:1.65}
+.event-card,.member-card,.admin-action{border-radius:8px}
+.event-card{display:flex;flex-direction:column;min-height:245px}
+.event-card .card-link,.event-card .card-action{margin-top:auto}
+.page-intro{max-width:680px;line-height:1.8}
+.page-title{overflow-wrap:anywhere}
+.auth-wrap{padding-inline:20px}
+.auth-card{width:min(100%,480px);border-radius:12px;padding:clamp(24px,4vw,40px)}
+.auth-card label{line-height:1.5}
+.auth-card input{min-height:46px;border-radius:6px}
+.auth-submit{min-height:48px;border-radius:5px}
+.form-message,.hint,.account-error{overflow-wrap:anywhere}
+.account-page{max-width:1440px;margin-inline:auto}
+.account-hero{gap:clamp(24px,5vw,72px)}
+.account-summary-grid{gap:14px}
+.account-summary-card{border-radius:10px;min-width:0}
+.account-summary-value{display:block;line-height:1.45}
+.account-panel{border-radius:10px;min-width:0}
+.account-details-list dd{overflow-wrap:anywhere}
+.account-quick-link{min-width:0}
+.ruby-directory-content{width:min(100%,1500px);margin-inline:auto;padding-inline:clamp(18px,5vw,76px)}
+.ruby-directory-intro{padding-inline:clamp(18px,5vw,76px)}
+.ruby-directory-intro-copy{width:min(100%,1500px);margin-inline:auto}
+.ruby-directory-toolbar{align-items:center}
+.ruby-directory-filters{display:flex;align-items:center;flex-wrap:wrap}
+.ruby-directory-filter{min-height:42px;padding-inline:5px;font-size:12px;cursor:pointer}
+.ruby-directory-filter:focus-visible{outline-offset:2px}
+.ruby-directory-search{min-width:0;border-radius:6px}
+.ruby-directory-search input{min-width:0}
+.ruby-directory-results-heading{display:flex;align-items:end;justify-content:space-between;gap:20px}
+.ruby-directory-results-heading>span{white-space:nowrap}
+.ruby-directory-member{min-width:0;border-radius:7px}
+.ruby-directory-member-type{max-width:100%;overflow-wrap:anywhere}
+.ruby-directory-member-copy h3{overflow-wrap:anywhere}
+.ruby-directory-member-copy p{line-height:1.6}
+.ruby-directory-join{gap:20px}
+.ruby-directory-join .landing-primary{white-space:nowrap}
+.directorate-empty-state{padding:42px 18px;border-top:1px solid var(--ui-border);border-bottom:1px solid var(--ui-border);text-align:center}
+.directorate-empty-state strong{font-family:'Barlow Condensed',sans-serif;font-size:28px}
+.directorate-empty-state p{color:var(--ui-muted);font-size:12px}
+.footer{row-gap:18px}
+.footer .brand{min-width:0}
+@media(max-width:1100px){
+  .header{padding-inline:24px;gap:16px}
+  .brand{min-width:0}
+  .nav{gap:14px}
+  .nav a{font-size:11px}
+  .header-account-copy{display:none}
+  .header-actions{gap:10px}
+  .landing-hero{gap:24px}
+  .mission-grid{gap:12px}
+}
+@media(max-width:820px){
+  .header{height:74px;padding-inline:18px}
+  .header .brand-logo{width:48px!important;height:48px!important}
+  .header .brand-name strong{font-size:13px}
+  .header .nav{gap:10px}
+  .header .nav a{font-size:10px}
+  .header-actions .header-signout span{display:none}
+  .header-actions .header-signout{width:38px;height:38px;justify-content:center;padding:0}
+  .landing-hero{min-height:0}
+  .landing-copy h1{font-size:clamp(58px,8vw,80px)}
+  .ruby-directory-toolbar{grid-template-columns:1fr}
+  .ruby-directory-toolbar-label{display:none}
+  .ruby-directory-filters{order:2;justify-content:flex-start;gap:clamp(12px,3vw,24px)}
+  .ruby-directory-search{order:1;width:100%}
+}
+@media(max-width:700px){
+  html{scroll-padding-top:76px}
+  .header{height:70px}
+  .header .nav{top:69px;left:10px;right:10px;padding:8px 16px;border-radius:0 0 10px 10px}
+  .header .nav a{font-size:13px;min-height:44px}
+  .header .nav-dashboard{display:flex}
+  .header-actions .header-account-chip{display:none}
+  .header-actions .header-signout{width:36px;height:36px}
+  .landing-hero{padding:48px 20px 28px}
+  .landing-copy h1{font-size:clamp(56px,14vw,76px);line-height:.88}
+  .landing-tagline{letter-spacing:1.7px}
+  .landing-actions>*{max-width:100%}
+  .mission-card{min-height:0;padding:18px 14px}
+  .mission-card h2{line-height:1.1}
+  .mission-card p{line-height:1.7}
+  .news-card-link{align-items:center;flex-direction:row}
+  .news-art{flex:0 0 92px;width:92px;height:100px;min-height:100px}
+  .news-copy{min-width:0}
+  .news-copy h3{line-height:1.3}
+  .footer .brand{width:auto}
+  .footer>small{line-height:1.7}
+  .auth-wrap{padding:30px 15px 45px}
+  .auth-card{padding:25px 20px}
+  .account-summary-grid{grid-template-columns:1fr}
+  .ruby-directory-intro{padding:42px 18px 32px}
+  .ruby-directory-content{padding-inline:18px}
+  .ruby-directory-results-heading{align-items:flex-start}
+  .ruby-directory-results-heading>span{padding-top:8px;font-size:8px}
+  .ruby-directory-filter{font-size:11px;min-height:42px}
+  .ruby-directory-member{min-height:250px}
+  .ruby-directory-join .landing-primary{width:100%}
+}
+@media(max-width:390px){
+  .header{padding-inline:12px}
+  .header .brand-name strong{font-size:11px}
+  .header .brand-logo{width:40px!important;height:40px!important}
+  .header-actions .login-link{font-size:9px;padding-inline:8px}
+  .landing-actions>*{width:100%}
+  .mission-grid{grid-template-columns:1fr}
+  .news-card-link{align-items:flex-start}
+  .news-art{flex-basis:76px;width:76px;height:84px;min-height:84px}
+  .ruby-directory-content{padding-inline:14px}
+  .ruby-directory-filters{gap:12px}
+  .ruby-directory-filter{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
