@@ -184,7 +184,6 @@ function Members(){
         <h1>MEMBER <span className="accent">DIRECTORY</span></h1>
         <p>Get to know the people behind Ruby Essentials.</p>
       </div>
-      <div className="ruby-directory-total"><strong>{String(filteredMembers.length).padStart(2,'0')}</strong><span>PROFILES</span></div>
     </section>
     <section className="ruby-directory-content" aria-labelledby="ruby-directory-heading">
       <div className="ruby-directory-toolbar">
