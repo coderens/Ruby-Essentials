@@ -108,11 +108,8 @@ function Header(){
     <button className="mobile-toggle" type="button" onClick={()=>setOpen(value=>!value)} aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="primary-navigation"><Menu aria-hidden="true"/></button>
     <nav id="primary-navigation" className={open?'nav nav-open':'nav'} aria-label="Main navigation">
       <NavLink to="/" end onClick={closeMenu}>Home</NavLink>
-      <a href="/#about" onClick={closeMenu}>About</a>
       <NavLink to="/members" onClick={closeMenu}>Roster</NavLink>
       <NavLink to="/events" onClick={closeMenu}>News</NavLink>
-      <a href="/#gallery" onClick={closeMenu}>Gallery</a>
-      <a href="/#contact" onClick={closeMenu}>Contact</a>
       {user&&<NavLink className="nav-dashboard" to="/dashboard" onClick={closeMenu}><LayoutDashboard size={14}/> Dashboard</NavLink>}
     </nav>
     <div className="header-actions">
