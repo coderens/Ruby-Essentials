@@ -3452,3 +3452,14 @@ a,button{-webkit-tap-highlight-color:rgba(255,53,72,.14)}
   .header .nav a:hover svg{transform:none}
   .header .mobile-toggle:hover{transform:none}
 }
+
+/* One-page public navigation: keep anchor targets clear of the sticky header. */
+#home,
+#ruby-official,
+#news,
+#gallery{
+  scroll-margin-top:100px;
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+}
