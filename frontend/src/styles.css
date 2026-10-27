@@ -997,3 +997,106 @@ button:disabled { opacity: .65; cursor: wait; }
 @media(max-width:900px){.directorate-member-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.directorate-controls{grid-template-columns:1fr minmax(210px,280px)}}
 @media(max-width:650px){.directorate-controls{grid-template-columns:1fr;gap:17px;padding:18px 15px}.directorate-search{width:100%}.directorate-member-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:13px 12px 18px}.directorate-member-card{padding:13px 11px;min-height:195px}.directorate-card-type{font-size:6px;padding:4px}.directorate-member-card h3{font-size:17px}.directorate-results-count{padding-inline:15px}}
 @media(max-width:380px){.directorate-member-grid{grid-template-columns:1fr}.directorate-member-card{min-height:0}.directorate-member-card .directorate-member-avatar{width:48px;height:48px}}
+
+
+/* Product-wide UI/UX polish: clearer hierarchy, keyboard focus, responsive spacing, and calmer surfaces */
+:root{
+  --ruby-glow:rgba(226,29,43,.16);
+  --surface-raised:#171012;
+  --surface-soft:#100b0d;
+  --line-strong:#633039;
+  --text-primary:#f8f3f4;
+  --text-secondary:#b9adaf;
+}
+html{scroll-padding-top:96px;scroll-behavior:smooth}
+body{color:var(--text-primary);line-height:1.6}
+::selection{background:#e21d2b;color:#fff}
+a,button,input{touch-action:manipulation}
+a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visible{
+  outline:2px solid #ff7582;
+  outline-offset:3px;
+}
+button:disabled{opacity:.6;cursor:not-allowed}
+.header{box-shadow:0 8px 30px rgba(0,0,0,.16)}
+.brand{flex-shrink:0}
+.brand-logo{object-fit:contain}
+.nav a{transition:color .18s ease,opacity .18s ease}
+.nav a:hover{color:#ff7c88}
+.nav a.active,.nav a[aria-current="page"]{color:#ff6675}
+.login-link,.header-signout,.landing-primary,.landing-secondary,.btn,.auth-submit{
+  transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease,color .18s ease;
+}
+.login-link:hover,.landing-primary:hover,.btn:hover,.auth-submit:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(226,29,43,.16)}
+.landing-home,.page{isolation:isolate}
+.landing-hero{position:relative;overflow:hidden}
+.landing-copy{max-width:680px}
+.landing-kicker{letter-spacing:2.4px}
+.landing-copy h1{letter-spacing:-.025em;line-height:.94}
+.landing-tagline{color:#d1c4c7;letter-spacing:.02em}
+.landing-crest img{filter:drop-shadow(0 18px 42px rgba(226,29,43,.12))}
+.mission-card,.news-card,.event-card,.account-panel,.account-summary-card{
+  transition:border-color .2s ease,transform .2s ease,background .2s ease;
+}
+.mission-card:hover,.news-card:hover,.event-card:hover{border-color:rgba(226,29,43,.48)}
+.news-card{overflow:hidden}
+.news-card-link{height:100%}
+.news-art img{transition:transform .35s ease}
+.news-card:hover .news-art img{transform:scale(1.04)}
+.page{width:min(100% - 48px,1180px);margin-inline:auto}
+.page-intro{max-width:780px;font-size:clamp(13px,1.2vw,15px);line-height:1.9;color:#c0b5b7}
+.page-title{letter-spacing:-.015em}
+.roster-intro-card{border-radius:3px;box-shadow:0 18px 55px rgba(0,0,0,.18)}
+.directorate-section{max-width:1080px}
+.directorate-toggle{border-radius:3px}
+.directorate-toggle:focus-visible{outline-offset:4px}
+.directorate-panel-inner{border-bottom:1px solid #482126}
+.directorate-controls{position:relative}
+.directorate-filter{border-radius:2px}
+.directorate-filter:focus-visible,.directorate-clear-search:focus-visible{outline-offset:2px}
+.directorate-search{border-radius:2px;transition:border-color .18s ease,box-shadow .18s ease}
+.directorate-search input{min-height:40px}
+.directorate-search input::-webkit-search-cancel-button{display:none}
+.directorate-results-count{font-variant-numeric:tabular-nums}
+.directorate-member-grid{align-items:stretch}
+.directorate-member-card{display:flex;flex-direction:column;border-radius:3px;overflow:hidden}
+.directorate-member-card:focus-within{border-color:#e21d2b}
+.directorate-member-card .directorate-member-avatar{border-radius:50%;background:radial-gradient(circle at 50% 35%,#351016,#140a0c 70%)}
+.directorate-member-card h3{font-size:clamp(17px,1.5vw,21px)}
+.directorate-member-card>p{font-size:11px}
+.directorate-member-card .directorate-member-status{margin-top:auto;padding-top:10px}
+.directorate-card-type{border-radius:2px}
+.directorate-empty-state{border-top:1px solid #302024}
+.auth-card,.auth-panel{border-radius:4px}
+input,select,textarea{accent-color:#e21d2b}
+input::placeholder,textarea::placeholder{opacity:1}
+.footer{margin-top:40px}
+@media(min-width:1200px){
+  .landing-hero{min-height:min(690px,calc(100svh - 82px))}
+  .mission-grid{gap:16px}
+}
+@media(max-width:900px){
+  .page{width:min(100% - 36px,1180px)}
+  .landing-copy h1{font-size:clamp(52px,9vw,88px)}
+}
+@media(max-width:650px){
+  html{scroll-padding-top:76px}
+  .header{min-height:70px;height:auto;padding:10px 15px;gap:10px}
+  .brand{gap:7px;font-size:17px}
+  .brand-logo{width:44px;height:44px}
+  .page{width:calc(100% - 30px)}
+  .page-title{line-height:.98}
+  .page-intro{font-size:13px}
+  .roster-intro-card{margin-top:24px;margin-bottom:42px}
+  .directorate-toggle{gap:12px}
+  .directorate-toggle strong{font-size:clamp(22px,6vw,31px)}
+  .directorate-controls{gap:15px}
+  .directorate-filter{min-height:40px;padding-inline:15px}
+  .directorate-member-card{min-height:200px}
+  .footer{padding-inline:18px}
+}
+@media(hover:none){
+  .directorate-member-card:hover,.mission-card:hover,.news-card:hover,.event-card:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
