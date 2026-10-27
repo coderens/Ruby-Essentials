@@ -101,6 +101,40 @@ function formatDate(value?: string | null) {
   return new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
 }
 function Brand(){return <Link to="/" className="brand" aria-label="Ruby Essentials home"><img className="brand-logo" src="/transparent%20logo.png" alt="" width="66" height="66"/><span className="brand-name"><b>RUBY</b><strong>ESSENTIALS</strong></span></Link>}
+
+let activeSectionScrollFrame:number|null=null;
+function smoothScrollToSection(id:string){
+  const target=document.getElementById(id);
+  if(!target)return;
+  if(activeSectionScrollFrame!==null){
+    window.cancelAnimationFrame(activeSectionScrollFrame);
+    activeSectionScrollFrame=null;
+  }
+  const targetY=Math.max(0,window.scrollY+target.getBoundingClientRect().top-100);
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    window.scrollTo(0,targetY);
+    return;
+  }
+  const startY=window.scrollY;
+  const distance=targetY-startY;
+  if(Math.abs(distance)<2)return;
+  const duration=Math.min(1100,Math.max(650,Math.abs(distance)*0.45));
+  let startTime:number|null=null;
+  const animate=(time:number)=>{
+    if(startTime===null)startTime=time;
+    const progress=Math.min((time-startTime)/duration,1);
+    const eased=progress<0.5
+      ?4*progress*progress*progress
+      :1-Math.pow(-2*progress+2,3)/2;
+    window.scrollTo(0,startY+distance*eased);
+    if(progress<1){
+      activeSectionScrollFrame=window.requestAnimationFrame(animate);
+    }else{
+      activeSectionScrollFrame=null;
+    }
+  };
+  activeSectionScrollFrame=window.requestAnimationFrame(animate);
+}
 function Header(){
   const [open,setOpen]=useState(false);
   const [signingOut,setSigningOut]=useState(false);
@@ -120,7 +154,7 @@ function Header(){
     // On the landing page, scroll directly instead of changing routes or hashes.
     if(location.pathname==='/'){
       event.preventDefault();
-      document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+      smoothScrollToSection(id);
     }
   };
   useEffect(()=>{
@@ -189,7 +223,7 @@ function ScrollToAnchor(){
     if(location.pathname!=='/'||!location.hash) return;
     const sectionId=decodeURIComponent(location.hash.slice(1));
     const timer=window.setTimeout(()=>{
-      document.getElementById(sectionId)?.scrollIntoView({behavior:'smooth',block:'start'});
+      smoothScrollToSection(sectionId);
     },100);
     return ()=>window.clearTimeout(timer);
   },[location.pathname,location.hash]);
