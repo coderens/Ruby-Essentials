@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { InputHTMLAttributes, ReactNode } from 'react';
 import { Link, NavLink, Route, Routes, useNavigate } from 'react-router-dom';
-import { Search, ArrowRight, ArrowUpRight, Camera, CheckCircle2, Clock3, Gamepad2, LayoutDashboard, LogOut, Mail, Menu, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users } from 'lucide-react';
+import { Search, ArrowRight, ArrowUpRight, Camera, CheckCircle2, Clock3, Gamepad2, House, LayoutDashboard, LogOut, Mail, Menu, Newspaper, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users } from 'lucide-react';
 
 const events = [
   { type: 'CLAN EVENT', title: 'Ruby Scrim Night', date: 'COMING SOON', detail: 'Team practice · Custom rooms' },
@@ -131,12 +131,12 @@ function Header(){
     <Brand/>
     <button className="mobile-toggle" type="button" onClick={()=>setOpen(value=>!value)} aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="primary-navigation"><Menu aria-hidden="true"/></button>
     <nav id="primary-navigation" className={open?'nav nav-open':'nav'} aria-label="Main navigation">
-      <NavLink to="/" end onClick={closeMenu}>Home</NavLink>
-      <NavLink to="/members" onClick={closeMenu}>Ruby Official</NavLink>
-      <NavLink to="/events" onClick={closeMenu}>News</NavLink>
-      <NavLink to="/gallery" onClick={()=>{closeMenu();window.scrollTo(0,0)}}>Gallery</NavLink>
-      {user&&<NavLink className="nav-dashboard" to="/dashboard" onClick={closeMenu}><LayoutDashboard size={14}/> Dashboard</NavLink>}
-      {user?.app_metadata?.role==='admin'&&<NavLink className="nav-dashboard" to="/admin" onClick={closeMenu}><ShieldCheck size={14}/> Admin</NavLink>}
+      <NavLink to="/" end onClick={closeMenu}><House size={14} aria-hidden="true"/><span>Home</span></NavLink>
+      <NavLink to="/members" onClick={closeMenu}><Users size={14} aria-hidden="true"/><span>Ruby Official</span></NavLink>
+      <NavLink to="/events" onClick={closeMenu}><Newspaper size={14} aria-hidden="true"/><span>News</span></NavLink>
+      <NavLink to="/gallery" onClick={()=>{closeMenu();window.scrollTo(0,0)}}><Camera size={14} aria-hidden="true"/><span>Gallery</span></NavLink>
+      {user&&<NavLink className="nav-dashboard" to="/dashboard" onClick={closeMenu}><LayoutDashboard size={14} aria-hidden="true"/><span>Dashboard</span></NavLink>}
+      {user?.app_metadata?.role==='admin'&&<NavLink className="nav-dashboard" to="/admin" onClick={closeMenu}><ShieldCheck size={14} aria-hidden="true"/><span>Admin</span></NavLink>}
     </nav>
     <div className="header-actions">
       {user ? <>
