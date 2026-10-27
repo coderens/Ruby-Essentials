@@ -3452,3 +3452,49 @@ a,button{-webkit-tap-highlight-color:rgba(255,53,72,.14)}
   .header .nav a:hover svg{transform:none}
   .header .mobile-toggle:hover{transform:none}
 }
+
+
+/* Global document scrolling: keep every route and long section reachable. */
+html{
+  min-height:100%;
+  height:auto;
+  overflow-x:clip;
+  overflow-y:auto;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+}
+body{
+  min-height:100%;
+  height:auto;
+  overflow-x:clip;
+  overflow-y:visible;
+  overscroll-behavior-y:auto;
+}
+#root{
+  min-height:100vh;
+  min-height:100dvh;
+  height:auto;
+  overflow:visible;
+}
+main,
+.page,
+.account-page,
+.account-dashboard,
+.auth-wrap{
+  height:auto;
+  max-height:none;
+  overflow-y:visible;
+}
+.landing-home,
+main.ruby-directory-page{
+  height:auto;
+  max-height:none;
+  overflow-x:clip;
+  overflow-y:visible;
+}
+html,body,#root{
+  scroll-snap-type:none;
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+}
