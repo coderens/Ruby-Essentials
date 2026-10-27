@@ -3030,3 +3030,92 @@ a,button{-webkit-tap-highlight-color:rgba(255,53,72,.14)}
   .admin-reviewed-actions{justify-content:space-between}
   .admin-resend-button{flex:1}
 }
+
+
+/* Uiverse-inspired icon fields for Ruby Essentials login and registration. */
+.auth-card .auth-field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  width:100%;
+  min-width:0;
+  color:#d7c9cc;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.1px;
+  line-height:1.5;
+}
+.auth-card .auth-field-label{
+  display:block;
+}
+.auth-card .uiverse-input-wrap{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  min-width:0;
+  min-height:54px;
+  padding:10px 13px;
+  border:1.5px solid #493038;
+  border-radius:6px;
+  background:rgba(4,4,6,.82);
+  color:#c5c5c5;
+  text-align:left;
+  transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+.auth-card .uiverse-input-icon{
+  display:flex;
+  flex:0 0 24px;
+  align-items:center;
+  justify-content:center;
+  color:#bdaeb2;
+  transition:color .2s ease;
+}
+.auth-card .uiverse-input{
+  display:block;
+  flex:1 1 auto;
+  width:100%;
+  min-width:0;
+  min-height:28px;
+  margin:0;
+  padding:0;
+  border:0!important;
+  border-radius:0!important;
+  outline:0;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:#f5edef;
+  font-size:14px;
+  font-weight:500;
+  letter-spacing:0;
+  line-height:1.5;
+}
+.auth-card .uiverse-input::placeholder{
+  color:#817579;
+  opacity:1;
+}
+.auth-card .uiverse-input-wrap:hover{
+  border-color:rgba(255,125,137,.55);
+}
+.auth-card .uiverse-input-wrap:focus-within{
+  border-color:#ff263b;
+  background:rgba(8,5,7,.98);
+  box-shadow:0 0 0 3px rgba(255,38,59,.13),0 0 18px rgba(255,38,59,.06);
+}
+.auth-card .uiverse-input-wrap:focus-within .uiverse-input-icon{
+  color:#ff7d89;
+}
+.auth-card .uiverse-input:focus{
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+@media(max-width:520px){
+  .auth-card .uiverse-input-wrap{
+    min-height:52px;
+    padding:10px 11px;
+  }
+  .auth-card .uiverse-input{font-size:13px}
+}
