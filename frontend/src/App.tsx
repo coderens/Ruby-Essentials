@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { InputHTMLAttributes, ReactNode } from 'react';
-import { Link, NavLink, Route, Routes, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { Search, ArrowRight, ArrowUpRight, Camera, CheckCircle2, Clock3, Gamepad2, House, LayoutDashboard, LogOut, Mail, Menu, Newspaper, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users } from 'lucide-react';
 
 const events = [
@@ -107,12 +107,35 @@ function Header(){
   const [logoutError,setLogoutError]=useState('');
   const user=useAuthUser();
   const navigate=useNavigate();
+  const location=useLocation();
+  const [activeSection,setActiveSection]=useState('home');
   useEffect(()=>{
     const closeOnEscape=(event:KeyboardEvent)=>{if(event.key==='Escape')setOpen(false)};
     window.addEventListener('keydown',closeOnEscape);
     return()=>window.removeEventListener('keydown',closeOnEscape)
   },[]);
   const closeMenu=()=>setOpen(false);
+  useEffect(()=>{
+    if(location.pathname!=='/'){
+      setActiveSection('');
+      return;
+    }
+    const sectionIds=['home','ruby-official','news','gallery'];
+    const syncActiveSection=()=>{
+      const passed=sectionIds.filter(id=>{
+        const element=document.getElementById(id);
+        return element && element.getBoundingClientRect().top<=150;
+      });
+      const next=passed.length?passed[passed.length-1]:'home';
+      setActiveSection(current=>current===next?current:next);
+    };
+    window.addEventListener('scroll',syncActiveSection,{passive:true});
+    const timer=window.setTimeout(syncActiveSection,120);
+    return ()=>{
+      window.removeEventListener('scroll',syncActiveSection);
+      window.clearTimeout(timer);
+    };
+  },[location.pathname,location.hash]);
   const handleSignOut=async()=>{
     setSigningOut(true);setLogoutError('');
     try{
@@ -131,10 +154,10 @@ function Header(){
     <Brand/>
     <button className="mobile-toggle" type="button" onClick={()=>setOpen(value=>!value)} aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="primary-navigation"><Menu aria-hidden="true"/></button>
     <nav id="primary-navigation" className={open?'nav nav-open':'nav'} aria-label="Main navigation">
-      <NavLink to="/" end onClick={closeMenu}><House size={14} aria-hidden="true"/><span>Home</span></NavLink>
-      <NavLink to="/members" onClick={closeMenu}><Users size={14} aria-hidden="true"/><span>Ruby Official</span></NavLink>
-      <NavLink to="/events" onClick={closeMenu}><Newspaper size={14} aria-hidden="true"/><span>News</span></NavLink>
-      <NavLink to="/gallery" onClick={()=>{closeMenu();window.scrollTo(0,0)}}><Camera size={14} aria-hidden="true"/><span>Gallery</span></NavLink>
+      <Link to="/#home" className={activeSection==='home'?'active':''} onClick={closeMenu}><House size={14} aria-hidden="true"/><span>Home</span></Link>
+      <Link to="/#ruby-official" className={activeSection==='ruby-official'?'active':''} onClick={closeMenu}><Users size={14} aria-hidden="true"/><span>Ruby Official</span></Link>
+      <Link to="/#news" className={activeSection==='news'?'active':''} onClick={closeMenu}><Newspaper size={14} aria-hidden="true"/><span>News</span></Link>
+      <Link to="/#gallery" className={activeSection==='gallery'?'active':''} onClick={closeMenu}><Camera size={14} aria-hidden="true"/><span>Gallery</span></Link>
       {user&&<NavLink className="nav-dashboard" to="/dashboard" onClick={closeMenu}><LayoutDashboard size={14} aria-hidden="true"/><span>Dashboard</span></NavLink>}
       {user?.app_metadata?.role==='admin'&&<NavLink className="nav-dashboard" to="/admin" onClick={closeMenu}><ShieldCheck size={14} aria-hidden="true"/><span>Admin</span></NavLink>}
     </nav>
@@ -152,13 +175,25 @@ function Header(){
     {logoutError&&<span className="header-logout-error" role="status">{logoutError}</span>}
   </header>
 }
+function ScrollToAnchor(){
+  const location=useLocation();
+  useEffect(()=>{
+    if(location.pathname!=='/'||!location.hash) return;
+    const sectionId=decodeURIComponent(location.hash.slice(1));
+    const timer=window.setTimeout(()=>{
+      document.getElementById(sectionId)?.scrollIntoView({behavior:'smooth',block:'start'});
+    },100);
+    return ()=>window.clearTimeout(timer);
+  },[location.pathname,location.hash]);
+  return null;
+}
 function Footer(){return <footer className="footer" id="contact"><Brand/><p>We The Confidence</p><small>© 2026 RUBY ESSENTIALS · CALL OF DUTY MOBILE ESPORTS</small></footer>}
 function Home(){
   const user=useAuthUser();
   const primaryPath=user?'/dashboard':'/join';
   const primaryLabel=user?'OPEN DASHBOARD':'JOIN OUR CLAN';
   return <><main className="landing-home">
-    <section className="landing-hero">
+    <section className="landing-hero" id="home">
       <div className="landing-copy">
         <p className="landing-kicker">CALL OF DUTY MOBILE ESPORTS CLAN</p>
         <h1><span>We The</span><strong>Confidence</strong></h1>
@@ -179,10 +214,12 @@ function Home(){
     <section className="latest-section" id="latest">
       <div className="latest-intro"><p className="landing-kicker">LATEST UPDATES</p><h2>STAY <em>CONNECTED</em></h2><p>Get the latest news, events, and announcements from Ruby Essentials.</p></div>
       <div className="news-cards">
-        <article className="news-card"><Link className="news-card-link" to="/events" aria-label="Read Welcome to Our New Website update"><div className="news-art news-art-crest"><img src="/transparent%20logo.png" alt="Ruby Essentials" width="94" height="94" loading="lazy" decoding="async"/></div><div className="news-copy"><span>ANNOUNCEMENT</span><h3>Welcome to Our New Website</h3><p>We're excited to officially launch our clan website. Stay tuned for updates, events, and more!</p><time>CLAN UPDATE</time></div></Link></article>
-        <article className="news-card"><Link className="news-card-link" to="/events" aria-label="View CODM Scrim Schedule"><div className="news-art news-art-soldier"><div className="soldier-visor"></div><div className="soldier-body"></div></div><div className="news-copy"><span>EVENT</span><h3>CODM Scrim Schedule</h3><p>Check out our upcoming scrim schedule and be ready for the action!</p><time>SCHEDULE TBA</time></div></Link></article>
+        <article className="news-card"><Link className="news-card-link" to="/#news" aria-label="Read Welcome to Our New Website update"><div className="news-art news-art-crest"><img src="/transparent%20logo.png" alt="Ruby Essentials" width="94" height="94" loading="lazy" decoding="async"/></div><div className="news-copy"><span>ANNOUNCEMENT</span><h3>Welcome to Our New Website</h3><p>We're excited to officially launch our clan website. Stay tuned for updates, events, and more!</p><time>CLAN UPDATE</time></div></Link></article>
+        <article className="news-card"><Link className="news-card-link" to="/#news" aria-label="View CODM Scrim Schedule"><div className="news-art news-art-soldier"><div className="soldier-visor"></div><div className="soldier-body"></div></div><div className="news-copy"><span>EVENT</span><h3>CODM Scrim Schedule</h3><p>Check out our upcoming scrim schedule and be ready for the action!</p><time>SCHEDULE TBA</time></div></Link></article>
       </div>
     </section>
+    <Members />
+    <Events />
     <GallerySection />
   </main></>
 }
@@ -238,7 +275,7 @@ function GallerySection(){
       </div>
       <div className="gallery-section-footer">
         <span>OUR STORY IS STILL BEING WRITTEN.</span>
-        <Link to="/events" className="gallery-updates-link">EXPLORE CLAN UPDATES <ArrowUpRight size={15}/></Link>
+        <Link to="/#news" className="gallery-updates-link">EXPLORE CLAN UPDATES <ArrowUpRight size={15}/></Link>
       </div>
     </section>
   );
@@ -258,7 +295,7 @@ function Members(){
     (memberType==='All'||member.category===memberType)&&
     (!query||[member.name,member.category,member.role,String(member.id)].some(value=>value.toLowerCase().includes(query)))
   );
-  return <main className="ruby-directory-page">
+  return <section className="ruby-directory-page" id="ruby-official">
     <section className="ruby-directory-intro">
       <div className="ruby-directory-intro-copy">
         <p className="landing-kicker"><span className="accent">RUBY ESSENTIALS</span><span className="ruby-directory-slash"> / </span>COMMUNITY</p>
@@ -300,7 +337,7 @@ function Members(){
         <Link className="landing-primary" to="/join">APPLY TO JOIN <ArrowUpRight size={17}/></Link>
       </div>
     </section>
-  </main>
+  </section>
 }
 function AccountDashboard(){
   const navigate=useNavigate();
@@ -451,7 +488,7 @@ function AccountDashboard(){
   </main>;
 }
 
-function Events(){return <main className="page section"><p className="eyebrow"><span className="accent">02 / </span>CLAN ACTIVITIES</p><h1 className="page-title">EVENTS & <span className="accent">UPDATES.</span></h1><p className="muted page-intro">Clan scrims, recruitment updates, and community activities in one place.</p><div className="event-grid">{events.map((e,i)=><article className="event-card" key={e.title}><div className="card-top"><span className="game-icon">{i===0?<Gamepad2 size={20}/>:i===1?<Users size={20}/>:<Trophy size={20}/>}</span><span className={'status '+(i===1?'live':'')}>{e.date}</span></div><p className="eyebrow">{e.type}</p><h3>{e.title}</h3><p className="muted">{e.detail}</p><Link className="card-action" to={i===1?"/join":"/#contact"}>{i===1?"Apply to join":"Get involved"} <ArrowUpRight size={15}/></Link></article>)}</div></main>}
+function Events(){return <section className="page section" id="news"><p className="eyebrow"><span className="accent">02 / </span>CLAN ACTIVITIES</p><h1 className="page-title">EVENTS & <span className="accent">UPDATES.</span></h1><p className="muted page-intro">Clan scrims, recruitment updates, and community activities in one place.</p><div className="event-grid">{events.map((e,i)=><article className="event-card" key={e.title}><div className="card-top"><span className="game-icon">{i===0?<Gamepad2 size={20}/>:i===1?<Users size={20}/>:<Trophy size={20}/>}</span><span className={'status '+(i===1?'live':'')}>{e.date}</span></div><p className="eyebrow">{e.type}</p><h3>{e.title}</h3><p className="muted">{e.detail}</p><Link className="card-action" to={i===1?"/join":"/#contact"}>{i===1?"Apply to join":"Get involved"} <ArrowUpRight size={15}/></Link></article>)}</div></section>}
 function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   const navigate=useNavigate();
   const [message,setMessage]=useState('');
@@ -739,4 +776,4 @@ function Admin(){
     <div className="admin-review-footer"><Link to="/members" className="text-link">View roster <ArrowUpRight size={15}/></Link><Link to="/events" className="text-link">Manage clan updates <ArrowUpRight size={15}/></Link></div>
   </main>;
 }
-export default function App(){return <><Header/><Routes><Route path="/" element={<Home/>}/><Route path="/dashboard" element={<AccountDashboard/>}/><Route path="/members" element={<Members/>}/><Route path="/gallery" element={<GalleryPage/>}/><Route path="/events" element={<Events/>}/><Route path="/login" element={<AuthPage mode="login"/>}/><Route path="/join" element={<AuthPage mode="join"/>}/><Route path="/forgot-password" element={<AuthPage mode="forgot"/>}/><Route path="/reset-password" element={<AuthPage mode="reset"/>}/><Route path="/admin" element={<Admin/>}/><Route path="*" element={<main className="page section"><h1 className="page-title">PAGE NOT FOUND<span className="accent">.</span></h1><Link to="/" className="text-link">Return home <ArrowUpRight size={17}/></Link></main>}/></Routes><Footer/></>}
+export default function App(){return <><Header/><ScrollToAnchor/><Routes><Route path="/" element={<Home/>}/><Route path="/dashboard" element={<AccountDashboard/>}/><Route path="/members" element={<Members/>}/><Route path="/gallery" element={<GalleryPage/>}/><Route path="/events" element={<Events/>}/><Route path="/login" element={<AuthPage mode="login"/>}/><Route path="/join" element={<AuthPage mode="join"/>}/><Route path="/forgot-password" element={<AuthPage mode="forgot"/>}/><Route path="/reset-password" element={<AuthPage mode="reset"/>}/><Route path="/admin" element={<Admin/>}/><Route path="*" element={<main className="page section"><h1 className="page-title">PAGE NOT FOUND<span className="accent">.</span></h1><Link to="/" className="text-link">Return home <ArrowUpRight size={17}/></Link></main>}/></Routes><Footer/></>}
