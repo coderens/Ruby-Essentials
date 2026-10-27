@@ -25,6 +25,10 @@ type ProfileRow = {
 
 type ApplicationRow = {
   id: string;
+  user_id?: string;
+  display_name?: string;
+  ign?: string | null;
+  email?: string | null;
   status: 'pending' | 'approved' | 'rejected';
   created_at: string;
 };
@@ -554,5 +558,110 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   }
   return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>{mode==='login'?'WELCOME BACK.':mode==='join'?'JOIN THE CLAN.':mode==='reset'?'CHOOSE A NEW PASSWORD.':'RESET ACCESS.'}</h1><p className="muted">{mode==='login'?'Sign in to your Ruby Essentials account.':mode==='join'?'Create your account and submit a membership request.':mode==='reset'?'Choose a new password for your account.':'Enter your account email to receive a password reset link.'}</p><form onSubmit={submit}>{mode==='join'&&<label>Display name<input name="displayName" required minLength={2} maxLength={60} placeholder="Your name or clan alias"/></label>}{mode!=='reset'&&<label>Email address<input name="email" type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com"/></label>}{mode!=='forgot'&&<label>{mode==='reset'?'New password':'Password'}<input name="password" type="password" required minLength={8} maxLength={128} autoComplete={mode==='login'?'current-password':'new-password'} placeholder="At least 8 characters"/></label>}{(mode==='join'||mode==='reset')&&<label>Confirm password<input name="confirmPassword" type="password" required minLength={8} maxLength={128} autoComplete="new-password" placeholder="Enter password again"/></label>}{mode==='join'&&<label>In-game name<input name="ign" maxLength={40} placeholder="Your IGN"/></label>}<button className="btn auth-submit" disabled={busy||!configured}>{busy?'Please wait…':mode==='login'?'Log in':mode==='join'?'Create account & request to join':mode==='reset'?'Update password':'Send reset link'} <ArrowUpRight size={17}/></button></form>{message&&<p className="form-message" role="status">{message}</p>}{!configured&&<p className="hint">Account services are not configured yet. Please try again later.</p>}<div className="auth-bottom">{mode==='login'?<><Link to="/forgot-password">Forgot password?</Link><span>New to Ruby? <Link to="/join">Request to join</Link></span></>:mode==='join'?<span>Already have an account? <Link to="/login">Log in</Link></span>:mode==='reset'?<span>Remembered it? <Link to="/login">Back to login</Link></span>:<span>Remembered it? <Link to="/login">Back to login</Link></span>}</div></div></main>
 }
-function Admin(){return <main className="page section"><p className="eyebrow"><span className="accent">ADMIN / </span>CONTROL ROOM</p><h1 className="page-title">CLAN <span className="accent">CENTER.</span></h1><p className="muted page-intro">Admin dashboard preview. Secure roles and backend access must be configured before live member data can be managed.</p><div className="admin-grid"><Link to="/members" className="admin-action"><span className="muted">MEMBERS</span><strong>View roster</strong><p className="muted">Browse member profiles and clan roles.</p><span className="card-action">Open roster <ArrowUpRight size={15}/></span></Link><Link to="/events" className="admin-action"><span className="muted">EVENTS</span><strong>View updates</strong><p className="muted">Browse scrims, announcements, and activities.</p><span className="card-action">Open events <ArrowUpRight size={15}/></span></Link><Link to="/join" className="admin-action"><span className="muted">APPLICATIONS</span><strong>Join requests</strong><p className="muted">Open the membership request form.</p><span className="card-action">View join form <ArrowUpRight size={15}/></span></Link></div><p className="hint">This is a visual prototype only. Add authenticated, role-protected backend routes before using it for real administration.</p></main>}
+function Admin(){
+  const [loading,setLoading]=useState(true);
+  const [isAdmin,setIsAdmin]=useState(false);
+  const [applications,setApplications]=useState<ApplicationRow[]>([]);
+  const [filter,setFilter]=useState<'pending'|'all'>('pending');
+  const [busyId,setBusyId]=useState<string|null>(null);
+  const [message,setMessage]=useState('');
+  const [error,setError]=useState('');
+  const [refreshCount,setRefreshCount]=useState(0);
+
+  useEffect(()=>{
+    let active=true;
+    (async()=>{
+      setLoading(true);setError('');
+      try{
+        const {supabase}=await import('./lib/supabase');
+        const {data:{user},error:userError}=await supabase.auth.getUser();
+        if(userError) throw userError;
+        if(!user){
+          if(active){setIsAdmin(false);setApplications([])}
+          return;
+        }
+        const allowed=user.app_metadata?.role==='admin';
+        if(active)setIsAdmin(allowed);
+        if(!allowed){
+          if(active)setApplications([]);
+          return;
+        }
+        const {data,error:queryError}=await supabase
+          .from('join_applications')
+          .select('id,user_id,display_name,ign,email,status,created_at')
+          .order('created_at',{ascending:false});
+        if(queryError)throw queryError;
+        if(active)setApplications((data||[]) as ApplicationRow[]);
+      }catch(e){
+        if(active)setError(e instanceof Error?e.message:'Unable to load membership applications.');
+      }finally{
+        if(active)setLoading(false);
+      }
+    })();
+    return()=>{active=false};
+  },[refreshCount]);
+
+  async function updateStatus(application:ApplicationRow,status:'approved'|'rejected'){
+    setBusyId(application.id);setError('');setMessage('');
+    try{
+      const {supabase}=await import('./lib/supabase');
+      const {data,error:updateError}=await supabase
+        .from('join_applications')
+        .update({status})
+        .eq('id',application.id)
+        .eq('status','pending')
+        .select('id,status')
+        .maybeSingle();
+      if(updateError)throw updateError;
+      if(!data)throw new Error('No status was changed. Refresh the list and confirm the request is still pending.');
+      setApplications(current=>current.map(item=>item.id===application.id?{...item,status}:item));
+      setMessage(`${application.display_name||application.email||'Application'} was ${status}.`);
+    }catch(e){
+      setError(e instanceof Error?e.message:'Could not update this application.');
+    }finally{setBusyId(null)}
+  }
+
+  const visibleApplications=applications.filter(item=>filter==='all'||item.status==='pending');
+  const pendingCount=applications.filter(item=>item.status==='pending').length;
+
+  return <main className="page section admin-review-page">
+    <p className="eyebrow"><span className="accent">ADMIN / </span>CONTROL ROOM</p>
+    <h1 className="page-title">MEMBERSHIP <span className="accent">REVIEW.</span></h1>
+    <p className="muted page-intro">Review Ruby Essentials join requests and approve or reject each application.</p>
+    {loading?<p className="admin-feedback" role="status">Checking administrator access and loading applications…</p>
+    :!isAdmin?<section className="admin-access-denied"><Shield size={25}/><h2>ADMIN ACCESS REQUIRED.</h2><p>This page is restricted to designated administrators. Sign in with an admin account to review membership requests.</p><Link to="/login" className="landing-primary">GO TO LOGIN <ArrowUpRight size={16}/></Link></section>
+    :<>
+      <section className="admin-review-summary">
+        <div><span className="eyebrow">PENDING REQUESTS</span><strong>{pendingCount}</strong></div>
+        <div><span className="eyebrow">TOTAL APPLICATIONS</span><strong>{applications.length}</strong></div>
+        <button className="account-refresh" type="button" onClick={()=>setRefreshCount(value=>value+1)}><RefreshCw size={14}/> Refresh list</button>
+      </section>
+      <div className="admin-review-toolbar">
+        <div><h2>JOIN APPLICATIONS</h2><p className="muted">Applicant details and review status.</p></div>
+        <div className="admin-review-filters">
+          <button type="button" className={filter==='pending'?'active':''} onClick={()=>setFilter('pending')}>Pending ({pendingCount})</button>
+          <button type="button" className={filter==='all'?'active':''} onClick={()=>setFilter('all')}>All applications</button>
+        </div>
+      </div>
+      {message&&<p className="admin-feedback success" role="status">{message}</p>}
+      {error&&<p className="admin-feedback error" role="alert">{error}</p>}
+      {visibleApplications.length===0?<div className="admin-empty-state"><CheckCircle2 size={24}/><strong>{filter==='pending'?'No pending applications':'No applications yet'}</strong><p className="muted">{filter==='pending'?'All current join requests have been reviewed.':'New join requests will appear here.'}</p></div>
+      :<div className="admin-application-list">{visibleApplications.map(application=><article className="admin-application-row" key={application.id}>
+        <div className="admin-applicant-avatar">{(application.display_name||'R').trim().slice(0,1).toUpperCase()}</div>
+        <div className="admin-applicant-details">
+          <strong>{application.display_name||'Unnamed applicant'}</strong>
+          <span>{application.email||'Email unavailable'}</span>
+          {application.ign&&<small>IGN: {application.ign}</small>}
+          <small>Submitted {formatDate(application.created_at)}</small>
+        </div>
+        <span className={'admin-status status-'+application.status}>{application.status}</span>
+        {application.status==='pending'?<div className="admin-application-actions">
+          <button type="button" className="admin-approve-button" disabled={busyId!==null} onClick={()=>void updateStatus(application,'approved')}>{busyId===application.id?'Saving…':'Approve'}</button>
+          <button type="button" className="admin-reject-button" disabled={busyId!==null} onClick={()=>void updateStatus(application,'rejected')}>Reject</button>
+        </div>:<span className="admin-reviewed-label">Reviewed</span>}
+      </article>)}</div>}
+    </>}
+    <div className="admin-review-footer"><Link to="/members" className="text-link">View roster <ArrowUpRight size={15}/></Link><Link to="/events" className="text-link">Manage clan updates <ArrowUpRight size={15}/></Link></div>
+  </main>;
+}
 export default function App(){return <><Header/><Routes><Route path="/" element={<Home/>}/><Route path="/dashboard" element={<AccountDashboard/>}/><Route path="/members" element={<Members/>}/><Route path="/gallery" element={<GalleryPage/>}/><Route path="/events" element={<Events/>}/><Route path="/login" element={<AuthPage mode="login"/>}/><Route path="/join" element={<AuthPage mode="join"/>}/><Route path="/forgot-password" element={<AuthPage mode="forgot"/>}/><Route path="/reset-password" element={<AuthPage mode="reset"/>}/><Route path="/admin" element={<Admin/>}/><Route path="*" element={<main className="page section"><h1 className="page-title">PAGE NOT FOUND<span className="accent">.</span></h1><Link to="/" className="text-link">Return home <ArrowUpRight size={17}/></Link></main>}/></Routes><Footer/></>}
