@@ -3463,3 +3463,44 @@ a,button{-webkit-tap-highlight-color:rgba(255,53,72,.14)}
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
 }
+
+/* Password visibility control for authentication forms. */
+.auth-card .auth-password-toggle{
+  display:inline-flex;
+  flex:0 0 34px;
+  align-items:center;
+  justify-content:center;
+  width:34px;
+  height:34px;
+  margin:0;
+  padding:0;
+  border:1px solid transparent;
+  border-radius:5px;
+  background:transparent;
+  color:#bdaeb2;
+  cursor:pointer;
+  transition:color .18s ease,background .18s ease,border-color .18s ease;
+}
+.auth-card .auth-password-toggle:hover{
+  color:#ff7d89;
+  border-color:rgba(255,125,137,.25);
+  background:rgba(255,38,59,.08);
+}
+.auth-card .auth-password-toggle:focus-visible{
+  outline:2px solid #ff7d89;
+  outline-offset:2px;
+}
+.auth-card .auth-password-toggle svg{
+  display:block;
+  flex:0 0 auto;
+}
+@media(max-width:520px){
+  .auth-card .auth-password-toggle{
+    flex-basis:32px;
+    width:32px;
+    height:32px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .auth-card .auth-password-toggle{transition:none}
+}
