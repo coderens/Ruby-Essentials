@@ -531,6 +531,28 @@ function AccountDashboard(){
 }
 
 function Events(){return <section className="page section" id="news"><p className="eyebrow"><span className="accent">02 / </span>CLAN ACTIVITIES</p><h1 className="page-title">EVENTS & <span className="accent">UPDATES.</span></h1><p className="muted page-intro">Clan scrims, recruitment updates, and community activities in one place.</p><div className="event-grid">{events.map((e,i)=><article className="event-card" key={e.title}><div className="card-top"><span className="game-icon">{i===0?<Gamepad2 size={20}/>:i===1?<Users size={20}/>:<Trophy size={20}/>}</span><span className={'status '+(i===1?'live':'')}>{e.date}</span></div><p className="eyebrow">{e.type}</p><h3>{e.title}</h3><p className="muted">{e.detail}</p><Link className="card-action" to={i===1?"/join":"/#contact"}>{i===1?"Apply to join":"Get involved"} <ArrowUpRight size={15}/></Link></article>)}</div></section>}
+function likelyEmailDomainFix(email:string){
+  const at=email.lastIndexOf('@');
+  if(at<0)return null;
+  const local=email.slice(0,at);
+  const domain=email.slice(at+1).toLowerCase();
+  const commonTypos:Record<string,string>={
+    'gmail.cm':'gmail.com',
+    'gmai.com':'gmail.com',
+    'gmal.com':'gmail.com',
+    'gmial.com':'gmail.com',
+    'gamil.com':'gmail.com',
+    'hotnail.com':'hotmail.com',
+    'hotmai.com':'hotmail.com',
+    'hotmial.com':'hotmail.com',
+    'outlok.com':'outlook.com',
+    'outloo.com':'outlook.com',
+    'yaho.com':'yahoo.com',
+    'yahooo.com':'yahoo.com'
+  };
+  const corrected=commonTypos[domain];
+  return corrected ? local+'@'+corrected : null;
+}
 function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   const navigate=useNavigate();
   const [message,setMessage]=useState('');
@@ -670,6 +692,10 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
       if(password!==confirmation) throw new Error('The passwords do not match.');
       const displayName=String(form.get('displayName')||'').trim();
       const ign=String(form.get('ign')||'').trim();
+      const suggestedEmail=likelyEmailDomainFix(email);
+      if(suggestedEmail){
+        throw new Error('Please check the email address. Did you mean '+suggestedEmail+'? Confirmation emails must go to an inbox you can access.');
+      }
       const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:authRedirectUrl+'/login',data:{display_name:displayName,ign}}});
       if(error) throw error;
       // Supabase intentionally returns an obfuscated user with no identities when
