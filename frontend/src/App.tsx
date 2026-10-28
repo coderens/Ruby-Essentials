@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import type { InputHTMLAttributes, MouseEvent, ReactNode } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { Search, ArrowRight, ArrowUpRight, Camera, CheckCircle2, Clock3, Gamepad2, House, LayoutDashboard, LogOut, Mail, Menu, Newspaper, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users } from 'lucide-react';
+import { Search, ArrowRight, ArrowUpRight, Camera, CheckCircle2, Clock3, Eye, EyeOff, Gamepad2, House, LayoutDashboard, LogOut, Mail, Menu, Newspaper, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users } from 'lucide-react';
 
 const events = [
   { type: 'CLAN EVENT', title: 'Ruby Scrim Night', date: 'COMING SOON', detail: 'Team practice · Custom rooms' },
@@ -38,17 +38,41 @@ type ApplicationRow = {
 type AuthFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   icon: ReactNode;
+  showPasswordToggle?: boolean;
+  showPassword?: boolean;
+  onTogglePassword?: () => void;
 };
 
-function AuthField({ label, icon, ...inputProps }: AuthFieldProps) {
+function AuthField({
+  label,
+  icon,
+  showPasswordToggle = false,
+  showPassword = false,
+  onTogglePassword,
+  ...inputProps
+}: AuthFieldProps) {
+  const inputId = useId();
+  const inputType = showPasswordToggle ? (showPassword ? 'text' : 'password') : inputProps.type;
   return (
-    <label className="auth-field">
-      <span className="auth-field-label">{label}</span>
+    <div className="auth-field">
+      <label className="auth-field-label" htmlFor={inputId}>{label}</label>
       <span className="uiverse-input-wrap">
         <span className="uiverse-input-icon" aria-hidden="true">{icon}</span>
-        <input className="uiverse-input" {...inputProps} />
+        <input id={inputId} className="uiverse-input" {...inputProps} type={inputType} />
+        {showPasswordToggle && (
+          <button
+            className="auth-password-toggle"
+            type="button"
+            onClick={onTogglePassword}
+            aria-label={showPassword ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
+            aria-pressed={showPassword}
+            title={showPassword ? 'Hide password' : 'Show password'}
+          >
+            {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+          </button>
+        )}
       </span>
-    </label>
+    </div>
   );
 }
 
@@ -557,6 +581,8 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   const navigate=useNavigate();
   const [message,setMessage]=useState('');
   const [busy,setBusy]=useState(false);
+  const [showPassword,setShowPassword]=useState(false);
+  const [showConfirmPassword,setShowConfirmPassword]=useState(false);
   const [canResendConfirmation,setCanResendConfirmation]=useState(false);
   const [confirmationEmail,setConfirmationEmail]=useState('');
   const [checkingSession,setCheckingSession]=useState(mode==='login');
@@ -722,7 +748,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   if(mode==='login'&&checkingSession){
     return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>CHECKING YOUR SESSION.</h1><p className="muted" role="status">Checking whether you're already signed in…</p></div></main>;
   }
-  return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>{mode==='login'?'WELCOME BACK.':mode==='join'?'JOIN THE CLAN.':mode==='reset'?'CHOOSE A NEW PASSWORD.':'RESET ACCESS.'}</h1><p className="muted">{mode==='login'?'Sign in to your Ruby Essentials account.':mode==='join'?'Create your account and submit a membership request.':mode==='reset'?'Choose a new password for your account.':'Enter your account email to receive a password reset link.'}</p><form onSubmit={submit}>{mode==='join'&&<AuthField label="Display name" icon={<UserRound size={22} strokeWidth={1.6}/>} name="displayName" required minLength={2} maxLength={60} autoComplete="nickname" placeholder="Your name or clan alias"/>}{mode!=='reset'&&<AuthField label="Email address" icon={<Mail size={22} strokeWidth={1.6}/>} name="email" type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com"/>}{mode!=='forgot'&&<AuthField label={mode==='reset'?'New password':'Password'} icon={<Shield size={22} strokeWidth={1.6}/>} name="password" type="password" required minLength={8} maxLength={128} autoComplete={mode==='login'?'current-password':'new-password'} placeholder="At least 8 characters"/>}{(mode==='join'||mode==='reset')&&<AuthField label="Confirm password" icon={<ShieldCheck size={22} strokeWidth={1.6}/>} name="confirmPassword" type="password" required minLength={8} maxLength={128} autoComplete="new-password" placeholder="Enter password again"/>}{mode==='join'&&<AuthField label="In-game name" icon={<Gamepad2 size={22} strokeWidth={1.6}/>} name="ign" maxLength={40} autoComplete="off" placeholder="Your IGN"/>}<button className="btn auth-submit" disabled={busy||!configured}>{busy?'Please wait…':mode==='login'?'Log in':mode==='join'?'Create account & request to join':mode==='reset'?'Update password':'Send reset link'} <ArrowUpRight size={17}/></button></form>{message&&<p className="form-message" role="status">{message}</p>}{mode==='login'&&canResendConfirmation&&<button className="btn auth-submit auth-resend-confirmation" type="button" onClick={resendConfirmation} disabled={busy||!configured}>{busy?'Sending…':'Resend confirmation email'} <ArrowUpRight size={17}/></button>}{!configured&&<p className="hint">Account services are not configured yet. Please try again later.</p>}<div className="auth-bottom">{mode==='login'?<><Link to="/forgot-password">Forgot password?</Link><span>New to Ruby? <Link to="/join">Request to join</Link></span></>:mode==='join'?<span>Already have an account? <Link to="/login">Log in</Link></span>:mode==='reset'?<span>Remembered it? <Link to="/login">Back to login</Link></span>:<span>Remembered it? <Link to="/login">Back to login</Link></span>}</div></div></main>
+  return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>{mode==='login'?'WELCOME BACK.':mode==='join'?'JOIN THE CLAN.':mode==='reset'?'CHOOSE A NEW PASSWORD.':'RESET ACCESS.'}</h1><p className="muted">{mode==='login'?'Sign in to your Ruby Essentials account.':mode==='join'?'Create your account and submit a membership request.':mode==='reset'?'Choose a new password for your account.':'Enter your account email to receive a password reset link.'}</p><form onSubmit={submit}>{mode==='join'&&<AuthField label="Display name" icon={<UserRound size={22} strokeWidth={1.6}/>} name="displayName" required minLength={2} maxLength={60} autoComplete="nickname" placeholder="Your name or clan alias"/>}{mode!=='reset'&&<AuthField label="Email address" icon={<Mail size={22} strokeWidth={1.6}/>} name="email" type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com"/>}{mode!=='forgot'&&<AuthField label={mode==='reset'?'New password':'Password'} icon={<Shield size={22} strokeWidth={1.6}/>} name="password" type="password" showPasswordToggle showPassword={showPassword} onTogglePassword={()=>setShowPassword(value=>!value)} required minLength={8} maxLength={128} autoComplete={mode==='login'?'current-password':'new-password'} placeholder="At least 8 characters"/>}{(mode==='join'||mode==='reset')&&<AuthField label="Confirm password" icon={<ShieldCheck size={22} strokeWidth={1.6}/>} name="confirmPassword" type="password" showPasswordToggle showPassword={showConfirmPassword} onTogglePassword={()=>setShowConfirmPassword(value=>!value)} required minLength={8} maxLength={128} autoComplete="new-password" placeholder="Enter password again"/>}{mode==='join'&&<AuthField label="In-game name" icon={<Gamepad2 size={22} strokeWidth={1.6}/>} name="ign" maxLength={40} autoComplete="off" placeholder="Your IGN"/>}<button className="btn auth-submit" disabled={busy||!configured}>{busy?'Please wait…':mode==='login'?'Log in':mode==='join'?'Create account & request to join':mode==='reset'?'Update password':'Send reset link'} <ArrowUpRight size={17}/></button></form>{message&&<p className="form-message" role="status">{message}</p>}{mode==='login'&&canResendConfirmation&&<button className="btn auth-submit auth-resend-confirmation" type="button" onClick={resendConfirmation} disabled={busy||!configured}>{busy?'Sending…':'Resend confirmation email'} <ArrowUpRight size={17}/></button>}{!configured&&<p className="hint">Account services are not configured yet. Please try again later.</p>}<div className="auth-bottom">{mode==='login'?<><Link to="/forgot-password">Forgot password?</Link><span>New to Ruby? <Link to="/join">Request to join</Link></span></>:mode==='join'?<span>Already have an account? <Link to="/login">Log in</Link></span>:mode==='reset'?<span>Remembered it? <Link to="/login">Back to login</Link></span>:<span>Remembered it? <Link to="/login">Back to login</Link></span>}</div></div></main>
 }
 function Admin(){
   const [loading,setLoading]=useState(true);
