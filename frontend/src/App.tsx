@@ -535,6 +535,8 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   const navigate=useNavigate();
   const [message,setMessage]=useState('');
   const [busy,setBusy]=useState(false);
+  const [canResendConfirmation,setCanResendConfirmation]=useState(false);
+  const [confirmationEmail,setConfirmationEmail]=useState('');
   const [checkingSession,setCheckingSession]=useState(mode==='login');
   const manualAuthInProgress=useRef(false);
   const configured=Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
@@ -587,12 +589,32 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
       unsubscribe?.();
     };
   },[mode,navigate,configured]);
+  async function resendConfirmation(){
+    if(!confirmationEmail||!configured)return;
+    setBusy(true);
+    setMessage('');
+    try{
+      const {supabase}=await import('./lib/supabase');
+      const {error}=await supabase.auth.resend({
+        type:'signup',
+        email:confirmationEmail,
+        options:{emailRedirectTo:authRedirectUrl+'/login'}
+      });
+      if(error) throw error;
+      setMessage('A new confirmation email has been requested. Check your inbox and spam folder. Please wait a minute before requesting another link.');
+    }catch(err){
+      const error=err as {message?:string};
+      setMessage(error.message||'We could not resend the confirmation email. Please try again shortly.');
+    }finally{
+      setBusy(false);
+    }
+  }
   async function submit(e:React.FormEvent<HTMLFormElement>){
     e.preventDefault();
     manualAuthInProgress.current=true;
     const formElement=e.currentTarget;
     const form=new FormData(formElement);
-    setMessage('');setBusy(true);
+    setMessage('');setCanResendConfirmation(false);setConfirmationEmail('');setBusy(true);
     try{
       if(!configured) throw new Error('Account services are not configured yet. Please try again later.');
       const { supabase } = await import('./lib/supabase');
@@ -616,7 +638,16 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
       }
       if(mode==='login'){
         const {data,error}=await supabase.auth.signInWithPassword({email,password});
-        if(error) throw error;
+        if(error){
+          const authError=error as {code?:string;message:string};
+          if(authError.code==='email_not_confirmed'||authError.message.toLowerCase().includes('email not confirmed')){
+            setConfirmationEmail(email);
+            setCanResendConfirmation(true);
+            setMessage('Your email address has not been confirmed yet. Request a fresh confirmation link below, then open it from your inbox.');
+            return;
+          }
+          throw error;
+        }
         const user=data.user;
         const displayName=String(user.user_metadata?.display_name||'').trim();
         const ign=String(user.user_metadata?.ign||'').trim();
@@ -641,6 +672,12 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
       const ign=String(form.get('ign')||'').trim();
       const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:authRedirectUrl+'/login',data:{display_name:displayName,ign}}});
       if(error) throw error;
+      // Supabase intentionally returns an obfuscated user with no identities when
+      // the email already belongs to an existing account. No new confirmation is sent.
+      if(data.user && data.user.identities?.length===0){
+        setMessage('An account with this email already exists. Please log in instead, or use Forgot password if you cannot access it.');
+        return;
+      }
       if(data.session && data.user){
         const {error:profileError}=await supabase.from('profiles').upsert({id:data.user.id,display_name:displayName,ign:ign||null},{onConflict:'id'});
         if(profileError) throw profileError;
@@ -659,7 +696,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   if(mode==='login'&&checkingSession){
     return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>CHECKING YOUR SESSION.</h1><p className="muted" role="status">Checking whether you're already signed in…</p></div></main>;
   }
-  return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>{mode==='login'?'WELCOME BACK.':mode==='join'?'JOIN THE CLAN.':mode==='reset'?'CHOOSE A NEW PASSWORD.':'RESET ACCESS.'}</h1><p className="muted">{mode==='login'?'Sign in to your Ruby Essentials account.':mode==='join'?'Create your account and submit a membership request.':mode==='reset'?'Choose a new password for your account.':'Enter your account email to receive a password reset link.'}</p><form onSubmit={submit}>{mode==='join'&&<AuthField label="Display name" icon={<UserRound size={22} strokeWidth={1.6}/>} name="displayName" required minLength={2} maxLength={60} autoComplete="nickname" placeholder="Your name or clan alias"/>}{mode!=='reset'&&<AuthField label="Email address" icon={<Mail size={22} strokeWidth={1.6}/>} name="email" type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com"/>}{mode!=='forgot'&&<AuthField label={mode==='reset'?'New password':'Password'} icon={<Shield size={22} strokeWidth={1.6}/>} name="password" type="password" required minLength={8} maxLength={128} autoComplete={mode==='login'?'current-password':'new-password'} placeholder="At least 8 characters"/>}{(mode==='join'||mode==='reset')&&<AuthField label="Confirm password" icon={<ShieldCheck size={22} strokeWidth={1.6}/>} name="confirmPassword" type="password" required minLength={8} maxLength={128} autoComplete="new-password" placeholder="Enter password again"/>}{mode==='join'&&<AuthField label="In-game name" icon={<Gamepad2 size={22} strokeWidth={1.6}/>} name="ign" maxLength={40} autoComplete="off" placeholder="Your IGN"/>}<button className="btn auth-submit" disabled={busy||!configured}>{busy?'Please wait…':mode==='login'?'Log in':mode==='join'?'Create account & request to join':mode==='reset'?'Update password':'Send reset link'} <ArrowUpRight size={17}/></button></form>{message&&<p className="form-message" role="status">{message}</p>}{!configured&&<p className="hint">Account services are not configured yet. Please try again later.</p>}<div className="auth-bottom">{mode==='login'?<><Link to="/forgot-password">Forgot password?</Link><span>New to Ruby? <Link to="/join">Request to join</Link></span></>:mode==='join'?<span>Already have an account? <Link to="/login">Log in</Link></span>:mode==='reset'?<span>Remembered it? <Link to="/login">Back to login</Link></span>:<span>Remembered it? <Link to="/login">Back to login</Link></span>}</div></div></main>
+  return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>{mode==='login'?'WELCOME BACK.':mode==='join'?'JOIN THE CLAN.':mode==='reset'?'CHOOSE A NEW PASSWORD.':'RESET ACCESS.'}</h1><p className="muted">{mode==='login'?'Sign in to your Ruby Essentials account.':mode==='join'?'Create your account and submit a membership request.':mode==='reset'?'Choose a new password for your account.':'Enter your account email to receive a password reset link.'}</p><form onSubmit={submit}>{mode==='join'&&<AuthField label="Display name" icon={<UserRound size={22} strokeWidth={1.6}/>} name="displayName" required minLength={2} maxLength={60} autoComplete="nickname" placeholder="Your name or clan alias"/>}{mode!=='reset'&&<AuthField label="Email address" icon={<Mail size={22} strokeWidth={1.6}/>} name="email" type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com"/>}{mode!=='forgot'&&<AuthField label={mode==='reset'?'New password':'Password'} icon={<Shield size={22} strokeWidth={1.6}/>} name="password" type="password" required minLength={8} maxLength={128} autoComplete={mode==='login'?'current-password':'new-password'} placeholder="At least 8 characters"/>}{(mode==='join'||mode==='reset')&&<AuthField label="Confirm password" icon={<ShieldCheck size={22} strokeWidth={1.6}/>} name="confirmPassword" type="password" required minLength={8} maxLength={128} autoComplete="new-password" placeholder="Enter password again"/>}{mode==='join'&&<AuthField label="In-game name" icon={<Gamepad2 size={22} strokeWidth={1.6}/>} name="ign" maxLength={40} autoComplete="off" placeholder="Your IGN"/>}<button className="btn auth-submit" disabled={busy||!configured}>{busy?'Please wait…':mode==='login'?'Log in':mode==='join'?'Create account & request to join':mode==='reset'?'Update password':'Send reset link'} <ArrowUpRight size={17}/></button></form>{message&&<p className="form-message" role="status">{message}</p>}{mode==='login'&&canResendConfirmation&&<button className="btn auth-submit auth-resend-confirmation" type="button" onClick={resendConfirmation} disabled={busy||!configured}>{busy?'Sending…':'Resend confirmation email'} <ArrowUpRight size={17}/></button>}{!configured&&<p className="hint">Account services are not configured yet. Please try again later.</p>}<div className="auth-bottom">{mode==='login'?<><Link to="/forgot-password">Forgot password?</Link><span>New to Ruby? <Link to="/join">Request to join</Link></span></>:mode==='join'?<span>Already have an account? <Link to="/login">Log in</Link></span>:mode==='reset'?<span>Remembered it? <Link to="/login">Back to login</Link></span>:<span>Remembered it? <Link to="/login">Back to login</Link></span>}</div></div></main>
 }
 function Admin(){
   const [loading,setLoading]=useState(true);
