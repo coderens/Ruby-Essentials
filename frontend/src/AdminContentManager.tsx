@@ -265,7 +265,7 @@ export default function AdminContentManager() {
           display_name: form.displayName.trim(), ign: form.ign.trim() || null, role: form.role.trim(),
           category: form.category.trim(), division: form.division.trim(), bio: form.bio.trim(),
           membership_status: form.membershipStatus, featured: form.featured, published: form.published,
-          sort_order: form.sortOrder, avatar_url: form.avatarUrl.trim() || null,
+          sort_order: form.sortOrder, avatar_url: selectedFile ? null : (form.avatarUrl.trim() || null),
         };
         if (avatarPath) payload.avatar_path = avatarPath;
         const result = editingId ? await supabase.from('public_members').update(payload).eq('id', editingId) : await supabase.from('public_members').insert(payload);
