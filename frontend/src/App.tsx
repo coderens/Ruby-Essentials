@@ -4,9 +4,9 @@ import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-ro
 import { Search, ArrowRight, ArrowUpRight, Camera, CheckCircle2, Clock3, Eye, EyeOff, Gamepad2, House, LayoutDashboard, LogOut, Mail, Menu, Newspaper, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users, X } from 'lucide-react';
 
 const events = [
-  { type: 'CLAN EVENT', title: 'Ruby Scrim Night', date: 'COMING SOON', detail: 'Team practice Â· Custom rooms' },
-  { type: 'COMMUNITY', title: 'Recruitment Open', date: 'NOW OPEN', detail: 'Meet the clan Â· Apply to join' },
-  { type: 'COMPETITIVE', title: 'Weekly Showdown', date: 'UPCOMING', detail: 'Competitive matches Â· Teamwork' },
+  { type: 'CLAN EVENT', title: 'Ruby Scrim Night', date: 'COMING SOON', detail: 'Team practice · Custom rooms' },
+  { type: 'COMMUNITY', title: 'Recruitment Open', date: 'NOW OPEN', detail: 'Meet the clan · Apply to join' },
+  { type: 'COMPETITIVE', title: 'Weekly Showdown', date: 'UPCOMING', detail: 'Competitive matches · Teamwork' },
 ];
 
 type AppUser = {
@@ -119,9 +119,9 @@ function displayNameFor(user: AppUser | null) {
 }
 
 function formatDate(value?: string | null) {
-  if (!value) return 'â€”';
+  if (!value) return '—';
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'â€”';
+  if (Number.isNaN(date.getTime())) return '—';
   return new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', year: 'numeric' }).format(date);
 }
 function Brand(){return <Link to="/" className="brand" aria-label="Ruby Essentials home"><img className="brand-logo" src="/transparent%20logo.png" alt="" width="66" height="66"/><span className="brand-name"><b>RUBY</b><strong>ESSENTIALS</strong></span></Link>}
@@ -216,7 +216,7 @@ function Header(){
         <button className="header-signout" type="button" onClick={handleSignOut} disabled={signingOut} aria-label="Sign out" title="Sign out">
           <LogOut size={15}/><span>{signingOut?'Signing out':'Sign out'}</span>
         </button>
-      </> : <Link className="login-link" to="/login" onClick={closeMenu}>â‡¥ &nbsp; Login / Register</Link>}
+      </> : <Link className="login-link" to="/login" onClick={closeMenu}>⇥ &nbsp; Login / Register</Link>}
     </div>
     {logoutError&&<span className="header-logout-error" role="status">{logoutError}</span>}
   </header>
@@ -230,7 +230,7 @@ function ScrollToAnchor(){
   },[location.pathname,location.hash]);
   return null;
 }
-function Footer(){return <footer className="footer" id="contact"><Brand/><p>We The Confidence</p><small>Â© 2026 RUBY ESSENTIALS Â· CALL OF DUTY MOBILE ESPORTS</small></footer>}
+function Footer(){return <footer className="footer" id="contact"><Brand/><p>We The Confidence</p><small>© 2026 RUBY ESSENTIALS · CALL OF DUTY MOBILE ESPORTS</small></footer>}
 function Home(){
   const user=useAuthUser();
   const primaryPath=user?'/dashboard':'/join';
@@ -298,7 +298,7 @@ function GallerySection(){
           <div className="gallery-collection-copy">
             <p className="eyebrow">PROGRESS WORTH REMEMBERING</p>
             <h3>Milestones &amp; Achievements</h3>
-            <p>Tournament highlights, placements, and clan milestonesâ€”added as they are recorded.</p>
+            <p>Tournament highlights, placements, and clan milestones—added as they are recorded.</p>
             <span className="gallery-coming-soon">ACHIEVEMENTS WILL BE ADDED HERE</span>
           </div>
         </article>
@@ -355,7 +355,7 @@ function Members(){
         <label className="ruby-directory-search">
           <Search size={17} aria-hidden="true"/>
           <input type="search" value={memberSearch} onChange={event=>setMemberSearch(event.target.value)} placeholder="Search members..." aria-label="Search members by name, type, or role"/>
-          {memberSearch&&<button type="button" onClick={()=>setMemberSearch('')} aria-label="Clear search">Ã—</button>}
+          {memberSearch&&<button type="button" onClick={()=>setMemberSearch('')} aria-label="Clear search">×</button>}
         </label>
       </div>
       <div className="ruby-directory-results-heading">
@@ -370,7 +370,7 @@ function Members(){
           <div className="ruby-directory-avatar"><img src="/transparent%20logo.png" alt="" loading="lazy" decoding="async"/></div>
           <div className="ruby-directory-member-copy">
             <h3>{member.name}</h3>
-            <p>{member.role} Â· Details coming soon</p>
+            <p>{member.role} · Details coming soon</p>
           </div>
           <div className="ruby-directory-member-bottom"><span><i/> RUBY ESSENTIALS</span><span className="ruby-directory-member-arrow"><ArrowUpRight size={17} aria-hidden="true"/></span></div>
         </article>)}
@@ -457,7 +457,7 @@ function AccountDashboard(){
   const createdAt=profile?.created_at||account?.created_at;
 
   if(loading){
-    return <main className="account-page page section"><div className="account-loading"><span className="account-loading-mark"><RefreshCw size={22}/></span><p className="eyebrow">RUBY ESSENTIALS / MEMBER CENTER</p><h1>PREPARING YOUR <span className="accent">ACCOUNT.</span></h1><p className="muted">Securely loading your profile and membership statusâ€¦</p></div></main>;
+    return <main className="account-page page section"><div className="account-loading"><span className="account-loading-mark"><RefreshCw size={22}/></span><p className="eyebrow">RUBY ESSENTIALS / MEMBER CENTER</p><h1>PREPARING YOUR <span className="accent">ACCOUNT.</span></h1><p className="muted">Securely loading your profile and membership status…</p></div></main>;
   }
 
   return <main className="account-page page section account-dashboard">
@@ -465,11 +465,11 @@ function AccountDashboard(){
       <div className="account-dashboard-heading">
         <p className="eyebrow"><span className="accent">RUBY ESSENTIALS / </span>{isAdmin?'ADMIN DASHBOARD':'MEMBER DASHBOARD'}</p>
         <h1 className="account-dashboard-title">{isAdmin?<>WELCOME BACK, <span className="accent">ADMIN.</span></>:<>WELCOME BACK, <span className="accent">{userName}</span></>}</h1>
-        <p className="muted account-intro">{isAdmin?'Manage membership requests and access Ruby Essentials administration tools.':'Your profile, membership request, and clan linksâ€”organized in one place.'}</p>
+        <p className="muted account-intro">{isAdmin?'Manage membership requests and access Ruby Essentials administration tools.':'Your profile, membership request, and clan links—organized in one place.'}</p>
       </div>
       <div className="account-hero-actions">
         <Link className="landing-primary" to={isAdmin?'/admin':'/members'}>{isAdmin?'REVIEW APPLICATIONS':'VIEW CLAN ROSTER'} <ArrowRight size={16}/></Link>
-        <button className="account-refresh" type="button" onClick={()=>setRefreshCount(count=>count+1)} disabled={refreshing}><RefreshCw size={14}/> {refreshing?'Refreshingâ€¦':'Refresh status'}</button>
+        <button className="account-refresh" type="button" onClick={()=>setRefreshCount(count=>count+1)} disabled={refreshing}><RefreshCw size={14}/> {refreshing?'Refreshing…':'Refresh status'}</button>
       </div>
     </section>
 
@@ -723,9 +723,9 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
     }finally{setBusy(false);manualAuthInProgress.current=false}
   }
   if(mode==='login'&&checkingSession){
-    return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>CHECKING YOUR SESSION.</h1><p className="muted" role="status">Checking whether you're already signed inâ€¦</p></div></main>;
+    return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>CHECKING YOUR SESSION.</h1><p className="muted" role="status">Checking whether you're already signed in…</p></div></main>;
   }
-  return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>{mode==='login'?'WELCOME BACK.':mode==='join'?'JOIN THE CLAN.':mode==='reset'?'CHOOSE A NEW PASSWORD.':'RESET ACCESS.'}</h1><p className="muted">{mode==='login'?'Sign in to your Ruby Essentials account.':mode==='join'?'Create your account and submit a membership request.':mode==='reset'?'Choose a new password for your account.':'Enter your account email to receive a password reset link.'}</p><form onSubmit={submit}>{mode==='join'&&<AuthField label="Display name" icon={<UserRound size={22} strokeWidth={1.6}/>} name="displayName" required minLength={2} maxLength={60} autoComplete="nickname" placeholder="Your name or clan alias"/>}{mode!=='reset'&&<AuthField label="Email address" icon={<Mail size={22} strokeWidth={1.6}/>} name="email" type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com"/>}{mode!=='forgot'&&<AuthField label={mode==='reset'?'New password':'Password'} icon={<Shield size={22} strokeWidth={1.6}/>} name="password" type="password" showPasswordToggle showPassword={showPassword} onTogglePassword={()=>setShowPassword(value=>!value)} required minLength={8} maxLength={128} autoComplete={mode==='login'?'current-password':'new-password'} placeholder="At least 8 characters"/>}{(mode==='join'||mode==='reset')&&<AuthField label="Confirm password" icon={<ShieldCheck size={22} strokeWidth={1.6}/>} name="confirmPassword" type="password" showPasswordToggle showPassword={showConfirmPassword} onTogglePassword={()=>setShowConfirmPassword(value=>!value)} required minLength={8} maxLength={128} autoComplete="new-password" placeholder="Enter password again"/>}{mode==='join'&&<AuthField label="In-game name" icon={<Gamepad2 size={22} strokeWidth={1.6}/>} name="ign" maxLength={40} autoComplete="off" placeholder="Your IGN"/>}<button className="btn auth-submit" disabled={busy||!configured}>{busy?'Please waitâ€¦':mode==='login'?'Log in':mode==='join'?'Create account & request to join':mode==='reset'?'Update password':'Send reset link'} <ArrowUpRight size={17}/></button></form>{message&&<p className="form-message" role="status">{message}</p>}{mode==='login'&&canResendConfirmation&&<button className="btn auth-submit auth-resend-confirmation" type="button" onClick={resendConfirmation} disabled={busy||!configured}>{busy?'Sendingâ€¦':'Resend confirmation email'} <ArrowUpRight size={17}/></button>}{!configured&&<p className="hint">Account services are not configured yet. Please try again later.</p>}<div className="auth-bottom">{mode==='login'?<><Link to="/forgot-password">Forgot password?</Link><span>New to Ruby? <Link to="/join">Request to join</Link></span></>:mode==='join'?<span>Already have an account? <Link to="/login">Log in</Link></span>:mode==='reset'?<span>Remembered it? <Link to="/login">Back to login</Link></span>:<span>Remembered it? <Link to="/login">Back to login</Link></span>}</div></div></main>
+  return <main className="auth-wrap"><div className="auth-card"><div className="auth-symbol"><img className="auth-logo" src="/transparent%20logo.png" alt="Ruby Essentials logo"/></div><p className="eyebrow">RUBY ESSENTIALS ACCOUNT</p><h1>{mode==='login'?'WELCOME BACK.':mode==='join'?'JOIN THE CLAN.':mode==='reset'?'CHOOSE A NEW PASSWORD.':'RESET ACCESS.'}</h1><p className="muted">{mode==='login'?'Sign in to your Ruby Essentials account.':mode==='join'?'Create your account and submit a membership request.':mode==='reset'?'Choose a new password for your account.':'Enter your account email to receive a password reset link.'}</p><form onSubmit={submit}>{mode==='join'&&<AuthField label="Display name" icon={<UserRound size={22} strokeWidth={1.6}/>} name="displayName" required minLength={2} maxLength={60} autoComplete="nickname" placeholder="Your name or clan alias"/>}{mode!=='reset'&&<AuthField label="Email address" icon={<Mail size={22} strokeWidth={1.6}/>} name="email" type="email" required maxLength={254} autoComplete="email" placeholder="you@example.com"/>}{mode!=='forgot'&&<AuthField label={mode==='reset'?'New password':'Password'} icon={<Shield size={22} strokeWidth={1.6}/>} name="password" type="password" showPasswordToggle showPassword={showPassword} onTogglePassword={()=>setShowPassword(value=>!value)} required minLength={8} maxLength={128} autoComplete={mode==='login'?'current-password':'new-password'} placeholder="At least 8 characters"/>}{(mode==='join'||mode==='reset')&&<AuthField label="Confirm password" icon={<ShieldCheck size={22} strokeWidth={1.6}/>} name="confirmPassword" type="password" showPasswordToggle showPassword={showConfirmPassword} onTogglePassword={()=>setShowConfirmPassword(value=>!value)} required minLength={8} maxLength={128} autoComplete="new-password" placeholder="Enter password again"/>}{mode==='join'&&<AuthField label="In-game name" icon={<Gamepad2 size={22} strokeWidth={1.6}/>} name="ign" maxLength={40} autoComplete="off" placeholder="Your IGN"/>}<button className="btn auth-submit" disabled={busy||!configured}>{busy?'Please wait…':mode==='login'?'Log in':mode==='join'?'Create account & request to join':mode==='reset'?'Update password':'Send reset link'} <ArrowUpRight size={17}/></button></form>{message&&<p className="form-message" role="status">{message}</p>}{mode==='login'&&canResendConfirmation&&<button className="btn auth-submit auth-resend-confirmation" type="button" onClick={resendConfirmation} disabled={busy||!configured}>{busy?'Sending…':'Resend confirmation email'} <ArrowUpRight size={17}/></button>}{!configured&&<p className="hint">Account services are not configured yet. Please try again later.</p>}<div className="auth-bottom">{mode==='login'?<><Link to="/forgot-password">Forgot password?</Link><span>New to Ruby? <Link to="/join">Request to join</Link></span></>:mode==='join'?<span>Already have an account? <Link to="/login">Log in</Link></span>:mode==='reset'?<span>Remembered it? <Link to="/login">Back to login</Link></span>:<span>Remembered it? <Link to="/login">Back to login</Link></span>}</div></div></main>
 }
 function Admin(){
   const [loading,setLoading]=useState(true);
@@ -842,13 +842,13 @@ function Admin(){
 
   const visibleApplications=applications.filter(item=>filter==='all'||item.status==='pending');
   const pendingCount=applications.filter(item=>item.status==='pending').length;
-  const realtimeLabel=realtimeStatus==='live'?'LIVE UPDATES':realtimeStatus==='connecting'?'CONNECTINGâ€¦':'LIVE UPDATES OFF';
+  const realtimeLabel=realtimeStatus==='live'?'LIVE UPDATES':realtimeStatus==='connecting'?'CONNECTING…':'LIVE UPDATES OFF';
 
   return <main className="page section admin-review-page">
     <p className="eyebrow"><span className="accent">ADMIN / </span>CONTROL ROOM</p>
     <h1 className="page-title">MEMBERSHIP <span className="accent">REVIEW.</span></h1>
     <p className="muted page-intro">Review Ruby Essentials join requests and approve or reject each application.</p>
-    {loading?<p className="admin-feedback" role="status">Checking administrator access and loading applicationsâ€¦</p>
+    {loading?<p className="admin-feedback" role="status">Checking administrator access and loading applications…</p>
     :!isAdmin?<section className="admin-access-denied"><Shield size={25}/><h2>ADMIN ACCESS REQUIRED.</h2><p>This page is restricted to designated administrators. Sign in with an admin account to review membership requests.</p><Link to="/login" className="landing-primary">GO TO LOGIN <ArrowUpRight size={16}/></Link></section>
     :<>
       <section className="admin-review-summary">
@@ -876,13 +876,12 @@ function Admin(){
         </div>
         <span className={'admin-status status-'+application.status}>{application.status}</span>
         {application.status==='pending'?<div className="admin-application-actions">
-          <button type="button" className="admin-approve-button" disabled={busyId!==null} onClick={()=>void updateStatus(application,'approved')}>{busyId===application.id?'Savingâ€¦':'Approve'}</button>
+          <button type="button" className="admin-approve-button" disabled={busyId!==null} onClick={()=>void updateStatus(application,'approved')}>{busyId===application.id?'Saving…':'Approve'}</button>
           <button type="button" className="admin-reject-button" disabled={busyId!==null} onClick={()=>void updateStatus(application,'rejected')}>Reject</button>
-        </div>:<div className="admin-reviewed-actions"><span className="admin-reviewed-label">Reviewed</span><button type="button" className="admin-resend-button" disabled={busyId!==null} onClick={()=>void resendDecisionEmail(application)}>{busyId===application.id?'Sendingâ€¦':'Resend email'}</button></div>}
+        </div>:<div className="admin-reviewed-actions"><span className="admin-reviewed-label">Reviewed</span><button type="button" className="admin-resend-button" disabled={busyId!==null} onClick={()=>void resendDecisionEmail(application)}>{busyId===application.id?'Sending…':'Resend email'}</button></div>}
       </article>)}</div>}
     </>}
     <div className="admin-review-footer"><Link to="/members" className="text-link">View roster <ArrowUpRight size={15}/></Link><Link to="/events" className="text-link">Manage clan updates <ArrowUpRight size={15}/></Link></div>
   </main>;
 }
 export default function App(){return <><Header/><ScrollToAnchor/><Routes><Route path="/" element={<Home/>}/><Route path="/dashboard" element={<AccountDashboard/>}/><Route path="/members" element={<Members/>}/><Route path="/gallery" element={<GalleryPage/>}/><Route path="/events" element={<Events/>}/><Route path="/login" element={<AuthPage mode="login"/>}/><Route path="/join" element={<AuthPage mode="join"/>}/><Route path="/forgot-password" element={<AuthPage mode="forgot"/>}/><Route path="/reset-password" element={<AuthPage mode="reset"/>}/><Route path="/admin" element={<Admin/>}/><Route path="*" element={<main className="page section"><h1 className="page-title">PAGE NOT FOUND<span className="accent">.</span></h1><Link to="/" className="text-link">Return home <ArrowUpRight size={17}/></Link></main>}/></Routes><Footer/></>}
-
