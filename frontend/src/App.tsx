@@ -1,7 +1,7 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import type { InputHTMLAttributes, MouseEvent, ReactNode } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { Search, ArrowRight, ArrowUpRight, Camera, CheckCircle2, Clock3, Eye, EyeOff, Gamepad2, House, LayoutDashboard, LogOut, Mail, Menu, Newspaper, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users } from 'lucide-react';
+import { Search, ArrowRight, ArrowUpRight, Camera, CheckCircle2, Clock3, Eye, EyeOff, Gamepad2, House, LayoutDashboard, LogOut, Mail, Menu, Newspaper, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users, X } from 'lucide-react';
 
 const events = [
   { type: 'CLAN EVENT', title: 'Ruby Scrim Night', date: 'COMING SOON', detail: 'Team practice · Custom rooms' },
@@ -126,38 +126,11 @@ function formatDate(value?: string | null) {
 }
 function Brand(){return <Link to="/" className="brand" aria-label="Ruby Essentials home"><img className="brand-logo" src="/transparent%20logo.png" alt="" width="66" height="66"/><span className="brand-name"><b>RUBY</b><strong>ESSENTIALS</strong></span></Link>}
 
-let activeSectionScrollFrame:number|null=null;
 function smoothScrollToSection(id:string){
   const target=document.getElementById(id);
   if(!target)return;
-  if(activeSectionScrollFrame!==null){
-    window.cancelAnimationFrame(activeSectionScrollFrame);
-    activeSectionScrollFrame=null;
-  }
-  const targetY=Math.max(0,window.scrollY+target.getBoundingClientRect().top-100);
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    window.scrollTo(0,targetY);
-    return;
-  }
-  const startY=window.scrollY;
-  const distance=targetY-startY;
-  if(Math.abs(distance)<2)return;
-  const duration=Math.min(1100,Math.max(650,Math.abs(distance)*0.45));
-  let startTime:number|null=null;
-  const animate=(time:number)=>{
-    if(startTime===null)startTime=time;
-    const progress=Math.min((time-startTime)/duration,1);
-    const eased=progress<0.5
-      ?4*progress*progress*progress
-      :1-Math.pow(-2*progress+2,3)/2;
-    window.scrollTo(0,startY+distance*eased);
-    if(progress<1){
-      activeSectionScrollFrame=window.requestAnimationFrame(animate);
-    }else{
-      activeSectionScrollFrame=null;
-    }
-  };
-  activeSectionScrollFrame=window.requestAnimationFrame(animate);
+  const behavior=window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth';
+  target.scrollIntoView({behavior,block:'start',inline:'nearest'});
 }
 function Header(){
   const [open,setOpen]=useState(false);
@@ -166,11 +139,19 @@ function Header(){
   const user=useAuthUser();
   const navigate=useNavigate();
   const location=useLocation();
+  const headerRef=useRef<HTMLElement>(null);
   const [activeSection,setActiveSection]=useState('home');
   useEffect(()=>{
     const closeOnEscape=(event:KeyboardEvent)=>{if(event.key==='Escape')setOpen(false)};
     window.addEventListener('keydown',closeOnEscape);
     return()=>window.removeEventListener('keydown',closeOnEscape)
+  },[]);
+  useEffect(()=>{
+    const closeOnOutsidePress=(event:PointerEvent)=>{
+      if(!headerRef.current?.contains(event.target as Node))setOpen(false);
+    };
+    window.addEventListener('pointerdown',closeOnOutsidePress);
+    return()=>window.removeEventListener('pointerdown',closeOnOutsidePress);
   },[]);
   const closeMenu=()=>setOpen(false);
   const handleSectionClick=(event:MouseEvent<HTMLAnchorElement>,id:string)=>{
@@ -196,10 +177,9 @@ function Header(){
       setActiveSection(current=>current===next?current:next);
     };
     window.addEventListener('scroll',syncActiveSection,{passive:true});
-    const timer=window.setTimeout(syncActiveSection,120);
+    syncActiveSection();
     return ()=>{
       window.removeEventListener('scroll',syncActiveSection);
-      window.clearTimeout(timer);
     };
   },[location.pathname,location.hash]);
   const handleSignOut=async()=>{
@@ -216,14 +196,14 @@ function Header(){
   };
   const accountName=displayNameFor(user);
   const initials=accountName.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]?.toUpperCase()).join('')||'RE';
-  return <header className="header">
+  return <header className="header" ref={headerRef}>
     <Brand/>
-    <button className="mobile-toggle" type="button" onClick={()=>setOpen(value=>!value)} aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="primary-navigation"><Menu aria-hidden="true"/></button>
+    <button className="mobile-toggle" type="button" onClick={()=>setOpen(value=>!value)} aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="primary-navigation">{open?<X aria-hidden="true"/>:<Menu aria-hidden="true"/>}</button>
     <nav id="primary-navigation" className={open?'nav nav-open':'nav'} aria-label="Main navigation">
-      <Link to="/#home" className={activeSection==='home'?'active':''} onClick={event=>handleSectionClick(event,'home')}><House size={14} aria-hidden="true"/><span>Home</span></Link>
-      <Link to="/#ruby-official" className={activeSection==='ruby-official'?'active':''} onClick={event=>handleSectionClick(event,'ruby-official')}><Users size={14} aria-hidden="true"/><span>Ruby Official</span></Link>
-      <Link to="/#news" className={activeSection==='news'?'active':''} onClick={event=>handleSectionClick(event,'news')}><Newspaper size={14} aria-hidden="true"/><span>News</span></Link>
-      <Link to="/#gallery" className={activeSection==='gallery'?'active':''} onClick={event=>handleSectionClick(event,'gallery')}><Camera size={14} aria-hidden="true"/><span>Gallery</span></Link>
+      <Link to="/#home" className={activeSection==='home'?'active':''} aria-current={activeSection==='home'?'location':undefined} onClick={event=>handleSectionClick(event,'home')}><House size={14} aria-hidden="true"/><span>Home</span></Link>
+      <Link to="/#ruby-official" className={activeSection==='ruby-official'?'active':''} aria-current={activeSection==='ruby-official'?'location':undefined} onClick={event=>handleSectionClick(event,'ruby-official')}><Users size={14} aria-hidden="true"/><span>Ruby Official</span></Link>
+      <Link to="/#news" className={activeSection==='news'?'active':''} aria-current={activeSection==='news'?'location':undefined} onClick={event=>handleSectionClick(event,'news')}><Newspaper size={14} aria-hidden="true"/><span>News</span></Link>
+      <Link to="/#gallery" className={activeSection==='gallery'?'active':''} aria-current={activeSection==='gallery'?'location':undefined} onClick={event=>handleSectionClick(event,'gallery')}><Camera size={14} aria-hidden="true"/><span>Gallery</span></Link>
       {user&&<NavLink className="nav-dashboard" to="/dashboard" onClick={closeMenu}><LayoutDashboard size={14} aria-hidden="true"/><span>Dashboard</span></NavLink>}
       {user?.app_metadata?.role==='admin'&&<NavLink className="nav-dashboard" to="/admin" onClick={closeMenu}><ShieldCheck size={14} aria-hidden="true"/><span>Admin</span></NavLink>}
     </nav>
@@ -243,13 +223,10 @@ function Header(){
 }
 function ScrollToAnchor(){
   const location=useLocation();
-  useEffect(()=>{
+  useLayoutEffect(()=>{
     if(location.pathname!=='/'||!location.hash) return;
     const sectionId=decodeURIComponent(location.hash.slice(1));
-    const timer=window.setTimeout(()=>{
-      smoothScrollToSection(sectionId);
-    },100);
-    return ()=>window.clearTimeout(timer);
+    smoothScrollToSection(sectionId);
   },[location.pathname,location.hash]);
   return null;
 }
