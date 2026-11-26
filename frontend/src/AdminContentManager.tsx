@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, CheckCircle2, ImagePlus, LoaderCircle, Pencil, Plus, Save, ShieldAlert, Trash2, Upload, X } from 'lucide-react';
-import { supabase } from './lib/supabase';
 import './content-admin.css';
 
 type ContentTab = 'announcements' | 'events' | 'members' | 'gallery';
@@ -70,6 +69,12 @@ const tabs: { id: ContentTab; label: string; description: string }[] = [
 const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
 const maxImageBytes = 10 * 1024 * 1024;
 
+async function removeStorageFile(path: string) {
+  const { supabase } = await import('./lib/supabase');
+  const { error } = await supabase.storage.from('ruby-gallery').remove([path]);
+  if (error) throw error;
+}
+
 function displayTitle(tab: ContentTab, row: ContentRow) {
   if (tab === 'members') return row.display_name || 'Unnamed member';
   if (tab === 'gallery') return row.caption || 'Untitled gallery item';
@@ -115,6 +120,7 @@ export default function AdminContentManager() {
     let active = true;
     async function verifyAdmin() {
       try {
+        const { supabase } = await import('./lib/supabase');
         const { data, error: authError } = await supabase.auth.getUser();
         if (authError) throw authError;
         if (active) setAuthorized(data.user?.app_metadata?.role === 'admin');
@@ -132,6 +138,7 @@ export default function AdminContentManager() {
     setLoading(true);
     setError('');
     try {
+      const { supabase } = await import('./lib/supabase');
       const [announcementResult, eventResult, memberResult, galleryResult] = await Promise.all([
         supabase.from('announcements').select('*').order('created_at', { ascending: false }),
         supabase.from('events').select('*').order('starts_at', { ascending: true, nullsFirst: false }),
@@ -220,6 +227,7 @@ export default function AdminContentManager() {
 
   async function uploadImage(folder: 'members' | 'gallery') {
     if (!selectedFile) return currentStoragePath;
+    const { supabase } = await import('./lib/supabase');
     const extension = selectedFile.name.split('.').pop()?.toLowerCase() || 'jpg';
     const safeExtension = ['jpg', 'jpeg', 'png', 'webp'].includes(extension) ? extension : 'jpg';
     const path = folder + '/' + crypto.randomUUID() + '.' + safeExtension;
@@ -237,6 +245,7 @@ export default function AdminContentManager() {
     setNotice('');
     let newlyUploadedPath: string | null = null;
     try {
+      const { supabase } = await import('./lib/supabase');
       if (activeTab === 'announcements') {
         const payload = { title: form.title.trim(), body: form.body.trim(), category: form.category.trim() || 'Announcement', published: form.published };
         const result = editingId ? await supabase.from('announcements').update(payload).eq('id', editingId) : await supabase.from('announcements').insert(payload);
@@ -279,7 +288,7 @@ export default function AdminContentManager() {
       setNotice(wasEditing ? 'Content updated successfully.' : 'Content created successfully.');
     } catch (saveError) {
       if (newlyUploadedPath) {
-        await supabase.storage.from('ruby-gallery').remove([newlyUploadedPath]);
+        try { await removeStorageFile(newlyUploadedPath); } catch { /* Preserve the original save error. */ }
       }
       setError(saveError instanceof Error ? saveError.message : 'Unable to save this content.');
     } finally {
@@ -291,6 +300,7 @@ export default function AdminContentManager() {
     setError('');
     setNotice('');
     try {
+      const { supabase } = await import('./lib/supabase');
       let requestError: { message: string } | null = null;
       if (activeTab === 'announcements') requestError = (await supabase.from('announcements').update({ published: !row.published }).eq('id', row.id)).error;
       else if (activeTab === 'events') requestError = (await supabase.from('events').update({ published: !row.published }).eq('id', row.id)).error;
@@ -309,6 +319,7 @@ export default function AdminContentManager() {
     setError('');
     setNotice('');
     try {
+      const { supabase } = await import('./lib/supabase');
       let requestError: { message: string } | null = null;
       if (activeTab === 'announcements') requestError = (await supabase.from('announcements').delete().eq('id', row.id)).error;
       else if (activeTab === 'events') requestError = (await supabase.from('events').delete().eq('id', row.id)).error;
