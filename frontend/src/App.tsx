@@ -129,7 +129,8 @@ function Brand(){return <Link to="/" className="brand" aria-label="Ruby Essentia
 function smoothScrollToSection(id:string){
   const target=document.getElementById(id);
   if(!target)return;
-  target.scrollIntoView({behavior:'instant',block:'start',inline:'nearest'});
+  const behavior=window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth';
+  target.scrollIntoView({behavior,block:'start',inline:'nearest'});
 }
 function Header(){
   const [open,setOpen]=useState(false);
@@ -176,10 +177,9 @@ function Header(){
       setActiveSection(current=>current===next?current:next);
     };
     window.addEventListener('scroll',syncActiveSection,{passive:true});
-    const timer=window.setTimeout(syncActiveSection,120);
+    syncActiveSection();
     return ()=>{
       window.removeEventListener('scroll',syncActiveSection);
-      window.clearTimeout(timer);
     };
   },[location.pathname,location.hash]);
   const handleSignOut=async()=>{
