@@ -2,12 +2,9 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import type { InputHTMLAttributes, MouseEvent, ReactNode } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { Search, ArrowRight, ArrowUpRight, Camera, CheckCircle2, Clock3, Eye, EyeOff, Gamepad2, House, LayoutDashboard, LogOut, Mail, Menu, Newspaper, RefreshCw, Shield, ShieldCheck, Trophy, UserRound, Users, X } from 'lucide-react';
+import AdminContentManager from './AdminContentManager';
 
-const events = [
-  { type: 'CLAN EVENT', title: 'Ruby Scrim Night', date: 'COMING SOON', detail: 'Team practice · Custom rooms' },
-  { type: 'COMMUNITY', title: 'Recruitment Open', date: 'NOW OPEN', detail: 'Meet the clan · Apply to join' },
-  { type: 'COMPETITIVE', title: 'Weekly Showdown', date: 'UPCOMING', detail: 'Competitive matches · Teamwork' },
-];
+
 
 type AppUser = {
   id: string;
@@ -34,6 +31,69 @@ type ApplicationRow = {
   status: 'pending' | 'approved' | 'rejected';
   created_at: string;
 };
+
+type PublicMemberRow = {
+  id: string;
+  display_name: string;
+  ign: string | null;
+  role: string;
+  category: string;
+  avatar_url: string | null;
+  avatar_path: string | null;
+  bio: string;
+  division: string;
+  featured: boolean;
+  sort_order: number;
+  membership_status: 'active' | 'alumni';
+  resolved_avatar?: string | null;
+};
+
+type AnnouncementRow = {
+  id: string;
+  title: string;
+  body: string;
+  category: string;
+  created_at: string;
+};
+
+type ClanEventRow = {
+  id: string;
+  title: string;
+  detail: string;
+  starts_at: string | null;
+  category: string;
+  status: string;
+  created_at: string;
+};
+
+type GalleryRow = {
+  id: string;
+  storage_path: string;
+  caption: string;
+  alt_text: string;
+  category: string;
+  sort_order: number;
+  created_at: string;
+  image_url?: string | null;
+};
+
+async function resolvePublicImage(storagePath?: string | null, directUrl?: string | null) {
+  if (directUrl) return directUrl;
+  if (!storagePath) return null;
+
+  try {
+    const { supabase } = await import('./lib/supabase');
+    const { data, error } = await supabase
+      .storage
+      .from('ruby-gallery')
+      .createSignedUrl(storagePath, 60 * 60);
+
+    if (error) return null;
+    return data.signedUrl;
+  } catch {
+    return null;
+  }
+}
 
 type AuthFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
@@ -167,7 +227,7 @@ function Header(){
       setActiveSection('');
       return;
     }
-    const sectionIds=['home','ruby-official','news','gallery'];
+    const sectionIds=['home','ruby-official','latest','events','gallery'];
     const syncActiveSection=()=>{
       const passed=sectionIds.filter(id=>{
         const element=document.getElementById(id);
@@ -202,7 +262,8 @@ function Header(){
     <nav id="primary-navigation" className={open?'nav nav-open':'nav'} aria-label="Main navigation">
       <Link to="/#home" className={activeSection==='home'?'active':''} aria-current={activeSection==='home'?'location':undefined} onClick={event=>handleSectionClick(event,'home')}><House size={14} aria-hidden="true"/><span>Home</span></Link>
       <Link to="/#ruby-official" className={activeSection==='ruby-official'?'active':''} aria-current={activeSection==='ruby-official'?'location':undefined} onClick={event=>handleSectionClick(event,'ruby-official')}><Users size={14} aria-hidden="true"/><span>Ruby Official</span></Link>
-      <Link to="/#news" className={activeSection==='news'?'active':''} aria-current={activeSection==='news'?'location':undefined} onClick={event=>handleSectionClick(event,'news')}><Newspaper size={14} aria-hidden="true"/><span>News</span></Link>
+      <Link to="/#latest" className={activeSection==='latest'?'active':''} aria-current={activeSection==='latest'?'location':undefined} onClick={event=>handleSectionClick(event,'latest')}><Newspaper size={14} aria-hidden="true"/><span>News</span></Link>
+      <Link to="/#events" className={activeSection==='events'?'active':''} aria-current={activeSection==='events'?'location':undefined} onClick={event=>handleSectionClick(event,'events')}><Trophy size={14} aria-hidden="true"/><span>Events</span></Link>
       <Link to="/#gallery" className={activeSection==='gallery'?'active':''} aria-current={activeSection==='gallery'?'location':undefined} onClick={event=>handleSectionClick(event,'gallery')}><Camera size={14} aria-hidden="true"/><span>Gallery</span></Link>
       {user&&<NavLink className="nav-dashboard" to="/dashboard" onClick={closeMenu}><LayoutDashboard size={14} aria-hidden="true"/><span>Dashboard</span></NavLink>}
       {user?.app_metadata?.role==='admin'&&<NavLink className="nav-dashboard" to="/admin" onClick={closeMenu}><ShieldCheck size={14} aria-hidden="true"/><span>Admin</span></NavLink>}
@@ -254,134 +315,283 @@ function Home(){
       <article className="mission-card"><h2>OUR <em>VALUES</em></h2><ul><li>Teamwork</li><li>Discipline</li><li>Respect</li><li>Growth</li></ul></article>
       <article className="mission-card"><h2>OUR <em>COMMUNITY</em></h2><p>Real players. Real bonds.<br/>One goal.</p></article>
     </section>
-    <section className="latest-section" id="latest">
-      <div className="latest-intro"><p className="landing-kicker">LATEST UPDATES</p><h2>STAY <em>CONNECTED</em></h2><p>Get the latest news, events, and announcements from Ruby Essentials.</p></div>
-      <div className="news-cards">
-        <article className="news-card"><Link className="news-card-link" to="/#news" aria-label="Read Welcome to Our New Website update"><div className="news-art news-art-crest"><img src="/transparent%20logo.png" alt="Ruby Essentials" width="94" height="94" loading="lazy" decoding="async"/></div><div className="news-copy"><span>ANNOUNCEMENT</span><h3>Welcome to Our New Website</h3><p>We're excited to officially launch our clan website. Stay tuned for updates, events, and more!</p><time>CLAN UPDATE</time></div></Link></article>
-        <article className="news-card"><Link className="news-card-link" to="/#news" aria-label="View CODM Scrim Schedule"><div className="news-art news-art-soldier"><div className="soldier-visor"></div><div className="soldier-body"></div></div><div className="news-copy"><span>EVENT</span><h3>CODM Scrim Schedule</h3><p>Check out our upcoming scrim schedule and be ready for the action!</p><time>SCHEDULE TBA</time></div></Link></article>
-      </div>
-    </section>
+    <LatestUpdates />
     <Members />
     <Events />
     <GallerySection />
   </main></>
 }
-function GallerySection(){
+function LatestUpdates() {
+  const [items, setItems] = useState<AnnouncementRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    async function loadAnnouncements() {
+      try {
+        const { supabase } = await import('./lib/supabase');
+        const { data, error: queryError } = await supabase
+          .from('announcements')
+          .select('id,title,body,category,created_at')
+          .eq('published', true)
+          .order('created_at', { ascending: false })
+          .limit(3);
+        if (queryError) throw queryError;
+        if (active) setItems((data || []) as AnnouncementRow[]);
+      } catch (loadError) {
+        if (active) setError(loadError instanceof Error ? loadError.message : 'Unable to load announcements.');
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    void loadAnnouncements();
+    return () => { active = false; };
+  }, []);
+
+  return (
+    <section className="latest-section" id="latest" aria-labelledby="latest-updates-heading">
+      <div className="latest-intro">
+        <p className="landing-kicker">LATEST UPDATES</p>
+        <h2 id="latest-updates-heading">STAY <em>CONNECTED</em></h2>
+        <p>Official announcements from Ruby Essentials.</p>
+      </div>
+      {loading ? (
+        <p className="dynamic-content-state" role="status">Loading the latest announcements…</p>
+      ) : error ? (
+        <p className="dynamic-content-error" role="alert">Updates could not be loaded. {error}</p>
+      ) : items.length === 0 ? (
+        <div className="dynamic-content-state">
+          <strong>No announcements published yet.</strong>
+          <p>Official updates will appear here when the Ruby Essentials team publishes them.</p>
+        </div>
+      ) : (
+        <div className="news-cards">
+          {items.map(item => (
+            <article className="news-card dynamic-news-card" key={item.id}>
+              <div className="news-card-link">
+                <div className="news-art news-art-crest">
+                  <img src="/transparent%20logo.png" alt="" width="94" height="94" loading="lazy" decoding="async" />
+                </div>
+                <div className="news-copy">
+                  <span>{item.category || 'ANNOUNCEMENT'}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                  <time dateTime={item.created_at}>{formatDate(item.created_at)}</time>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+      <div className="dynamic-section-link">
+        <Link className="text-link" to="/events">Explore upcoming events <ArrowUpRight size={15} /></Link>
+      </div>
+    </section>
+  );
+}
+
+function GallerySection() {
+  const [items, setItems] = useState<GalleryRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    async function loadGallery() {
+      try {
+        const { supabase } = await import('./lib/supabase');
+        const { data, error: queryError } = await supabase
+          .from('gallery_items')
+          .select('id,storage_path,caption,alt_text,category,sort_order,created_at')
+          .eq('published', true)
+          .order('sort_order', { ascending: true })
+          .order('created_at', { ascending: false });
+        if (queryError) throw queryError;
+        const rows = (data || []) as GalleryRow[];
+        const withImages = await Promise.all(rows.map(async item => ({
+          ...item,
+          image_url: await resolvePublicImage(item.storage_path),
+        })));
+        if (active) setItems(withImages);
+      } catch (loadError) {
+        if (active) setError(loadError instanceof Error ? loadError.message : 'Unable to load the gallery.');
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    void loadGallery();
+    return () => { active = false; };
+  }, []);
+
   return (
     <section className="gallery-section" id="gallery" aria-labelledby="gallery-heading">
       <div className="gallery-section-heading">
         <div className="gallery-section-heading-copy">
           <h2 id="gallery-heading">RUBY <em>GALLERY.</em></h2>
-          <p>Memories, achievements, and moments from the clan.</p>
+          <p>Published memories and official media from Ruby Essentials.</p>
         </div>
       </div>
-      <div className="gallery-collection-grid">
-        <article className="gallery-collection-card">
-          <div className="gallery-collection-visual gallery-visual-memories">
-            <span className="gallery-visual-icon"><Camera size={25}/></span>
-            <span className="gallery-visual-index">01 / MEMORIES</span>
-            <span className="gallery-visual-placeholder">CLAN MOMENTS</span>
-          </div>
-          <div className="gallery-collection-copy">
-            <p className="eyebrow">THE PEOPLE BEHIND THE CLAN</p>
-            <h3>Moments Together</h3>
-            <p>Scrims, celebrations, community moments, and memories made together.</p>
-            <span className="gallery-coming-soon">PHOTOS WILL BE ADDED HERE</span>
-          </div>
-        </article>
-        <article className="gallery-collection-card">
-          <div className="gallery-collection-visual gallery-visual-achievements">
-            <span className="gallery-visual-icon"><Trophy size={25}/></span>
-            <span className="gallery-visual-index">02 / ACHIEVEMENTS</span>
-            <span className="gallery-visual-placeholder">MILESTONES</span>
-          </div>
-          <div className="gallery-collection-copy">
-            <p className="eyebrow">PROGRESS WORTH REMEMBERING</p>
-            <h3>Milestones &amp; Achievements</h3>
-            <p>Tournament highlights, placements, and clan milestones—added as they are recorded.</p>
-            <span className="gallery-coming-soon">ACHIEVEMENTS WILL BE ADDED HERE</span>
-          </div>
-        </article>
-        <article className="gallery-collection-card">
-          <div className="gallery-collection-visual gallery-visual-community">
-            <span className="gallery-visual-icon"><Users size={25}/></span>
-            <span className="gallery-visual-index">03 / COMMUNITY</span>
-            <span className="gallery-visual-placeholder">ONE RUBY FAMILY</span>
-          </div>
-          <div className="gallery-collection-copy">
-            <p className="eyebrow">MORE THAN THE GAME</p>
-            <h3>Community Highlights</h3>
-            <p>Teamwork, friendships, and the moments that make Ruby Essentials a community.</p>
-            <span className="gallery-coming-soon">COMMUNITY PHOTOS COMING SOON</span>
-          </div>
-        </article>
-      </div>
+      {loading ? (
+        <p className="dynamic-content-state" role="status">Loading gallery images…</p>
+      ) : error ? (
+        <p className="dynamic-content-error" role="alert">The gallery could not be loaded. {error}</p>
+      ) : items.length === 0 ? (
+        <div className="dynamic-content-state">
+          <strong>No gallery images published yet.</strong>
+          <p>Official photos will appear here after an administrator uploads and publishes them.</p>
+        </div>
+      ) : (
+        <div className="gallery-collection-grid dynamic-gallery-grid">
+          {items.map(item => (
+            <article className="gallery-collection-card dynamic-gallery-card" key={item.id}>
+              {item.image_url ? (
+                <a className="dynamic-gallery-image-link" href={item.image_url} target="_blank" rel="noreferrer" aria-label={'Open full-size image: ' + (item.alt_text || item.caption)}>
+                  <img className="dynamic-gallery-image" src={item.image_url} alt={item.alt_text || item.caption} loading="lazy" decoding="async" />
+                </a>
+              ) : (
+                <div className="gallery-collection-visual dynamic-gallery-unavailable">
+                  <span className="gallery-visual-placeholder">IMAGE UNAVAILABLE</span>
+                </div>
+              )}
+              <div className="gallery-collection-copy">
+                <p className="eyebrow">{item.category || 'RUBY ESSENTIALS'}</p>
+                <h3>{item.caption}</h3>
+                <p>{formatDate(item.created_at)}</p>
+                {item.image_url && <a className="dynamic-full-image-link" href={item.image_url} target="_blank" rel="noreferrer">VIEW FULL IMAGE <ArrowUpRight size={14} /></a>}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
       <div className="gallery-section-footer">
         <span>OUR STORY IS STILL BEING WRITTEN.</span>
-        <Link to="/#news" className="gallery-updates-link">EXPLORE CLAN UPDATES <ArrowUpRight size={15}/></Link>
+        <Link to="/events" className="gallery-updates-link">EXPLORE CLAN EVENTS <ArrowUpRight size={15} /></Link>
       </div>
     </section>
   );
 }
-function GalleryPage(){return <main className="gallery-route-page"><GallerySection/></main>}
-function Members(){
-  const [memberType,setMemberType]=useState('All');
-  const [memberSearch,setMemberSearch]=useState('');
-  const members=Array.from({length:12},(_,index)=>({
-    id:index+1,
-    name:'Member profile pending',
-    category:index%3===0?'Streamers':index%3===1?'Members':'Content Creators',
-    role:index%3===0?'Streamer profile':index%3===1?'Community member':'Content creator',
-  }));
-  const query=memberSearch.trim().toLowerCase();
-  const filteredMembers=members.filter(member=>
-    (memberType==='All'||member.category===memberType)&&
-    (!query||[member.name,member.category,member.role,String(member.id)].some(value=>value.toLowerCase().includes(query)))
+
+function GalleryPage() {
+  return <main className="gallery-route-page"><GallerySection /></main>;
+}
+
+function Members() {
+  const [memberType, setMemberType] = useState('All');
+  const [memberSearch, setMemberSearch] = useState('');
+  const [members, setMembers] = useState<PublicMemberRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    async function loadMembers() {
+      try {
+        const { supabase } = await import('./lib/supabase');
+        const { data, error: queryError } = await supabase
+          .from('public_members')
+          .select('id,display_name,ign,role,category,avatar_url,avatar_path,bio,division,featured,sort_order,membership_status')
+          .eq('published', true)
+          .eq('membership_status', 'active')
+          .order('sort_order', { ascending: true })
+          .order('display_name', { ascending: true });
+        if (queryError) throw queryError;
+        const rows = (data || []) as PublicMemberRow[];
+        const withAvatars = await Promise.all(rows.map(async member => ({
+          ...member,
+          resolved_avatar: await resolvePublicImage(member.avatar_path, member.avatar_url),
+        })));
+        if (active) setMembers(withAvatars);
+      } catch (loadError) {
+        if (active) setError(loadError instanceof Error ? loadError.message : 'Unable to load the member directory.');
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    void loadMembers();
+    return () => { active = false; };
+  }, []);
+
+  const categories = ['All', ...Array.from(new Set(members.map(member => member.category).filter(Boolean)))];
+  const query = memberSearch.trim().toLowerCase();
+  const filteredMembers = members.filter(member =>
+    (memberType === 'All' || member.category === memberType) &&
+    (!query || [member.display_name, member.ign || '', member.role, member.category, member.division, member.bio]
+      .some(value => value.toLowerCase().includes(query)))
   );
-  return <section className="ruby-directory-page" id="ruby-official">
-    <section className="ruby-directory-intro">
-      <div className="ruby-directory-intro-copy">
-        <p className="landing-kicker"><span className="accent">RUBY ESSENTIALS</span><span className="ruby-directory-slash"> / </span>COMMUNITY</p>
-        <h1>MEMBER <span className="accent">DIRECTORY</span></h1>
-        <p>Get to know the people behind Ruby Essentials.</p>
-      </div>
-    </section>
-    <section className="ruby-directory-content" aria-labelledby="ruby-directory-heading">
-      <div className="ruby-directory-toolbar">
-        <div className="ruby-directory-toolbar-label"><span className="ruby-directory-live-dot"/> BROWSE THE ROSTER</div>
-        <div className="ruby-directory-filters" role="group" aria-label="Filter members">
-          {['All','Members','Streamers','Content Creators'].map(type=><button type="button" key={type} className={memberType===type?'ruby-directory-filter active':'ruby-directory-filter'} onClick={()=>setMemberType(type)} aria-pressed={memberType===type}>{type}</button>)}
+
+  return (
+    <section className="ruby-directory-page" id="ruby-official">
+      <section className="ruby-directory-intro">
+        <div className="ruby-directory-intro-copy">
+          <p className="landing-kicker"><span className="accent">RUBY ESSENTIALS</span><span className="ruby-directory-slash"> / </span>COMMUNITY</p>
+          <h1>MEMBER <span className="accent">DIRECTORY</span></h1>
+          <p>Meet the approved members and published profiles of Ruby Essentials.</p>
         </div>
-        <label className="ruby-directory-search">
-          <Search size={17} aria-hidden="true"/>
-          <input type="search" value={memberSearch} onChange={event=>setMemberSearch(event.target.value)} placeholder="Search members..." aria-label="Search members by name, type, or role"/>
-          {memberSearch&&<button type="button" onClick={()=>setMemberSearch('')} aria-label="Clear search">×</button>}
-        </label>
-      </div>
-      <div className="ruby-directory-results-heading">
-        <div><h2 id="ruby-directory-heading">THE <span className="accent">ROSTER</span></h2><p>Players, creators, and community members.</p></div>
-        <span>{filteredMembers.length} RESULTS</span>
-      </div>
-      {filteredMembers.length>0?<div className="ruby-directory-grid">
-        {filteredMembers.map(member=><article className="ruby-directory-member" key={member.id}>
-          <div className="ruby-directory-member-top">
-            <span className="ruby-directory-member-type">{member.category}</span>
+      </section>
+      <section className="ruby-directory-content" aria-labelledby="ruby-directory-heading">
+        <div className="ruby-directory-toolbar">
+          <div className="ruby-directory-toolbar-label"><span className="ruby-directory-live-dot" /> BROWSE THE ROSTER</div>
+          <div className="ruby-directory-filters" role="group" aria-label="Filter members">
+            {categories.map(type => (
+              <button type="button" key={type} className={memberType === type ? 'ruby-directory-filter active' : 'ruby-directory-filter'} onClick={() => setMemberType(type)} aria-pressed={memberType === type}>{type}</button>
+            ))}
           </div>
-          <div className="ruby-directory-avatar"><img src="/transparent%20logo.png" alt="" loading="lazy" decoding="async"/></div>
-          <div className="ruby-directory-member-copy">
-            <h3>{member.name}</h3>
-            <p>{member.role} · Details coming soon</p>
+          <label className="ruby-directory-search">
+            <Search size={17} aria-hidden="true" />
+            <input type="search" value={memberSearch} onChange={event => setMemberSearch(event.target.value)} placeholder="Search members…" aria-label="Search members by name, IGN, role, division, or biography" />
+            {memberSearch && <button type="button" onClick={() => setMemberSearch('')} aria-label="Clear search">×</button>}
+          </label>
+        </div>
+        <div className="ruby-directory-results-heading">
+          <div><h2 id="ruby-directory-heading">THE <span className="accent">ROSTER</span></h2><p>Only intentionally published member profiles appear here.</p></div>
+          <span>{loading ? 'LOADING…' : filteredMembers.length + ' RESULTS'}</span>
+        </div>
+        {loading ? (
+          <p className="dynamic-content-state" role="status">Loading approved member profiles…</p>
+        ) : error ? (
+          <p className="dynamic-content-error" role="alert">The directory could not be loaded. {error}</p>
+        ) : filteredMembers.length > 0 ? (
+          <div className="ruby-directory-grid">
+            {filteredMembers.map(member => (
+              <article className="ruby-directory-member" key={member.id}>
+                <div className="ruby-directory-member-top">
+                  <span className="ruby-directory-member-type">{member.category}</span>
+                  {member.featured && <span className="dynamic-featured-label">FEATURED</span>}
+                </div>
+                <div className="ruby-directory-avatar">
+                  <img src={member.resolved_avatar || '/transparent%20logo.png'} alt={member.resolved_avatar ? member.display_name + ' profile' : ''} loading="lazy" decoding="async" />
+                </div>
+                <div className="ruby-directory-member-copy">
+                  <h3>{member.display_name}</h3>
+                  <p>{member.ign ? 'IGN: ' + member.ign : member.role}</p>
+                  <p className="dynamic-member-bio">{member.bio || member.division}</p>
+                </div>
+                <div className="ruby-directory-member-bottom">
+                  <span><i /> {member.role.toUpperCase()}</span>
+                  <span className="ruby-directory-member-arrow"><ArrowUpRight size={17} aria-hidden="true" /></span>
+                </div>
+              </article>
+            ))}
           </div>
-          <div className="ruby-directory-member-bottom"><span><i/> RUBY ESSENTIALS</span><span className="ruby-directory-member-arrow"><ArrowUpRight size={17} aria-hidden="true"/></span></div>
-        </article>)}
-      </div>:<div className="directorate-empty-state"><strong>No members found</strong><p>Try a different search or filter.</p><button className="ruby-directory-reset" type="button" onClick={()=>{setMemberSearch('');setMemberType('All')}}>Reset filters</button></div>}
-      <div className="ruby-directory-join">
-        <div><span>YOUR PLACE COULD BE HERE</span><h2>JOIN THE <em>RUBY FAMILY.</em></h2></div>
-        <Link className="landing-primary" to="/join">APPLY TO JOIN <ArrowUpRight size={17}/></Link>
-      </div>
+        ) : (
+          <div className="directorate-empty-state">
+            <strong>{members.length === 0 ? 'No member profiles published yet.' : 'No members found.'}</strong>
+            <p>{members.length === 0 ? 'The roster will appear here when administrators publish member profiles.' : 'Try another search or category.'}</p>
+            <button className="ruby-directory-reset" type="button" onClick={() => { setMemberSearch(''); setMemberType('All'); }}>Reset filters</button>
+          </div>
+        )}
+        <div className="ruby-directory-join">
+          <div><span>YOUR PLACE COULD BE HERE</span><h2>JOIN THE <em>RUBY FAMILY.</em></h2></div>
+          <Link className="landing-primary" to="/join">APPLY TO JOIN <ArrowUpRight size={17} /></Link>
+        </div>
+      </section>
     </section>
-  </section>
+  );
 }
+
+
+
 function AccountDashboard(){
   const navigate=useNavigate();
   const [loading,setLoading]=useState(true);
@@ -531,7 +741,74 @@ function AccountDashboard(){
   </main>;
 }
 
-function Events(){return <section className="page section" id="news"><p className="eyebrow"><span className="accent">02 / </span>CLAN ACTIVITIES</p><h1 className="page-title">EVENTS & <span className="accent">UPDATES.</span></h1><p className="muted page-intro">Clan scrims, recruitment updates, and community activities in one place.</p><div className="event-grid">{events.map((e,i)=><article className="event-card" key={e.title}><div className="card-top"><span className="game-icon">{i===0?<Gamepad2 size={20}/>:i===1?<Users size={20}/>:<Trophy size={20}/>}</span><span className={'status '+(i===1?'live':'')}>{e.date}</span></div><p className="eyebrow">{e.type}</p><h3>{e.title}</h3><p className="muted">{e.detail}</p><Link className="card-action" to={i===1?"/join":"/#contact"}>{i===1?"Apply to join":"Get involved"} <ArrowUpRight size={15}/></Link></article>)}</div></section>}
+function Events() {
+  const [items, setItems] = useState<ClanEventRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    async function loadEvents() {
+      try {
+        const { supabase } = await import('./lib/supabase');
+        const { data, error: queryError } = await supabase
+          .from('events')
+          .select('id,title,detail,starts_at,category,status,created_at')
+          .eq('published', true)
+          .order('starts_at', { ascending: true, nullsFirst: false })
+          .order('created_at', { ascending: false });
+        if (queryError) throw queryError;
+        if (active) setItems((data || []) as ClanEventRow[]);
+      } catch (loadError) {
+        if (active) setError(loadError instanceof Error ? loadError.message : 'Unable to load published events.');
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    void loadEvents();
+    return () => { active = false; };
+  }, []);
+
+  return (
+    <section className="page section dynamic-events-section" id="events" aria-labelledby="events-heading">
+      <p className="eyebrow"><span className="accent">02 / </span>CLAN ACTIVITIES</p>
+      <h1 className="page-title" id="events-heading">EVENTS & <span className="accent">UPDATES.</span></h1>
+      <p className="muted page-intro">Official scrims, tournaments, and community activities published by Ruby Essentials.</p>
+      {loading ? (
+        <p className="dynamic-content-state" role="status">Loading published events…</p>
+      ) : error ? (
+        <p className="dynamic-content-error" role="alert">Events could not be loaded. {error}</p>
+      ) : items.length === 0 ? (
+        <div className="dynamic-content-state">
+          <strong>No upcoming events published yet.</strong>
+          <p>Check back when the Ruby Essentials team announces its next activity.</p>
+        </div>
+      ) : (
+        <div className="event-grid">
+          {items.map(item => (
+            <article className="event-card" key={item.id}>
+              <div className="card-top">
+                <span className="game-icon"><Trophy size={20} /></span>
+                <span className="status">{(item.status || 'upcoming').replace(/_/g, ' ').toUpperCase()}</span>
+              </div>
+              <p className="eyebrow">{item.category || 'CLAN EVENT'}</p>
+              <h3>{item.title}</h3>
+              <p className="muted">{item.detail}</p>
+              <div className="dynamic-event-date">
+                <Clock3 size={14} />
+                <time dateTime={item.starts_at || undefined}>{item.starts_at ? formatDate(item.starts_at) : 'DATE TO BE ANNOUNCED'}</time>
+              </div>
+              <Link className="card-action" to="/#latest">Read latest updates <ArrowUpRight size={15} /></Link>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+
+
 function likelyEmailDomainFix(email:string){
   const at=email.lastIndexOf('@');
   if(at<0)return null;
@@ -565,7 +842,7 @@ function AuthPage({mode}:{mode:'login'|'join'|'forgot'|'reset'}){
   const [checkingSession,setCheckingSession]=useState(mode==='login');
   const manualAuthInProgress=useRef(false);
   const configured=Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
-  const authRedirectUrl='https://ruby-essentials.vercel.app';
+  const authRedirectUrl=window.location.origin;
 
   // On the login route, resume a session created by the email-confirmation link.
   // Do not run this on password-reset pages, where recovery sessions must remain available.
@@ -881,7 +1158,7 @@ function Admin(){
         </div>:<div className="admin-reviewed-actions"><span className="admin-reviewed-label">Reviewed</span><button type="button" className="admin-resend-button" disabled={busyId!==null} onClick={()=>void resendDecisionEmail(application)}>{busyId===application.id?'Sending…':'Resend email'}</button></div>}
       </article>)}</div>}
     </>}
-    <div className="admin-review-footer"><Link to="/members" className="text-link">View roster <ArrowUpRight size={15}/></Link><Link to="/events" className="text-link">Manage clan updates <ArrowUpRight size={15}/></Link></div>
+    <div className="admin-review-footer"><Link to="/members" className="text-link">View roster <ArrowUpRight size={15}/></Link><Link to="/events" className="text-link">View clan updates <ArrowUpRight size={15}/></Link><Link to="/admin/content" className="text-link">Manage website content <ArrowUpRight size={15}/></Link></div>
   </main>;
 }
-export default function App(){return <><Header/><ScrollToAnchor/><Routes><Route path="/" element={<Home/>}/><Route path="/dashboard" element={<AccountDashboard/>}/><Route path="/members" element={<Members/>}/><Route path="/gallery" element={<GalleryPage/>}/><Route path="/events" element={<Events/>}/><Route path="/login" element={<AuthPage mode="login"/>}/><Route path="/join" element={<AuthPage mode="join"/>}/><Route path="/forgot-password" element={<AuthPage mode="forgot"/>}/><Route path="/reset-password" element={<AuthPage mode="reset"/>}/><Route path="/admin" element={<Admin/>}/><Route path="*" element={<main className="page section"><h1 className="page-title">PAGE NOT FOUND<span className="accent">.</span></h1><Link to="/" className="text-link">Return home <ArrowUpRight size={17}/></Link></main>}/></Routes><Footer/></>}
+export default function App(){return <><Header/><ScrollToAnchor/><Routes><Route path="/" element={<Home/>}/><Route path="/dashboard" element={<AccountDashboard/>}/><Route path="/members" element={<Members/>}/><Route path="/gallery" element={<GalleryPage/>}/><Route path="/events" element={<Events/>}/><Route path="/login" element={<AuthPage mode="login"/>}/><Route path="/join" element={<AuthPage mode="join"/>}/><Route path="/forgot-password" element={<AuthPage mode="forgot"/>}/><Route path="/reset-password" element={<AuthPage mode="reset"/>}/><Route path="/admin" element={<Admin/>}/><Route path="/admin/content" element={<AdminContentManager/>}/><Route path="*" element={<main className="page section"><h1 className="page-title">PAGE NOT FOUND<span className="accent">.</span></h1><Link to="/" className="text-link">Return home <ArrowUpRight size={17}/></Link></main>}/></Routes><Footer/></>}
